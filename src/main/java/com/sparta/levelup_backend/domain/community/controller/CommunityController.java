@@ -4,10 +4,6 @@ import static com.sparta.levelup_backend.common.ApiResMessage.*;
 import static com.sparta.levelup_backend.common.ApiResponse.*;
 import static org.springframework.http.HttpStatus.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.levelup_backend.common.ApiResponse;
 import com.sparta.levelup_backend.config.CustomUserDetails;
-import com.sparta.levelup_backend.domain.community.document.CommunityDocument;
 import com.sparta.levelup_backend.domain.community.dto.request.CommnunityCreateRequestDto;
 import com.sparta.levelup_backend.domain.community.dto.request.CommunityUpdateRequestDto;
 import com.sparta.levelup_backend.domain.community.dto.response.CommunityListResponseDto;
 import com.sparta.levelup_backend.domain.community.dto.response.CommunityResponseDto;
-import com.sparta.levelup_backend.domain.community.repositoryES.CommunityESRepository;
 import com.sparta.levelup_backend.domain.community.service.CommunityService;
 
 import jakarta.validation.Valid;
@@ -37,8 +31,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommunityController {
 	private final CommunityService communityService;
-
-	private final CommunityESRepository communityESRepository;
 
 	// community 생성
 	@PostMapping
@@ -203,14 +195,5 @@ public class CommunityController {
 
 		communityService.deleteCommunityRedis(userId, communityId);
 		return success(OK, COMMUNITY_DELETE_SUCCESS);
-	}
-
-	// 나중에 지울것
-	@GetMapping("/es/test")
-	public ApiResponse<List<CommunityDocument>> findAllComunity() {
-		List<CommunityDocument> communityDocuments = StreamSupport
-			.stream(communityESRepository.findAll().spliterator(), false)
-			.collect(Collectors.toList());
-		return success(OK, COMMUNITY_LIST_FOUND_SUCCESS, communityDocuments);
 	}
 }
