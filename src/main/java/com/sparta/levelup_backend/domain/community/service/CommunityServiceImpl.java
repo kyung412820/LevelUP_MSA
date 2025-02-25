@@ -45,7 +45,7 @@ public class CommunityServiceImpl implements CommunityService {
 	private final GameRepository gameRepository;
 
 	private final CommunityESRepository communityESRepository;
-	private final RedisTemplate redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	private final String COMMUNITY_CACHE_KEY = "community:";
 	private final String COMMUNITY_ZSET_KEY = "community_view";
@@ -217,7 +217,7 @@ public class CommunityServiceImpl implements CommunityService {
 		}
 
 		for (String key : keys) {
-			Map<String, Object> community = redisTemplate.opsForHash().entries(key);
+			Map<String, Object> community = redisTemplate.<String, Object>opsForHash().entries(key);
 			String title = community.get("title").toString();
 
 			if (title.toLowerCase().contains(searchKeyword.toLowerCase())) {
@@ -245,7 +245,7 @@ public class CommunityServiceImpl implements CommunityService {
 
 		List<CommunityReadResponseDto> results = new ArrayList<>();
 		for (String key : matchedArticles.stream().skip((long)page * size).limit(size).toList()) {
-			Map<String, Object> result = redisTemplate.opsForHash().entries(key);
+			Map<String, Object> result = redisTemplate.<String, Object>opsForHash().entries(key);
 			results.add(new CommunityReadResponseDto(
 				String.valueOf(result.get("communityId")),
 				(String)result.get("title"),
@@ -262,7 +262,7 @@ public class CommunityServiceImpl implements CommunityService {
 		CommunityEntity community = communityRepository.findByIdOrElseThrow(dto.getCommunityId());
 
 		String key = COMMUNITY_CACHE_KEY + community.getId();
-		Map<String, Object> communityMap = redisTemplate.opsForHash().entries(key);
+		Map<String, Object> communityMap = redisTemplate.<String, Object>opsForHash().entries(key);
 		checkAuth(community, userId);
 		checkCommunityIsDeleted(community);
 
