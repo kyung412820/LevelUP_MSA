@@ -5,6 +5,7 @@ import static com.sparta.levelup_backend.utill.UserRole.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -44,9 +45,10 @@ public class CommunityServiceImpl implements CommunityService {
 	private final GameRepository gameRepository;
 
 	private final CommunityESRepository communityESRepository;
-	private final RedisTemplate redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 
-	private static final String COMMUNITY_CACHE_KEY = "community:*";
+	private final String COMMUNITY_CACHE_KEY = "community:";
+	private final String COMMUNITY_ZSET_KEY = "community_view";
 
 	@Override
 	public CommunityResponseDto saveCommunity(Long userId, CommnunityCreateRequestDto dto) {
@@ -192,32 +194,106 @@ public class CommunityServiceImpl implements CommunityService {
 		CommunityEntity community = communityRepository.save(
 			new CommunityEntity(dto.getTitle(), dto.getContent(), user, game));
 
-		String redisKey = COMMUNITY_CACHE_KEY + community.getTitle();
+		String redisKey = COMMUNITY_CACHE_KEY + community.getId();
 
-		CommunityDocument communityDocument = CommunityDocument.from(community);
-		redisTemplate.opsForValue().set(redisKey, communityDocument);
+		Map<String, Object> communityMap = Map.of(
+			"communityId", community.getId(),
+			"title", community.getTitle(),
+			"userEmail", user.getEmail(),
+			"gameName", game.getName()
+		);
+		redisTemplate.opsForHash().putAll(redisKey, communityMap);
+		redisTemplate.opsForZSet().add(COMMUNITY_ZSET_KEY, redisKey, 0);
 		return CommunityResponseDto.of(community, user, game);
 	}
 
 	@Override
-	public CommunityListResponseDto findCommunityRedis(String searchKeyword) {
+	public CommunityListResponseDto findCommunityRedis(String searchKeyword, int page, int size) {
 		Set<String> keys = redisTemplate.keys(COMMUNITY_CACHE_KEY + "*");
+		List<String> matchedCommunities = new ArrayList<>();
 
-		List<CommunityReadResponseDto> results = new ArrayList<>();
-		if (keys != null) {
-			for (String key : keys) {
-				CommunityDocument community = (CommunityDocument)redisTemplate.opsForValue().get(key);
-				if (community != null && community.getTitle().contains(searchKeyword)) {
-					results.add(CommunityReadResponseDto.from(community));
-				}
-			}
-		}
-
-		if (results.isEmpty()) {
+		if (keys == null) {
 			throw new NotFoundException(COMMUNITY_NOT_FOUND);
 		}
 
+		for (String key : keys) {
+			Map<String, Object> community = redisTemplate.<String, Object>opsForHash().entries(key);
+			String title = community.get("title").toString();
+
+			if (title.toLowerCase().contains(searchKeyword.toLowerCase())) {
+				matchedCommunities.add(key);
+			}
+		}
+
+		if (matchedCommunities.isEmpty()) {
+			throw new NotFoundException(COMMUNITY_NOT_FOUND);
+		}
+
+		if (page * size >= matchedCommunities.size()) {
+			throw new PageOutOfBoundsException(PAGE_OUT_OF_BOUNDS);
+		}
+
+		matchedCommunities.sort((a, b) -> {
+			Double scoreA = redisTemplate.opsForZSet().score(COMMUNITY_ZSET_KEY, a);
+			Double scoreB = redisTemplate.opsForZSet().score(COMMUNITY_ZSET_KEY, b);
+
+			scoreA = (scoreA != null) ? scoreA : 0.0;
+			scoreB = (scoreB != null) ? scoreB : 0.0;
+
+			return Double.compare(scoreB, scoreA);
+		});
+
+		List<CommunityReadResponseDto> results = new ArrayList<>();
+		for (String key : matchedCommunities.stream().skip((long)page * size).limit(size).toList()) {
+			Map<String, Object> result = redisTemplate.<String, Object>opsForHash().entries(key);
+			results.add(new CommunityReadResponseDto(
+				String.valueOf(result.get("communityId")),
+				(String)result.get("title"),
+				(String)result.get("userEmail"),
+				(String)result.get("gameName")));
+			incrementViews(key);
+		}
+
 		return new CommunityListResponseDto(results);
+	}
+
+	@Override
+	public CommunityResponseDto updateCommunityRedis(Long userId, CommunityUpdateRequestDto dto) {
+		CommunityEntity community = communityRepository.findByIdOrElseThrow(dto.getCommunityId());
+
+		String key = COMMUNITY_CACHE_KEY + community.getId();
+		Map<String, Object> communityMap = redisTemplate.<String, Object>opsForHash().entries(key);
+		checkAuth(community, userId);
+		checkCommunityIsDeleted(community);
+
+		if (Objects.nonNull(dto.getTitle())) {
+			community.updateTitle(dto.getTitle());
+			communityMap.put("title", dto.getTitle());
+		}
+		if (Objects.nonNull(dto.getContent())) {
+			community.updateContent(dto.getContent());
+		}
+
+		redisTemplate.opsForHash().putAll(key, communityMap);
+		communityRepository.save(community);
+
+		return CommunityResponseDto.from(community);
+	}
+
+	@Override
+	public void deleteCommunityRedis(Long userId, Long communityId) {
+		String key = COMMUNITY_CACHE_KEY + communityId;
+		CommunityEntity community = communityRepository.findByIdOrElseThrow(communityId);
+		checkAuth(community, userId);
+		checkCommunityIsDeleted(community);
+
+		redisTemplate.delete(key);
+		community.deleteCommunity();
+
+	}
+
+	public void incrementViews(String communityKey) {
+		redisTemplate.opsForZSet().incrementScore(COMMUNITY_ZSET_KEY, communityKey, 1);
 	}
 
 	private void checkGameIsDeleted(GameEntity game) {
