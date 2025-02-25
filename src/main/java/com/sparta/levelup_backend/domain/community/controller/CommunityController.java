@@ -171,13 +171,4 @@ public class CommunityController {
 		communityService.deleteCommunityRedis(userId, communityId);
 		return success(OK, COMMUNITY_DELETE_SUCCESS);
 	}
-
-	// 나중에 지울것
-	@GetMapping("/es/test")
-	public ApiResponse<List<CommunityDocument>> findAllComunity() {
-		List<CommunityDocument> communityDocuments = StreamSupport
-			.stream(communityESRepository.findAll().spliterator(), false)
-			.collect(Collectors.toList());
-		return success(OK, COMMUNITY_LIST_FOUND_SUCCESS, communityDocuments);
-	}
 }
