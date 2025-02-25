@@ -1,9 +1,9 @@
-package com.sparta.levelup_backend.domain.sse.event;
+package com.sparta.levelup_backend.domain.alert.event;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import com.sparta.levelup_backend.domain.sse.entity.AlertMessageEntity;
+import com.sparta.levelup_backend.domain.alert.entity.AlertMessageEntity;
 
 import lombok.RequiredArgsConstructor;
 

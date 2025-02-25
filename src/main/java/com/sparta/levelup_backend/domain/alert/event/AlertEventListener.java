@@ -1,4 +1,4 @@
-package com.sparta.levelup_backend.domain.sse.event;
+package com.sparta.levelup_backend.domain.alert.event;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import com.sparta.levelup_backend.domain.sse.service.AlertService;
+import com.sparta.levelup_backend.domain.alert.service.AlertService;
 
 import lombok.RequiredArgsConstructor;
 

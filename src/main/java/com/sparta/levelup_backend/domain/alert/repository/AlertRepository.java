@@ -1,4 +1,4 @@
-package com.sparta.levelup_backend.domain.sse.repository;
+package com.sparta.levelup_backend.domain.alert.repository;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
-package com.sparta.levelup_backend.domain.sse.event;
+package com.sparta.levelup_backend.domain.alert.event;
 
-import com.sparta.levelup_backend.domain.sse.entity.AlertMessageEntity;
+import com.sparta.levelup_backend.domain.alert.entity.AlertMessageEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

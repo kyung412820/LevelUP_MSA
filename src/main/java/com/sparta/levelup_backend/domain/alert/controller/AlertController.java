@@ -1,4 +1,4 @@
-package com.sparta.levelup_backend.domain.sse.controller;
+package com.sparta.levelup_backend.domain.alert.controller;
 
 import static com.sparta.levelup_backend.common.ApiResMessage.*;
 import static com.sparta.levelup_backend.common.ApiResponse.*;
@@ -20,8 +20,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.sparta.levelup_backend.common.ApiResponse;
 import com.sparta.levelup_backend.config.CustomUserDetails;
-import com.sparta.levelup_backend.domain.sse.dto.response.AlertLogResponseDto;
-import com.sparta.levelup_backend.domain.sse.service.AlertService;
+import com.sparta.levelup_backend.domain.alert.dto.response.AlertLogResponseDto;
+import com.sparta.levelup_backend.domain.alert.service.AlertService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class AlertController {
 	private final AlertService alertService;
 
-	@GetMapping(value = "/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@GetMapping(value = "/alert", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public ResponseEntity<SseEmitter> userChangeAlert(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
 		SseEmitter alert = alertService.alertSubscribe(userDetails.getId(), lastEventId);
@@ -39,14 +39,14 @@ public class AlertController {
 		return new ResponseEntity(alert, HttpStatus.OK);
 	}
 
-	@PostMapping("/sse/allRead")
+	@PostMapping("/alert/allRead")
 	public ApiResponse<Void> readAllAlert(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		alertService.readAllAlert(userDetails.getId());
 
 		return success(HttpStatus.OK, ALERT_ALL_READ_SUCCESS);
 	}
 
-	@PostMapping("/sse/read/{alertId}")
+	@PostMapping("/alert/read/{alertId}")
 	public ApiResponse<Void> readAlert(@AuthenticationPrincipal CustomUserDetails userDetails,
 		@PathVariable Long alertId) {
 		alertService.readAlert(userDetails.getId(), alertId);
@@ -54,7 +54,7 @@ public class AlertController {
 		return success(HttpStatus.OK, ALERT_READ_SUCCESS);
 	}
 
-	@GetMapping("/admin/sse/log/{userId}")
+	@GetMapping("/admin/alert/log/{userId}")
 	public ApiResponse<Page<AlertLogResponseDto>> findLogByuserId(@PageableDefault Pageable pageable,
 		@PathVariable Long userId) {
 		Page<AlertLogResponseDto> results = alertService.findLogByuserId(userId, pageable);

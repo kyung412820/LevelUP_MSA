@@ -1,7 +1,7 @@
-package com.sparta.levelup_backend.domain.sse.service;
+package com.sparta.levelup_backend.domain.alert.service;
 
-import static com.sparta.levelup_backend.domain.sse.dto.AlertMessage.*;
-import static com.sparta.levelup_backend.domain.sse.dto.request.AlertMessageDto.*;
+import static com.sparta.levelup_backend.domain.alert.dto.AlertMessage.*;
+import static com.sparta.levelup_backend.domain.alert.dto.request.AlertMessageDto.*;
 import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
 import static org.springframework.web.servlet.mvc.method.annotation.SseEmitter.*;
 
@@ -14,12 +14,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.sparta.levelup_backend.domain.sse.dto.response.AlertLogResponseDto;
-import com.sparta.levelup_backend.domain.sse.entity.AlertMessageEntity;
-import com.sparta.levelup_backend.domain.sse.entity.AlertMessageLogEntity;
-import com.sparta.levelup_backend.domain.sse.repository.AlertMessageLogRepository;
-import com.sparta.levelup_backend.domain.sse.repository.AlertMessageRepository;
-import com.sparta.levelup_backend.domain.sse.repository.AlertRepository;
+import com.sparta.levelup_backend.domain.alert.dto.response.AlertLogResponseDto;
+import com.sparta.levelup_backend.domain.alert.entity.AlertMessageEntity;
+import com.sparta.levelup_backend.domain.alert.entity.AlertMessageLogEntity;
+import com.sparta.levelup_backend.domain.alert.repository.AlertMessageLogRepository;
+import com.sparta.levelup_backend.domain.alert.repository.AlertMessageRepository;
+import com.sparta.levelup_backend.domain.alert.repository.AlertRepository;
 import com.sparta.levelup_backend.domain.user.entity.UserEntity;
 import com.sparta.levelup_backend.domain.user.repository.UserRepository;
 import com.sparta.levelup_backend.exception.common.NotFoundException;
@@ -54,10 +54,10 @@ public class AlertServiceImpl implements AlertService {
 		}
 
 		if (!lastEventId.equals("")) {
-			sendAlertMessage(alert, alertId, new AlertMessageEntity("sseCreated"));
+			sendAlertMessage(alert, alertId, new AlertMessageEntity("alertCreated"));
 			sendSseMessageExceedingId(alert, alertId, Long.parseLong(lastEventId), userId);
 		} else {
-			sendAlertMessage(alert, alertId, new AlertMessageEntity("sseCreated"));
+			sendAlertMessage(alert, alertId, new AlertMessageEntity("alertCreated"));
 		}
 
 		alert.onCompletion(() -> alertRepository.deleteById(alertId));

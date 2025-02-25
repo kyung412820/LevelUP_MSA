@@ -1,4 +1,4 @@
-package com.sparta.levelup_backend.domain.sse.entity;
+package com.sparta.levelup_backend.domain.alert.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

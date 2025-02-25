@@ -1,4 +1,4 @@
-package com.sparta.levelup_backend.domain.sse.repository;
+package com.sparta.levelup_backend.domain.alert.repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.sparta.levelup_backend.domain.sse.entity.AlertMessageEntity;
+import com.sparta.levelup_backend.domain.alert.entity.AlertMessageEntity;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,6 +1,6 @@
 package com.sparta.levelup_backend.domain.user.service;
 
-import static com.sparta.levelup_backend.domain.sse.dto.request.AlertMessageDto.*;
+import static com.sparta.levelup_backend.domain.alert.dto.request.AlertMessageDto.*;
 import static com.sparta.levelup_backend.domain.user.dto.UserMessage.*;
 import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
 
@@ -15,11 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sparta.levelup_backend.domain.email.dto.request.SendEmailDto;
 import com.sparta.levelup_backend.domain.email.event.EmailEventPublisher;
-import com.sparta.levelup_backend.domain.sse.entity.AlertMessageEntity;
-import com.sparta.levelup_backend.domain.sse.entity.AlertMessageLogEntity;
-import com.sparta.levelup_backend.domain.sse.event.AlertEventPublisher;
-import com.sparta.levelup_backend.domain.sse.repository.AlertMessageLogRepository;
-import com.sparta.levelup_backend.domain.sse.repository.AlertMessageRepository;
+import com.sparta.levelup_backend.domain.alert.entity.AlertMessageEntity;
+import com.sparta.levelup_backend.domain.alert.entity.AlertMessageLogEntity;
+import com.sparta.levelup_backend.domain.alert.event.AlertEventPublisher;
+import com.sparta.levelup_backend.domain.alert.repository.AlertMessageLogRepository;
+import com.sparta.levelup_backend.domain.alert.repository.AlertMessageRepository;
 import com.sparta.levelup_backend.domain.user.dto.request.ChangePasswordDto;
 import com.sparta.levelup_backend.domain.user.dto.request.DeleteUserRequestDto;
 import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordConfirmDto;

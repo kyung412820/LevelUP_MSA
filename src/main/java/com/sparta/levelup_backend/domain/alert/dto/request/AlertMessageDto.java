@@ -1,8 +1,8 @@
-package com.sparta.levelup_backend.domain.sse.dto.request;
+package com.sparta.levelup_backend.domain.alert.dto.request;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.levelup_backend.domain.sse.entity.AlertMessageEntity;
+import com.sparta.levelup_backend.domain.alert.entity.AlertMessageEntity;
 
 public class AlertMessageDto {
 	public static final String USER_CHANGED_MESSAGE = "유저 정보가 변경되었습니다.";

@@ -1,4 +1,4 @@
-package com.sparta.levelup_backend.domain.sse.dto.response;
+package com.sparta.levelup_backend.domain.alert.dto.response;
 
 import java.time.LocalDateTime;
 

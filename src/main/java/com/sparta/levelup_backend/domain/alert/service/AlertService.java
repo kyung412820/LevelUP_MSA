@@ -1,11 +1,11 @@
-package com.sparta.levelup_backend.domain.sse.service;
+package com.sparta.levelup_backend.domain.alert.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.sparta.levelup_backend.domain.sse.dto.response.AlertLogResponseDto;
-import com.sparta.levelup_backend.domain.sse.entity.AlertMessageEntity;
+import com.sparta.levelup_backend.domain.alert.dto.response.AlertLogResponseDto;
+import com.sparta.levelup_backend.domain.alert.entity.AlertMessageEntity;
 
 public interface AlertService {
 
