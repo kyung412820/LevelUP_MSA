@@ -1,16 +1,17 @@
 package com.sparta.levelup_backend.common;
 
-
 public class ApiResMessage {
 
-    // 회원 관련 성공 메시지
-    public static final String SIGNUP_SUCCESS = "회원가입이 성공적으로 완료되었습니다.";
-    public static final String LOGIN_SUCCESS = "로그인이 성공적으로 완료되었습니다.";
-    public static final String FIND_SUCCESS = "사용자 정보 조회에 성공했습니다.";
-    public static final String UPDATE_SUCCESS = "사용자 정보 수정에 성공했습니다.";
-    public static final String PASSWORD_CHANGE_SUCCESS = "사용자 비밀번호 변경에 성공했습니다.";
-    public static final String DELETE_SUCCESS = "탈퇴가 완료되었습니다.";
 
+  	// 회원 관련 성공 메시지
+  	public static final String SIGNUP_SUCCESS = "회원가입이 성공적으로 완료되었습니다.";
+  	public static final String LOGIN_SUCCESS = "로그인이 성공적으로 완료되었습니다.";
+  	public static final String FIND_SUCCESS = "사용자 정보 조회에 성공했습니다.";
+  	public static final String UPDATE_SUCCESS = "사용자 정보 수정에 성공했습니다.";
+  	public static final String PASSWORD_CHANGE_SUCCESS = "사용자 비밀번호 변경에 성공했습니다.";
+  	public static final String DELETE_SUCCESS = "탈퇴가 완료되었습니다.";
+  	public static final String RESET_EMAIL_SEND_SUCCESS = "비밀번호 재설정 인증번호 발송 성공";
+  	public static final String RESET_PASSWORD_SUCCESS = "비밀번호 초기화 성공";
 
     //Review
     public static final String REVIEW_SUCCESS = "리뷰 작성이 완료되었습니다.";
@@ -52,6 +53,12 @@ public class ApiResMessage {
     public static final String COMMUNITY_FOUND_SUCCESS = "커뮤니티 글이 조회되었습니다.";
     public static final String COMMUNITY_UPDATE_SUCCESS = "커뮤니티 글이 수정되었습니다.";
     public static final String COMMUNITY_DELETE_SUCCESS = "커뮤니티 글이 삭제되었습니다.";
+  
+  
+  	//ALERT
+  	public static final String ALERT_ALL_READ_SUCCESS = "알림을 모두 읽음처리했습니다.";
+  	public static final String ALERT_READ_SUCCESS = "알림을 읽음처리했습니다.";
+	  public static final String ALERT_LOG_READ_SUCCESS = "알림로그 조회에 성공했습니다.";
 
     // payment
     public static final String OK_REQUEST = "결제요청을 성공했습니다.";

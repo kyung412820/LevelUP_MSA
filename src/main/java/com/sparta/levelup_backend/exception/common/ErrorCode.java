@@ -24,6 +24,9 @@ public enum ErrorCode {
     INVALID_CHATROOM_CREATE(HttpStatus.BAD_REQUEST, "ERR014", "자기자신과 채팅방을 만들 수 없습니다."),
     PAYMENT_ERROR_ORDER_PRICE(HttpStatus.BAD_REQUEST, "ERR015", "요청한 가격과 상품의 가격이 일치하지않습니다."),
 	PAYMENT_ERROR_ORDER_NAME(HttpStatus.BAD_REQUEST, "ERR016", "존재하지 않는 결제 방법입니다."),
+	INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "ERR017", "유저이름이 일치하지 않습니다."),
+	INVALID_RESETCODE(HttpStatus.BAD_REQUEST, "ERR018", "인증코드가 만료되었거나 일치하지 않습니다."),
+	AUTH_TYPE_NOT_GENERAL(HttpStatus.BAD_REQUEST, "ERR019", "소셜로그인은 비밀번호 초기화가 불가능합니다."),
 
 	// 401 UNAUTHORIZED
 	UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "ERR101", "로그인이 필요합니다."),
@@ -34,7 +37,6 @@ public enum ErrorCode {
 	// 403 FORBIDDEN
 	FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "ERR201", "접근 권한이 없습니다."),
 	COMPLETED_ORDER_REQUIRED(HttpStatus.FORBIDDEN, "ERR202", "해당 상품을 거래 완료한 사용자만 리뷰를 작성할 수 있습니다."),
-
 
 	// 404 NOT_FOUND
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "ERR301", "사용자를 찾을 수 없습니다."),
@@ -49,6 +51,9 @@ public enum ErrorCode {
 	COMMUNITY_NOT_FOUND(HttpStatus.NOT_FOUND, "ERR310", "커뮤니티를 찾을 수 없습니다."),
 	PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "ERR311", "결제정보를 찾을 수 없습니다."),
 
+	ALERT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "ERR312", "알림메시지를 찾을 수 없습니다."),
+	ALERT_LOG_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "ERR313", "알림메시지로그를 찾을 수 없습니다."),
+
 	// 409 CONFLICT
 	DUPLICATE_EMAIL(HttpStatus.CONFLICT, "ERR401", "이미 사용 중인 이메일입니다."),
 	DUPLICATE_OUT_OF_AMOUNT(HttpStatus.CONFLICT, "ERR402", "재고가 소진되었습니다."),
@@ -56,8 +61,8 @@ public enum ErrorCode {
 	DUPLICATE_REVIEW(HttpStatus.CONFLICT, "ERR404", "이미 리뷰를 작성하였습니다."),
 	REVIEW_ISDELETED(HttpStatus.CONFLICT, "ERR405", "이미 삭제된 리뷰입니다."),
 	PRODUCT_ISDELETED(HttpStatus.CONFLICT, "ERR406", "이미 삭제된 상품입니다."),
-  GAME_ISDELETED(HttpStatus.CONFLICT, "ERR407", "이미 삭제된 게임입니다."),
-  CONFLICT_LOCK_GET(HttpStatus.CONFLICT, "ERR408", "락 획득 실패"),
+	GAME_ISDELETED(HttpStatus.CONFLICT, "ERR407", "이미 삭제된 게임입니다."),
+	CONFLICT_LOCK_GET(HttpStatus.CONFLICT, "ERR408", "락 획득 실패"),
 	CONFLICT_LOCK_ERROR(HttpStatus.CONFLICT, "ERR409", "락 획득 중 오류 발생"),
 	DUPLICATE_CHATROOM(HttpStatus.CONFLICT, "ERR410", "이미 채팅방이 존재합니다."),
 	PARTICIPANT_ISDELETED(HttpStatus.CONFLICT, "ERR411", "이미 나간 채팅방입니다."),

@@ -36,10 +36,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
 	private final JwtUtils jwtUtils;
 	private final List<RequestMatcher> WHITE_LIST = Arrays.asList(
-			new AntPathRequestMatcher("/v2/home"),
-			new AntPathRequestMatcher("/v2/sign**"),
-			new AntPathRequestMatcher("/oauth2/authorization/naver"),
-			new AntPathRequestMatcher("/v2/oauth2sign*"));
+		new AntPathRequestMatcher("/v2/home"),
+		new AntPathRequestMatcher("/v2/sign**"),
+		new AntPathRequestMatcher("/v**/users/resetPassword**"),
+		new AntPathRequestMatcher("/resetPassword**"),
+		new AntPathRequestMatcher("/oauth2/authorization/naver"),
+		new AntPathRequestMatcher("/v2/oauth2sign*"));
 	private final OrRequestMatcher orRequestMatcher = new OrRequestMatcher(WHITE_LIST);
 	private final FilterResponse filterResponse;
 
@@ -127,15 +129,15 @@ public class JwtFilter extends OncePerRequestFilter {
 	/**
 	 * Refresh 토큰 존재 여부 확인 후 재발급 처리 메서드
 	 */
-	private void reissueExpiredTokens(String accessToken, String refreshToken, HttpServletResponse response) throws Exception {
+	private void reissueExpiredTokens(String accessToken, String refreshToken, HttpServletResponse response) throws
+		Exception {
 
 		if (hasText(refreshToken)) {
 			if (isTokenExpired(accessToken)) {
 				String newAccessToken = jwtUtils.refresingToken(refreshToken);
 				response.addHeader("Authorization", "Bearer " + newAccessToken);
 				response.addHeader("Set-Cookie", "accessToken=" + newAccessToken + "; Path=/; Domain=localhost;");
-			}
-			else if (isTokenExpired(refreshToken)) {
+			} else if (isTokenExpired(refreshToken)) {
 				String newRefreshToken = jwtUtils.refresingToken(accessToken);
 				response.addHeader("Set-Cookie", "refreshToken=" + newRefreshToken + "; Path=/; Domain=localhost;");
 			}
