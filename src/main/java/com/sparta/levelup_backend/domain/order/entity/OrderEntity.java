@@ -38,7 +38,7 @@ public class OrderEntity extends BaseEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 
-    @Column(name = "order_name")
+    @Column(name = "order_name", nullable = false)
     private String orderName;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
