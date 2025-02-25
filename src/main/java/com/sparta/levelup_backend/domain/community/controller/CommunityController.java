@@ -21,7 +21,6 @@ import com.sparta.levelup_backend.domain.community.dto.request.CommnunityCreateR
 import com.sparta.levelup_backend.domain.community.dto.request.CommunityUpdateRequestDto;
 import com.sparta.levelup_backend.domain.community.dto.response.CommunityListResponseDto;
 import com.sparta.levelup_backend.domain.community.dto.response.CommunityResponseDto;
-import com.sparta.levelup_backend.domain.community.repositoryES.CommunityESRepository;
 import com.sparta.levelup_backend.domain.community.service.CommunityService;
 
 import jakarta.validation.Valid;
