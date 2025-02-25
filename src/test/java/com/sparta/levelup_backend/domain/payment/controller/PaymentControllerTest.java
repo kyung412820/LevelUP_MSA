@@ -1,25 +1,18 @@
 package com.sparta.levelup_backend.domain.payment.controller;
 
-import com.sparta.levelup_backend.domain.payment.entity.PaymentEntity;
 import com.sparta.levelup_backend.domain.payment.repository.PaymentRepository;
 import com.sparta.levelup_backend.exception.common.ErrorCode;
 import com.sparta.levelup_backend.exception.common.PaymentException;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import java.util.Optional;
 
 
-
-@SpringBootTest
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 class PaymentControllerTest {
 
     @Mock
@@ -39,22 +32,14 @@ class PaymentControllerTest {
     }
 
     @Test
-    public void 재시도_성공_테스트() throws Exception {
+    void 재시도_성공_테스트() throws Exception {
         // Given
-        PaymentEntity paymentEntity = PaymentEntity.builder()
-                .orderId(ORDER_ID)
-                .amount(AMOUNT)
-                .build();
-
-        when(paymentRepository.findByOrderId(ORDER_ID)).thenReturn(Optional.of(paymentEntity));
-
-
         JSONObject requestJson = new JSONObject();
         requestJson.put("paymentKey", PAYMENT_KEY);
         requestJson.put("amount", String.valueOf(AMOUNT));
         requestJson.put("orderId", ORDER_ID);
 
-       // when
+        // when
         int maxRetries = 3;
         int retryCount = 0;
         boolean success = false;
@@ -71,6 +56,7 @@ class PaymentControllerTest {
                 }
             }
         }
+
         // Then
         assertTrue(success);
         assertEquals(2, attempt);
