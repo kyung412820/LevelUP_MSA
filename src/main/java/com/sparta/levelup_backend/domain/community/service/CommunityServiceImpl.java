@@ -210,7 +210,7 @@ public class CommunityServiceImpl implements CommunityService {
 	@Override
 	public CommunityListResponseDto findCommunityRedis(String searchKeyword, int page, int size) {
 		Set<String> keys = redisTemplate.keys(COMMUNITY_CACHE_KEY + "*");
-		List<String> matchedArticles = new ArrayList<>();
+		List<String> matchedCommunities = new ArrayList<>();
 
 		if (keys == null) {
 			throw new NotFoundException(COMMUNITY_NOT_FOUND);
@@ -221,19 +221,19 @@ public class CommunityServiceImpl implements CommunityService {
 			String title = community.get("title").toString();
 
 			if (title.toLowerCase().contains(searchKeyword.toLowerCase())) {
-				matchedArticles.add(key);
+				matchedCommunities.add(key);
 			}
 		}
 
-		if (matchedArticles.isEmpty()) {
+		if (matchedCommunities.isEmpty()) {
 			throw new NotFoundException(COMMUNITY_NOT_FOUND);
 		}
 
-		if (page * size >= matchedArticles.size()) {
+		if (page * size >= matchedCommunities.size()) {
 			throw new PageOutOfBoundsException(PAGE_OUT_OF_BOUNDS);
 		}
 
-		matchedArticles.sort((a, b) -> {
+		matchedCommunities.sort((a, b) -> {
 			Double scoreA = redisTemplate.opsForZSet().score(COMMUNITY_ZSET_KEY, a);
 			Double scoreB = redisTemplate.opsForZSet().score(COMMUNITY_ZSET_KEY, b);
 
@@ -244,7 +244,7 @@ public class CommunityServiceImpl implements CommunityService {
 		});
 
 		List<CommunityReadResponseDto> results = new ArrayList<>();
-		for (String key : matchedArticles.stream().skip((long)page * size).limit(size).toList()) {
+		for (String key : matchedCommunities.stream().skip((long)page * size).limit(size).toList()) {
 			Map<String, Object> result = redisTemplate.<String, Object>opsForHash().entries(key);
 			results.add(new CommunityReadResponseDto(
 				String.valueOf(result.get("communityId")),
