@@ -160,6 +160,11 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void resetPassword(ResetPasswordDto dto) {
 		UserEntity user = userRepository.findByEmailOrElseThrow(dto.getEmail());
+
+		if (!user.getProvider().startsWith("none")) {
+			throw new MismatchException(AUTH_TYPE_NOT_GENERAL);
+		}
+
 		if (user.getNickName().equals(dto.getNickName())) {
 			String passwordResetCode = UUID.randomUUID().toString();
 			ValueOperations<String, Object> passwordResetCodes = redisTemplate.opsForValue();
