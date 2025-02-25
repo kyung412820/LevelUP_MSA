@@ -18,8 +18,6 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtils {
 
-	@Value("${domain.url}")
-    public static String url;
 
 	private final String BEARER_PREFIX = "Bearer ";
 

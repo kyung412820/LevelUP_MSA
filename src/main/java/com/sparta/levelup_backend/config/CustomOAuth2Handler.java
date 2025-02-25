@@ -1,6 +1,5 @@
 package com.sparta.levelup_backend.config;
 
-import static com.sparta.levelup_backend.utill.JwtUtils.url;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -26,55 +25,57 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Component
 public class CustomOAuth2Handler implements AuthenticationSuccessHandler,
-	AuthenticationFailureHandler {
+    AuthenticationFailureHandler {
 
-	private final JwtUtils jwtUtils;
-	private final FilterResponse filterResponse;
+    private final JwtUtils jwtUtils;
+    private final FilterResponse filterResponse;
 
-	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws IOException, ServletException {
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+        Authentication authentication) throws IOException, ServletException {
 
-		CustomOAuth2User customOAuth2User = (CustomOAuth2User)authentication.getPrincipal();
-		Long id = customOAuth2User.getId();
-		String email = customOAuth2User.getName();
-		String nickName = customOAuth2User.getNickName();
-		String provider = customOAuth2User.getProvider();
+        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        Long id = customOAuth2User.getId();
+        String email = customOAuth2User.getName();
+        String nickName = customOAuth2User.getNickName();
+        String provider = customOAuth2User.getProvider();
 
-		if (provider.endsWith("new")) {
-			request.setAttribute("id", id);
-			request.setAttribute("email", email);
-			request.setAttribute("nickName", nickName);
-			request.setAttribute("provider", provider);
+        if (provider.endsWith("new")) {
+            request.setAttribute("id", id);
+            request.setAttribute("email", email);
+            request.setAttribute("nickName", nickName);
+            request.setAttribute("provider", provider);
 
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher("/v2/oauth2signup");
-			requestDispatcher.forward(request, response);
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/v2/oauth2signup");
+            requestDispatcher.forward(request, response);
 
-		} else {
-			Collection<? extends GrantedAuthority> authorites = authentication.getAuthorities();
-			Iterator<? extends GrantedAuthority> iterator = authorites.iterator();
-			GrantedAuthority auth = iterator.next();
-			String role = auth.getAuthority();
+        } else {
+            Collection<? extends GrantedAuthority> authorites = authentication.getAuthorities();
+            Iterator<? extends GrantedAuthority> iterator = authorites.iterator();
+            GrantedAuthority auth = iterator.next();
+            String role = auth.getAuthority();
 
-			String accessToken = jwtUtils.substringToken(jwtUtils.createAccessToken(email, id, nickName, role));
-			String refreshToken = jwtUtils.substringToken(jwtUtils.createRefreshToken(email, id, nickName, role));
+            String accessToken = jwtUtils.substringToken(
+                jwtUtils.createAccessToken(email, id, nickName, role));
+            String refreshToken = jwtUtils.substringToken(
+                jwtUtils.createRefreshToken(email, id, nickName, role));
 
-			response.addHeader("Authorization", accessToken);
-			response.addHeader("Set-Cookie",
-				"accessToken=" + accessToken + "; " + "Path=/; Domain=" + url + "; Max-Age=" + 30 * 60 + "; ");
-			response.addHeader("Set-Cookie",
-				"refreshToken=" + refreshToken + "; " + "Path=/; Domain=" + url + "; Max-Age=" + 12 * 60 * 60 + "; ");
-			response.sendRedirect("/");
-		}
-	}
+            response.addHeader("Authorization", accessToken);
+            response.addHeader("Set-Cookie",
+                "accessToken=" + accessToken + "; " + "Path=/; Max-Age=" + 30 * 60 + "; ");
+            response.addHeader("Set-Cookie",
+                "refreshToken=" + refreshToken + "; " + "Path=/; Max-Age=" + 12 * 60 * 60 + "; ");
+            response.sendRedirect("/");
+        }
+    }
 
-	@Override
-	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-		AuthenticationException exception) throws IOException, ServletException {
-		OAuth2AuthenticationException superException = (OAuth2AuthenticationException)exception;
-		ErrorCode error = ErrorCode.valueOf(superException.getError().getErrorCode());
+    @Override
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+        AuthenticationException exception) throws IOException, ServletException {
+        OAuth2AuthenticationException superException = (OAuth2AuthenticationException) exception;
+        ErrorCode error = ErrorCode.valueOf(superException.getError().getErrorCode());
 
-		filterResponse.responseErrorMsg(response, error.getStatus().value(), error.getCode(),
-			error.getMessage());
-	}
+        filterResponse.responseErrorMsg(response, error.getStatus().value(), error.getCode(),
+            error.getMessage());
+    }
 }
