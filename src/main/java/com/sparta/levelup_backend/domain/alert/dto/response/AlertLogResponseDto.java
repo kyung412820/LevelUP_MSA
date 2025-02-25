@@ -15,7 +15,7 @@ public class AlertLogResponseDto {
 
 	String message;
 
-	boolean isSend;
+	boolean isSendSucess;
 
 	private LocalDateTime createdAt;
 	

@@ -98,7 +98,6 @@ public class AuthServiceImpl implements AuthService {
 	private ResponseCookie createCookie(String name, String token, long maxAge) {
 		return ResponseCookie.from(name, jwtUtils.substringToken(token))
 			.path("/")
-			.domain("localhost")
 			.maxAge(maxAge)
 			.build();
 	}

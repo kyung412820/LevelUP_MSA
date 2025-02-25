@@ -136,10 +136,10 @@ public class JwtFilter extends OncePerRequestFilter {
 			if (isTokenExpired(accessToken)) {
 				String newAccessToken = jwtUtils.refresingToken(refreshToken);
 				response.addHeader("Authorization", "Bearer " + newAccessToken);
-				response.addHeader("Set-Cookie", "accessToken=" + newAccessToken + "; Path=/; Domain=localhost;");
+				response.addHeader("Set-Cookie", "accessToken=" + newAccessToken + "; Path=/;");
 			} else if (isTokenExpired(refreshToken)) {
 				String newRefreshToken = jwtUtils.refresingToken(accessToken);
-				response.addHeader("Set-Cookie", "refreshToken=" + newRefreshToken + "; Path=/; Domain=localhost;");
+				response.addHeader("Set-Cookie", "refreshToken=" + newRefreshToken + "; Path=/;");
 			}
 		}
 	}
