@@ -11,9 +11,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.sparta.levelup_backend.config.CustomOAuth2User;
-import com.sparta.levelup_backend.domain.auth.dto.response.GoogleResponseDtoDto;
-import com.sparta.levelup_backend.domain.auth.dto.response.KakaoResponseDtoDto;
-import com.sparta.levelup_backend.domain.auth.dto.response.NaverResponseDtoDto;
+import com.sparta.levelup_backend.domain.auth.dto.response.GoogleResponseDto;
+import com.sparta.levelup_backend.domain.auth.dto.response.KakaoResponseDto;
+import com.sparta.levelup_backend.domain.auth.dto.response.NaverResponseDto;
 import com.sparta.levelup_backend.domain.auth.dto.response.OAuth2ResponseDto;
 import com.sparta.levelup_backend.domain.email.dto.request.SendEmailDto;
 import com.sparta.levelup_backend.domain.email.event.EmailEventPublisher;
@@ -40,15 +40,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		if (registrationId.equals("naver")) {
 
-			oAuth2ResponseDto = new NaverResponseDtoDto(
+			oAuth2ResponseDto = new NaverResponseDto(
 				(Map<String, Object>)oAuth2User.getAttributes().get("response"));
 
 		} else if (registrationId.equals("google")) {
 
-			oAuth2ResponseDto = new GoogleResponseDtoDto(oAuth2User.getAttributes());
+			oAuth2ResponseDto = new GoogleResponseDto(oAuth2User.getAttributes());
 
 		} else {
-			oAuth2ResponseDto = new KakaoResponseDtoDto(oAuth2User.getAttributes());
+			oAuth2ResponseDto = new KakaoResponseDto(oAuth2User.getAttributes());
 		}
 
 		UserEntity user = null;

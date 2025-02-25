@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public class GoogleResponseDtoDto implements OAuth2ResponseDto {
+public class GoogleResponseDto implements OAuth2ResponseDto {
 
 	private final Map<String, Object> attribute;
 

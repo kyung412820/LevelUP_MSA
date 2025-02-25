@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public class NaverResponseDtoDto implements OAuth2ResponseDto {
+public class NaverResponseDto implements OAuth2ResponseDto {
 
 	private final Map<String, Object> attribute;
 
