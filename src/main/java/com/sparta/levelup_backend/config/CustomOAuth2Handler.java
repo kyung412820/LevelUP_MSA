@@ -1,7 +1,5 @@
 package com.sparta.levelup_backend.config;
 
-import static com.sparta.levelup_backend.utill.JwtUtils.url;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -61,9 +59,9 @@ public class CustomOAuth2Handler implements AuthenticationSuccessHandler,
 
 			response.addHeader("Authorization", accessToken);
 			response.addHeader("Set-Cookie",
-				"accessToken=" + accessToken + "; " + "Path=/; Domain=" + url + "; Max-Age=" + 30 * 60 + "; ");
+				"accessToken=" + accessToken + "; " + "Path=/; Domain=localhost; Max-Age=" + 30 * 60 + "; ");
 			response.addHeader("Set-Cookie",
-				"refreshToken=" + refreshToken + "; " + "Path=/; Domain=" + url + "; Max-Age=" + 12 * 60 * 60 + "; ");
+				"refreshToken=" + refreshToken + "; " + "Path=/; Domain=localhost; Max-Age=" + 12 * 60 * 60 + "; ");
 			response.sendRedirect("/");
 		}
 	}

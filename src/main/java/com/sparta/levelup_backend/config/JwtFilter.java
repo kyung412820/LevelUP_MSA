@@ -1,7 +1,6 @@
 package com.sparta.levelup_backend.config;
 
 import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
-import static com.sparta.levelup_backend.utill.JwtUtils.url;
 import static org.springframework.util.StringUtils.*;
 
 import java.io.IOException;
@@ -137,10 +136,10 @@ public class JwtFilter extends OncePerRequestFilter {
 			if (isTokenExpired(accessToken)) {
 				String newAccessToken = jwtUtils.refresingToken(refreshToken);
 				response.addHeader("Authorization", "Bearer " + newAccessToken);
-				response.addHeader("Set-Cookie", "accessToken=" + newAccessToken + "; Path=/; Domain=" + url + ";");
+				response.addHeader("Set-Cookie", "accessToken=" + newAccessToken + "; Path=/; Domain=localhost;");
 			} else if (isTokenExpired(refreshToken)) {
 				String newRefreshToken = jwtUtils.refresingToken(accessToken);
-				response.addHeader("Set-Cookie", "refreshToken=" + newRefreshToken + "; Path=/; Domain=" + url +";");
+				response.addHeader("Set-Cookie", "refreshToken=" + newRefreshToken + "; Path=/; Domain=localhost;");
 			}
 		}
 	}
