@@ -3,11 +3,16 @@ package com.sparta.levelup_backend.domain.community.service;
 import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
 import static com.sparta.levelup_backend.utill.UserRole.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +45,10 @@ public class CommunityServiceImpl implements CommunityService {
 	private final GameRepository gameRepository;
 
 	private final CommunityESRepository communityESRepository;
+	private final RedisTemplate<String, Object> redisTemplate;
+
+	private final String COMMUNITY_CACHE_KEY = "community:";
+	private final String COMMUNITY_ZSET_KEY = "community_view";
 
 	@Override
 	public CommunityResponseDto saveCommunity(Long userId, CommnunityCreateRequestDto dto) {
@@ -101,6 +110,7 @@ public class CommunityServiceImpl implements CommunityService {
 		community.deleteCommunity();
 	}
 
+	// community 생성(elasticSearch 사용)
 	@Override
 	public CommunityResponseDto saveCommunityES(Long userId, CommnunityCreateRequestDto dto) {
 		UserEntity user = userRepository.findByIdOrElseThrow(userId);
@@ -112,8 +122,9 @@ public class CommunityServiceImpl implements CommunityService {
 		return CommunityResponseDto.from(communityDocument);
 	}
 
+	// community 목록 검색(elasticSearch 사용)
 	@Override
-	public CommunityListResponseDto findCommunityES(String searchKeyword, int page, int size) {
+	public CommunityListResponseDto findCommunitiesES(String searchKeyword, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		Page<CommunityDocument> communityDocuments = communityESRepository.findByTitleAndIsDeletedFalse(searchKeyword,
 			pageable);
@@ -133,6 +144,14 @@ public class CommunityServiceImpl implements CommunityService {
 		return responseDto;
 	}
 
+	// community 단건 조회(elasticSearch 사용)
+	@Override
+	public CommunityResponseDto findCommunityES(String communityId) {
+		CommunityDocument communityDocument = communityESRepository.findByIdOrElseThrow(communityId);
+		return CommunityResponseDto.from(communityDocument);
+	}
+
+	// community 수정(elasticSearch 사용)
 	@Override
 	public CommunityResponseDto updateCommunityES(Long userId, CommunityUpdateRequestDto dto) {
 		CommunityEntity community = communityRepository.findByIdOrElseThrow(dto.getCommunityId());
@@ -159,6 +178,7 @@ public class CommunityServiceImpl implements CommunityService {
 		return CommunityResponseDto.from(communityDocument);
 	}
 
+	// community 삭제(elasticSearch 사용)
 	@Override
 	public void deleteCommunityES(Long userId, Long communityId) {
 		CommunityEntity community = communityRepository.findByIdOrElseThrow(communityId);
@@ -169,6 +189,140 @@ public class CommunityServiceImpl implements CommunityService {
 		community.deleteCommunity();
 		communityDocument.updateIsDeleted(true);
 		communityESRepository.save(communityDocument);
+	}
+
+	/**
+	 * community 생성(redis활용)
+	 * @param userId 사용자 Id
+	 * @param dto title, content, gameId
+	 * @return CommunityResponseDto
+	 */
+	@Override
+	public CommunityResponseDto saveCommunityRedis(Long userId, CommnunityCreateRequestDto dto) {
+		UserEntity user = userRepository.findByIdOrElseThrow(userId);
+		GameEntity game = gameRepository.findByIdOrElseThrow(dto.getGameId());
+		checkGameIsDeleted(game);
+		CommunityEntity community = communityRepository.save(
+			new CommunityEntity(dto.getTitle(), dto.getContent(), user, game));
+
+		String redisKey = COMMUNITY_CACHE_KEY + community.getId();
+
+		Map<String, Object> communityMap = Map.of(
+			"communityId", community.getId(),
+			"title", community.getTitle(),
+			"userEmail", user.getEmail(),
+			"gameName", game.getName()
+		);
+		redisTemplate.opsForHash().putAll(redisKey, communityMap);
+		redisTemplate.opsForZSet().add(COMMUNITY_ZSET_KEY, redisKey, 0);
+		return CommunityResponseDto.of(community, user, game);
+	}
+
+	/**
+	 * community 검색(redis 활용)
+	 * @param searchKeyword 검색할 단어
+	 * @param page 페이지 수
+	 * @param size 한 페이지에 표시할 데이터 수
+	 * @return CommunityListResponseDto
+	 */
+	@Override
+	public CommunityListResponseDto findCommunityRedis(String searchKeyword, int page, int size) {
+		Set<String> keys = redisTemplate.keys(COMMUNITY_CACHE_KEY + "*");
+		List<String> matchedCommunities = new ArrayList<>();
+
+		if (keys == null) {
+			throw new NotFoundException(COMMUNITY_NOT_FOUND);
+		}
+
+		for (String key : keys) {
+			Map<String, Object> community = redisTemplate.<String, Object>opsForHash().entries(key);
+			String title = community.get("title").toString();
+
+			if (title.toLowerCase().contains(searchKeyword.toLowerCase())) {
+				matchedCommunities.add(key);
+			}
+		}
+
+		if (matchedCommunities.isEmpty()) {
+			throw new NotFoundException(COMMUNITY_NOT_FOUND);
+		}
+
+		if (page * size >= matchedCommunities.size()) {
+			throw new PageOutOfBoundsException(PAGE_OUT_OF_BOUNDS);
+		}
+
+		matchedCommunities.sort((a, b) -> {
+			Double scoreA = redisTemplate.opsForZSet().score(COMMUNITY_ZSET_KEY, a);
+			Double scoreB = redisTemplate.opsForZSet().score(COMMUNITY_ZSET_KEY, b);
+
+			scoreA = (scoreA != null) ? scoreA : 0.0;
+			scoreB = (scoreB != null) ? scoreB : 0.0;
+
+			return Double.compare(scoreB, scoreA);
+		});
+
+		List<CommunityReadResponseDto> results = new ArrayList<>();
+		for (String key : matchedCommunities.stream().skip((long)page * size).limit(size).toList()) {
+			Map<String, Object> result = redisTemplate.<String, Object>opsForHash().entries(key);
+			results.add(new CommunityReadResponseDto(
+				String.valueOf(result.get("communityId")),
+				(String)result.get("title"),
+				(String)result.get("userEmail"),
+				(String)result.get("gameName")));
+			incrementViews(key);
+		}
+
+		return new CommunityListResponseDto(results);
+	}
+
+	/**
+	 * community 수정(redis 활용)
+	 * @param userId 사용자 Id
+	 * @param dto communityId, title, content
+	 * @return CommunityResponseDto
+	 */
+	@Override
+	public CommunityResponseDto updateCommunityRedis(Long userId, CommunityUpdateRequestDto dto) {
+		CommunityEntity community = communityRepository.findByIdOrElseThrow(dto.getCommunityId());
+
+		String key = COMMUNITY_CACHE_KEY + community.getId();
+		Map<String, Object> communityMap = redisTemplate.<String, Object>opsForHash().entries(key);
+		checkAuth(community, userId);
+		checkCommunityIsDeleted(community);
+
+		if (Objects.nonNull(dto.getTitle())) {
+			community.updateTitle(dto.getTitle());
+			communityMap.put("title", dto.getTitle());
+		}
+		if (Objects.nonNull(dto.getContent())) {
+			community.updateContent(dto.getContent());
+		}
+
+		redisTemplate.opsForHash().putAll(key, communityMap);
+		communityRepository.save(community);
+
+		return CommunityResponseDto.from(community);
+	}
+
+	/**
+	 * community 삭제(redis 활용)
+	 * @param userId 사용자 Id
+	 * @param communityId community Id
+	 */
+	@Override
+	public void deleteCommunityRedis(Long userId, Long communityId) {
+		String key = COMMUNITY_CACHE_KEY + communityId;
+		CommunityEntity community = communityRepository.findByIdOrElseThrow(communityId);
+		checkAuth(community, userId);
+		checkCommunityIsDeleted(community);
+
+		redisTemplate.delete(key);
+		community.deleteCommunity();
+
+	}
+
+	public void incrementViews(String communityKey) {
+		redisTemplate.opsForZSet().incrementScore(COMMUNITY_ZSET_KEY, communityKey, 1);
 	}
 
 	private void checkGameIsDeleted(GameEntity game) {
