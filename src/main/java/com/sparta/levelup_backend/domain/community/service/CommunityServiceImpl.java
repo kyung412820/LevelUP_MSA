@@ -195,19 +195,15 @@ public class CommunityServiceImpl implements CommunityService {
 			new CommunityEntity(dto.getTitle(), dto.getContent(), user, game));
 
 		String redisKey = COMMUNITY_CACHE_KEY + community.getId();
-		String zsetKey = COMMUNITY_ZSET_KEY;
 
 		Map<String, Object> communityMap = Map.of(
 			"communityId", community.getId(),
 			"title", community.getTitle(),
-			"content", community.getContent(),
-			"userId", user.getId(),
 			"userEmail", user.getEmail(),
-			"gameName", game.getName(),
-			"gameGenre", game.getGenre()
+			"gameName", game.getName()
 		);
 		redisTemplate.opsForHash().putAll(redisKey, communityMap);
-		redisTemplate.opsForZSet().add(zsetKey, redisKey, 0);
+		redisTemplate.opsForZSet().add(COMMUNITY_ZSET_KEY, redisKey, 0);
 		return CommunityResponseDto.of(community, user, game);
 	}
 
@@ -216,6 +212,10 @@ public class CommunityServiceImpl implements CommunityService {
 		Set<String> keys = redisTemplate.keys(COMMUNITY_CACHE_KEY + "*");
 		List<String> matchedArticles = new ArrayList<>();
 
+		if (keys == null) {
+			throw new NotFoundException(COMMUNITY_NOT_FOUND);
+		}
+
 		for (String key : keys) {
 			Map<String, Object> community = redisTemplate.opsForHash().entries(key);
 			String title = community.get("title").toString();
@@ -223,6 +223,10 @@ public class CommunityServiceImpl implements CommunityService {
 			if (title.toLowerCase().contains(searchKeyword.toLowerCase())) {
 				matchedArticles.add(key);
 			}
+		}
+
+		if (matchedArticles.isEmpty()) {
+			throw new NotFoundException(COMMUNITY_NOT_FOUND);
 		}
 
 		if (page * size >= matchedArticles.size()) {
@@ -240,7 +244,7 @@ public class CommunityServiceImpl implements CommunityService {
 		});
 
 		List<CommunityReadResponseDto> results = new ArrayList<>();
-		for (String key : matchedArticles.stream().skip(page * size).limit(size).toList()) {
+		for (String key : matchedArticles.stream().skip((long)page * size).limit(size).toList()) {
 			Map<String, Object> result = redisTemplate.opsForHash().entries(key);
 			results.add(new CommunityReadResponseDto(
 				String.valueOf(result.get("communityId")),
@@ -258,30 +262,24 @@ public class CommunityServiceImpl implements CommunityService {
 		CommunityEntity community = communityRepository.findByIdOrElseThrow(dto.getCommunityId());
 
 		String key = COMMUNITY_CACHE_KEY + community.getId();
-		CommunityDocument communityDocument = (CommunityDocument)redisTemplate.opsForValue().get(key);
+		Map<String, Object> communityMap = redisTemplate.opsForHash().entries(key);
 		checkAuth(community, userId);
 		checkCommunityIsDeleted(community);
 
-		if (communityDocument.getIsDeleted()) {
-			throw new DuplicateException(COMMUNITY_ISDELETED);
-		}
-
 		if (Objects.nonNull(dto.getTitle())) {
 			community.updateTitle(dto.getTitle());
-			communityDocument.updateTitle(dto.getTitle());
+			communityMap.put("title", dto.getTitle());
 		}
 		if (Objects.nonNull(dto.getContent())) {
 			community.updateContent(dto.getContent());
-			communityDocument.updateContent(dto.getContent());
 		}
 
-		redisTemplate.opsForValue().set(key, communityDocument);
-		communityESRepository.save(communityDocument);
+		redisTemplate.opsForHash().putAll(key, communityMap);
+		communityRepository.save(community);
 
-		return CommunityResponseDto.from(communityDocument);
+		return CommunityResponseDto.from(community);
 	}
 
-	// redis와 db에서 삭제
 	@Override
 	public void deleteCommunityRedis(Long userId, Long communityId) {
 		String key = COMMUNITY_CACHE_KEY + communityId;
@@ -295,9 +293,7 @@ public class CommunityServiceImpl implements CommunityService {
 	}
 
 	public void incrementViews(String communityKey) {
-		String zsetKey = COMMUNITY_ZSET_KEY;
-
-		redisTemplate.opsForZSet().incrementScore(zsetKey, communityKey, 1);
+		redisTemplate.opsForZSet().incrementScore(COMMUNITY_ZSET_KEY, communityKey, 1);
 	}
 
 	private void checkGameIsDeleted(GameEntity game) {
