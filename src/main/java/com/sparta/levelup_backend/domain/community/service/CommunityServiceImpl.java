@@ -5,6 +5,7 @@ import static com.sparta.levelup_backend.utill.UserRole.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -46,7 +47,8 @@ public class CommunityServiceImpl implements CommunityService {
 	private final CommunityESRepository communityESRepository;
 	private final RedisTemplate redisTemplate;
 
-	private static final String COMMUNITY_CACHE_KEY = "community:*";
+	private final String COMMUNITY_CACHE_KEY = "community:";
+	private final String COMMUNITY_ZSET_KEY = "community_view";
 
 	@Override
 	public CommunityResponseDto saveCommunity(Long userId, CommnunityCreateRequestDto dto) {
@@ -193,28 +195,59 @@ public class CommunityServiceImpl implements CommunityService {
 			new CommunityEntity(dto.getTitle(), dto.getContent(), user, game));
 
 		String redisKey = COMMUNITY_CACHE_KEY + community.getId();
+		String zsetKey = COMMUNITY_ZSET_KEY;
 
-		CommunityDocument communityDocument = CommunityDocument.from(community);
-		redisTemplate.opsForValue().set(redisKey, communityDocument);
+		Map<String, Object> communityMap = Map.of(
+			"communityId", community.getId(),
+			"title", community.getTitle(),
+			"content", community.getContent(),
+			"userId", user.getId(),
+			"userEmail", user.getEmail(),
+			"gameName", game.getName(),
+			"gameGenre", game.getGenre()
+		);
+		redisTemplate.opsForHash().putAll(redisKey, communityMap);
+		redisTemplate.opsForZSet().add(zsetKey, redisKey, 0);
 		return CommunityResponseDto.of(community, user, game);
 	}
 
 	@Override
-	public CommunityListResponseDto findCommunityRedis(String searchKeyword) {
+	public CommunityListResponseDto findCommunityRedis(String searchKeyword, int page, int size) {
 		Set<String> keys = redisTemplate.keys(COMMUNITY_CACHE_KEY + "*");
+		List<String> matchedArticles = new ArrayList<>();
 
-		List<CommunityReadResponseDto> results = new ArrayList<>();
-		if (keys != null) {
-			for (String key : keys) {
-				CommunityDocument community = (CommunityDocument)redisTemplate.opsForValue().get(key);
-				if (community != null && community.getTitle().contains(searchKeyword)) {
-					results.add(CommunityReadResponseDto.from(community));
-				}
+		for (String key : keys) {
+			Map<String, Object> community = redisTemplate.opsForHash().entries(key);
+			String title = community.get("title").toString();
+
+			if (title.toLowerCase().contains(searchKeyword.toLowerCase())) {
+				matchedArticles.add(key);
 			}
 		}
 
-		if (results.isEmpty()) {
-			throw new NotFoundException(COMMUNITY_NOT_FOUND);
+		if (page * size >= matchedArticles.size()) {
+			throw new PageOutOfBoundsException(PAGE_OUT_OF_BOUNDS);
+		}
+
+		matchedArticles.sort((a, b) -> {
+			Double scoreA = redisTemplate.opsForZSet().score(COMMUNITY_ZSET_KEY, a);
+			Double scoreB = redisTemplate.opsForZSet().score(COMMUNITY_ZSET_KEY, b);
+
+			scoreA = (scoreA != null) ? scoreA : 0.0;
+			scoreB = (scoreB != null) ? scoreB : 0.0;
+
+			return Double.compare(scoreB, scoreA);
+		});
+
+		List<CommunityReadResponseDto> results = new ArrayList<>();
+		for (String key : matchedArticles.stream().skip(page * size).limit(size).toList()) {
+			Map<String, Object> result = redisTemplate.opsForHash().entries(key);
+			results.add(new CommunityReadResponseDto(
+				String.valueOf(result.get("communityId")),
+				(String)result.get("title"),
+				(String)result.get("userEmail"),
+				(String)result.get("gameName")));
+			incrementViews(key);
 		}
 
 		return new CommunityListResponseDto(results);
@@ -248,6 +281,7 @@ public class CommunityServiceImpl implements CommunityService {
 		return CommunityResponseDto.from(communityDocument);
 	}
 
+	// redis와 db에서 삭제
 	@Override
 	public void deleteCommunityRedis(Long userId, Long communityId) {
 		String key = COMMUNITY_CACHE_KEY + communityId;
@@ -258,6 +292,12 @@ public class CommunityServiceImpl implements CommunityService {
 		redisTemplate.delete(key);
 		community.deleteCommunity();
 
+	}
+
+	public void incrementViews(String communityKey) {
+		String zsetKey = COMMUNITY_ZSET_KEY;
+
+		redisTemplate.opsForZSet().incrementScore(zsetKey, communityKey, 1);
 	}
 
 	private void checkGameIsDeleted(GameEntity game) {

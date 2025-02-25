@@ -142,9 +142,11 @@ public class CommunityController {
 	}
 
 	@GetMapping("/redis")
-	public ApiResponse<CommunityListResponseDto> findCommunityRedis(@RequestParam String searchKeyword) {
+	public ApiResponse<CommunityListResponseDto> findCommunityRedis(@RequestParam String searchKeyword,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
 
-		CommunityListResponseDto responseDto = communityService.findCommunityRedis(searchKeyword);
+		CommunityListResponseDto responseDto = communityService.findCommunityRedis(searchKeyword, page, size);
 
 		return success(OK, COMMUNITY_FOUND_SUCCESS, responseDto);
 	}
