@@ -18,9 +18,6 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtils {
 
-	@Value("${domain.url}")
-    public static String url;
-
 	private final String BEARER_PREFIX = "Bearer ";
 
 	private final Long REFRESH_TOKEN_EXPIRE_TIME = 12L * 60L * 60L * 1000L;

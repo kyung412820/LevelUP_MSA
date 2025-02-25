@@ -1,7 +1,6 @@
 package com.sparta.levelup_backend.domain.auth.service;
 
 import static com.sparta.levelup_backend.domain.user.dto.UserMessage.*;
-import static com.sparta.levelup_backend.utill.JwtUtils.url;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -99,7 +98,7 @@ public class AuthServiceImpl implements AuthService {
 	private ResponseCookie createCookie(String name, String token, long maxAge) {
 		return ResponseCookie.from(name, jwtUtils.substringToken(token))
 			.path("/")
-			.domain(url)
+			.domain("localhost")
 			.maxAge(maxAge)
 			.build();
 	}
