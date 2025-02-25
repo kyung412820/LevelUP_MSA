@@ -56,5 +56,9 @@ public class ApiResMessage {
 	public static final String ALERT_ALL_READ_SUCCESS = "알림을 모두 읽음처리했습니다.";
 	public static final String ALERT_READ_SUCCESS = "알림을 읽음처리했습니다.";
 	public static final String ALERT_LOG_READ_SUCCESS = "알림로그 조회에 성공했습니다.";
+
+    // payment
+    public static final String OK_REQUEST = "결제요청을 성공했습니다.";
+    public static final String OK_REQUEST_CANCEL = "취소요청을 성공했습니다";
 }
 

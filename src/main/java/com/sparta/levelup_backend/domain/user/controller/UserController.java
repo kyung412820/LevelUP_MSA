@@ -37,11 +37,11 @@ public class UserController {
 
 	@GetMapping("/admin/users/{userId}")
 	public ApiResponse<UserResponseDto> findUserById(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long userId) {
+			@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long userId) {
 		String role = customUserDetails.
-			getAuthorities().
-			iterator().next().
-			getAuthority();
+				getAuthorities().
+				iterator().next().
+				getAuthority();
 		UserResponseDto responseDto = userService.findUserById(role, userId);
 
 		return success(HttpStatus.OK, FIND_SUCCESS, responseDto);
@@ -49,7 +49,7 @@ public class UserController {
 
 	@GetMapping("/users")
 	public ApiResponse<UserResponseDto> findUser(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails
+			@AuthenticationPrincipal CustomUserDetails customUserDetails
 	) {
 		UserResponseDto responseDto = userService.findUser(customUserDetails.getId());
 
@@ -58,8 +58,8 @@ public class UserController {
 
 	@PatchMapping("/users")
 	public ApiResponse<UserResponseDto> updateUser(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@Valid @RequestBody UpdateUserRequestDto dto
+			@AuthenticationPrincipal CustomUserDetails customUserDetails,
+			@Valid @RequestBody UpdateUserRequestDto dto
 	) {
 
 		UserResponseDto responseDto = userService.updateUser(customUserDetails.getId(), dto);
@@ -69,8 +69,8 @@ public class UserController {
 
 	@PatchMapping("/users/changingPassword")
 	public ApiResponse<Void> changePassword(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@Valid @RequestBody ChangePasswordDto dto) {
+			@AuthenticationPrincipal CustomUserDetails customUserDetails,
+			@Valid @RequestBody ChangePasswordDto dto) {
 		userService.changePassword(customUserDetails.getId(), dto);
 
 		return success(HttpStatus.OK, PASSWORD_CHANGE_SUCCESS);
@@ -78,8 +78,8 @@ public class UserController {
 
 	@PatchMapping("/users/profileImage")
 	public ApiResponse<UserResponseDto> updateImgUrl(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@Valid @RequestBody UpdateUserImgUrlReqeustDto dto
+			@AuthenticationPrincipal CustomUserDetails customUserDetails,
+			@Valid @RequestBody UpdateUserImgUrlReqeustDto dto
 	) {
 		UserResponseDto responseDto = userService.updateImgUrl(customUserDetails.getId(), dto);
 
@@ -88,8 +88,8 @@ public class UserController {
 
 	@DeleteMapping("/users")
 	public ApiResponse<Void> deleteUser(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@Valid @RequestBody DeleteUserRequestDto dto
+			@AuthenticationPrincipal CustomUserDetails customUserDetails,
+			@Valid @RequestBody DeleteUserRequestDto dto
 	) {
 		userService.deleteUser(customUserDetails.getId(), dto);
 
@@ -107,5 +107,4 @@ public class UserController {
 		userService.resetPasswordConfirm(dto);
 		return success(HttpStatus.OK, RESET_PASSWORD_SUCCESS);
 	}
-
 }

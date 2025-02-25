@@ -1,6 +1,5 @@
 package com.sparta.levelup_backend.domain.bill.service;
 
-import com.sparta.levelup_backend.config.CustomUserDetails;
 import com.sparta.levelup_backend.domain.bill.dto.responseDto.BillResponseDto;
 import com.sparta.levelup_backend.domain.bill.entity.BillEntity;
 import com.sparta.levelup_backend.domain.bill.repository.BillRepository;
@@ -12,13 +11,13 @@ import com.sparta.levelup_backend.exception.common.DuplicateException;
 import com.sparta.levelup_backend.exception.common.ErrorCode;
 import com.sparta.levelup_backend.exception.common.ForbiddenException;
 import com.sparta.levelup_backend.exception.common.NotFoundException;
-import com.sparta.levelup_backend.utill.BillStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import static com.sparta.levelup_backend.utill.BillStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,26 +26,28 @@ public class BillServiceImplV2 implements BillServiceV2 {
     private final BillRepository billRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final BillEventPubService billEventPubService;
 
     // 거래 내역 생성 (거래중으로 바뀌었을때 생성 됌)
-    public void createBill(Long userId, OrderEntity order) {
+    @Transactional
+    public void createBill(Long userId, Long orderId) {
 
         UserEntity user = userRepository.findByIdOrElseThrow(userId); // tutor 정보
 
-        OrderEntity findOrder = orderRepository.findByIdOrElseThrow(userId);
+        OrderEntity findOrder = orderRepository.findByIdOrElseThrow(orderId);
 
         BillEntity bill = BillEntity.builder()
-                .tutor(order.getProduct().getUser())
+                .tutor(findOrder.getProduct().getUser())
                 .student(user)
                 .order(findOrder)
                 .billHistory(findOrder.getProduct().getProductName())
                 .price(findOrder.getTotalPrice())
-                .status(BillStatus.PAYCOMPLETED)
+                .status(PAYREQUEST)
                 .tutorIsDeleted(false)
                 .studentIsDeleted(false)
                 .build();
 
-        billRepository.save(bill);
+        billEventPubService.createPaidEvent(bill);
     }
 
     /**
