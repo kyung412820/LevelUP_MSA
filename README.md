@@ -9,7 +9,8 @@
 ![쿠팡 쿠폰 메인 이미지](https://github.com/llRosell/Coupang/blob/dev/%E1%84%8F%E1%85%AE%E1%84%91%E1%85%A1%E1%86%BC%20%E1%84%8F%E1%85%AE%E1%84%91%E1%85%A9%E1%86%AB%20%E1%84%86%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%AB.png?raw=true)
 
 <br>
-  
+<br>
+
 ## 👤 팀원 소개
 
 - **김효중**: Redis, 커뮤니티, 프로젝트 총괄
@@ -18,6 +19,7 @@
 - **이동건**: 결제, 락
 - **정영균**: 스프링 시큐리티
 
+<br>
 <br>
 
 ## 🎯 프로젝트 목표
@@ -51,6 +53,7 @@
 ### 8. 
 - 
 <br>
+<br>
 
 ## 🏆 **Architecture** 
 ![image](https://github.com/user-attachments/assets/27a7d8be-d38d-4036-834b-57b93aa53c1b)
@@ -68,6 +71,7 @@
 |:------:|:----------------------:|:----------------------:|
 | [Notion 보러가기](https://www.notion.so/teamsparta/9-1962dc3ef51480d5b934d27f143c3c41) | [발표 보고서 보러가기](https://www.canva.com/design/DAGaRbld9so/37ehM1xDZDsknpC-fXeebQ/edit?utm_content=DAGaRbld9so&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) | [발표 영상 보러가기](https://www.youtube.com/watch?v=-8S3XLLW6jA) |
 
+<br>
 <br>
 
 ## 📚 **기술 스택**
