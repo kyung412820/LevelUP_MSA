@@ -50,7 +50,7 @@
 
 ### 8. 
 - 
-
+---
 
 ## 🏆 **Architecture** 
 ![image](https://github.com/user-attachments/assets/27a7d8be-d38d-4036-834b-57b93aa53c1b)
