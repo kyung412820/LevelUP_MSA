@@ -22,6 +22,8 @@
 - JWT 및 Spring Security 설정을 통해 인증 및 인가 로직 구현
 - OAuth 2.0을 사용하여 소셜 로그인 기능 구현
 
+<br>
+
 ### 2. ElasticSearch를 활용한 검색 서비스  
 
 ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 수 있는 분산형 검색 엔진입니다.  
@@ -56,8 +58,7 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
 - **Prometheus & Grafana**: 서버 및 애플리케이션 성능 시각화  
 - **Alerting System**: 이상 감지 시 Slack/Webhook을 통한 알림 전송  
 
-이 시스템을 통해 서비스의 성능을 실시간으로 확인하고, 장애 발생 시 신속하게 대응할 수 있도록 합니다. 🚀
-
+<br>
 
 ### 4. 
 - 
