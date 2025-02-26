@@ -1,9 +1,8 @@
 # levelup_backend
 
-🛍️ **levelup** - 상품을 검색/조회하고, 인기검색어를 조회하며, 쿠폰을 빠르고 정확하게 발급하는 서비스  
-🔰 **상품 조회, 인기검색어 조회, 선착순 동시 쿠폰 발급 시스템**  
+🛍️ **levelup** - 게임을 잘하고 싶은 사람들에게 멘토를 매칭해 주는 서비스입니다! 매칭된 사람들끼리의 실시간 채팅, 전체 커뮤니티등 다양한 기능을 함께 제공해 드립니다.
 
-**프로젝트 기간**: 2025/01/31 ~ 2025/02/07
+**프로젝트 기간**: 2025/02/10 ~ 2025/03/17
 
 
 ## ⭐️ **스파르타 내일배움캠프 플러스 프로젝트** : 8조 ⭐️
@@ -12,10 +11,11 @@
 
 ## 👤 팀원 소개
 
-- **김리은**: Redis 분산락, 비관적 락, 낙관적 락을 이용한 동시성 제어, README 작성, 발표
-- **최순우**: JWT와 Spring Security 인증/인가, Social Login, AWS 배포, 발표자료 준비
-- **이경훈**: ElasticSearch를 이용한 인기 검색어 조회 기능
-- **최대현**: 상품 목록 조회, Caching 성능 비교, 시연 영상 녹화
+- **김효중**: Redis, 커뮤니티, 프로젝트 총괄
+- **최대현**: 소켓,배포
+- **이경훈**: ElasticSearch를 이용한 인기 검색어 조회 기능, 자동완성, 감성분석과 집계를 통한 Top3 선정, 클러스터를 이용한 분산 데이터 처리
+- **이동건**: 결제, 락
+- **정영균**: 스프링 시큐리티
 
 
 ## 🚀 프로젝트 소개
@@ -58,29 +58,13 @@
 [발표 영상](https://www.youtube.com/watch?v=-8S3XLLW6jA)
 
 ## 📝 **와이어프레임**
-![와이어프레임 이미지](https://github.com/llRosell/Coupang/blob/dev/%E1%84%8F%E1%85%AE%E1%84%88%E1%85%A1%E1%86%BC%20%E1%84%8B%E1%85%AA%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%91%E1%85%B3%E1%84%85%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%B7.png?raw=true)
+![와이어프레임 이미지][(https://github.com/llRosell/Coupang/blob/dev/%E1%84%8F%E1%85%AE%E1%84%88%E1%85%A1%E1%86%BC%20%E1%84%8B%E1%85%AA%E1%84%8B%E1%85%B5%E1%84%8B%E1%85%A5%E1%84%91%E1%85%B3%E1%84%85%E1%85%A6%E1%84%8B%E1%85%B5%E1%86%B7.png?raw=true)]
 </details>
 
 ## 💬 **ERD**
-![ERD 이미지](https://raw.githubusercontent.com/llRosell/Coupang/refs/heads/dev/ERD.webp)
+[![ERD 이미지](https://raw.githubusercontent.com/llRosell/Coupang/refs/heads/dev/ERD.webp)]
 </details>
 
-## 🗒️ API 명세서
-
-
-| **기능**           | **method** | **URL**                              | **body**                                                                                                                      |
-|------------------|------------|------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| **회원가입**        | POST       | /user/register                     | {<br/>"email": "email@example.com",<br/>"password": "data"<br/>}                                                                   |
-| **로그인**          | POST       | /auth/login                        | {<br>"email": "email@example.com",<br>"password": "data"<br>}                                          |
-| **상품 목록 조회**   | GET        | /products/v2/list                  | 없음                                                                                                                            |
-| **쿠폰 조회**        | GET        | /coupons                            | 없음                                                                                                                            |
-| **쿠폰 발급**        | POST       | /coupons/issue                      | {<br>"couponName": "20% 할인 쿠폰",<br>"off": 20,<br>"status": "사용 가능",<br>"expDate": "2025-12-31T00:00:00"<br>} |
-| **자동완성**         | GET        | /search/suggestions?query=a        | 없음                                                                                                                            |
-| **인기 검색어 조회**  | GET        | /search/popular                    | 없음                                                                                                                            |
-| **인기 검색어 조회 - 맵 최적화** | GET        | /search/popular/optimized           | 없음                                                                                                                            |
-| **인기 검색어 조회 - 필터적용** | GET        | /search/popular/fastest             | 없음                                                                                                                            |
-| **데이터 추가**      | POST       | /search/insert/1000000              | {<br>"search_ic": "1",<br>"search_text": "소위키"<br>}                                                      |
-| **검색에 생성**      | POST       | /search                            | {<br>"search_ic": "1",<br>"search_text": "소위키"<br>}                                                       |
 
 ## 📽️ 프로젝트 목표
 
