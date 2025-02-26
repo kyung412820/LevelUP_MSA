@@ -58,7 +58,7 @@
 [발표 영상](https://www.youtube.com/watch?v=-8S3XLLW6jA)
 
 ## 📝 **와이어프레임**
-![와이어프레임 이미지]![Uploading image.png…]()
+[![와이어프레임 이미지]![Uploading image.png…]()](https://private-user-images.githubusercontent.com/71320521/416924097-e156ae13-944e-4089-848b-73bc4ef7d088.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDA1MzA3NjEsIm5iZiI6MTc0MDUzMDQ2MSwicGF0aCI6Ii83MTMyMDUyMS80MTY5MjQwOTctZTE1NmFlMTMtOTQ0ZS00MDg5LTg0OGItNzNiYzRlZjdkMDg4LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAyMjYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMjI2VDAwNDEwMVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWYzNzFiYWEwYTY1ZDE3NDllYTM1MDE5NmM5NjZmNTg4OTFjMDZhYzMxMjdhN2VkOTMwYjc3NjdjN2FmOGYzY2YmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.NGIbH_BbIVBpieEgTcXfVx_eLnfwv8fFLXMy7NWOKQ4)
 
 </details>
 
