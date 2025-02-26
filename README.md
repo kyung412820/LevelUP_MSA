@@ -58,7 +58,7 @@
 <table style="width:100%; border-collapse: collapse; text-align: center;">
     <thead>
         <tr>
-            <th style="background-color: #D6EAF8; padding: 10px;">📚 Level_UP Team Notion</th>
+            <th style="background-color: #D6EAF8; padding: 10px;"> Level_UP Team Notion</th>
             <th style="background-color: #D6EAF8; padding: 10px;">📄 발표 보고서</th>
             <th style="background-color: #D6EAF8; padding: 10px;">🎬 발표 영상</th>
         </tr>
