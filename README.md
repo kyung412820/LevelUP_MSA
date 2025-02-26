@@ -1,6 +1,6 @@
-# levelup_backend
+# Level_UP
 
-🛍️ **levelup** - 게임을 잘하고 싶은 사람들에게 멘토를 매칭해 주는 서비스입니다! 매칭된 사람들끼리의 실시간 채팅, 전체 커뮤니티등 다양한 기능을 함께 제공해 드립니다.
+🛍️ **Level_UP** - 게임을 잘하고 싶은 사람들에게 멘토를 매칭해 주는 서비스입니다! 매칭된 사람들끼리의 실시간 채팅, 전체 커뮤니티등 다양한 기능을 함께 제공해 드립니다.
 
 **프로젝트 기간**: 2025/02/10 ~ 2025/03/17
 
@@ -48,8 +48,8 @@
 ## 🏆 **Architecture** 
 ![image](https://github.com/user-attachments/assets/27a7d8be-d38d-4036-834b-57b93aa53c1b)
 
-## 📚 **쿠빵 Team Notion 보러가기**
-[쿠빵 Team Notion](https://teamsparta.notion.site/8-5c74090342f94d1bae575d1f6888cdc1)
+## 📚 **Level_UP Team Notion 보러가기**
+[Level_UP Team Notion](https://www.notion.so/teamsparta/9-1962dc3ef51480d5b934d27f143c3c41)
 
 ## 📄 **발표 보고서 보러가기**
 [발표 보고서](https://www.canva.com/design/DAGaRbld9so/37ehM1xDZDsknpC-fXeebQ/edit?utm_content=DAGaRbld9so&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
@@ -316,10 +316,10 @@
 
 | 이름   | 깃허브                                                   |
 |--------|---------------------------------------------------------|
+| 김효중 | (https://github.com/rlagywnd4) |
 | 최대현 | [https://github.com/DeaHyun0911](https://github.com/DeaHyun0911) |
-| 김리은 | [https://github.com/llRosell](https://github.com/llRosell) |
-| 최순우 | [https://github.com/asdd2557](https://github.com/asdd2557) |
 | 이경훈 | [https://github.com/kyung412820](https://github.com/kyung412820) |
-
+| 이동건 | (https://github.com/LeeDong-gun) |
+| 정영균 | (https://github.com/lq0920084) |
 ---
 
