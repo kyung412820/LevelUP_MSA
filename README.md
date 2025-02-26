@@ -55,8 +55,7 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
 
 #### 📌 모니터링 시스템 구성  
 - **Elastic Stack(ELK)**: Elasticsearch + Logstash + Kibana를 이용한 로그 분석  
-- **Prometheus & Grafana**: 서버 및 애플리케이션 성능 시각화  
-- **Alerting System**: 이상 감지 시 Slack/Webhook을 통한 알림 전송  
+- **Fleet Server**: 서버 및 애플리케이션 성능 시각화  
 
 <br>
 
