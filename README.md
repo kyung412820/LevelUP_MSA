@@ -58,10 +58,10 @@
 [발표 영상](https://www.youtube.com/watch?v=-8S3XLLW6jA)
 
 ## 📝 **와이어프레임**
-![와이어프레임](https://github.com/user-attachments/assets/fe71547b-5171-4ed6-a63f-6b4b3a5e96fc)
+![와이어프레임](https://github.com/user-attachments/assets/b01ecd9d-afa0-4b53-a06b-6e2cad4ca68f)
 
 ## 💬 **ERD**
-![ERD](https://github.com/user-attachments/assets/e156ae13-944e-4089-848b-73bc4ef7d088)
+![ERD](https://github.com/user-attachments/assets/e36a5524-ed83-4636-9b5d-a77596d88c50)
 </details>
 
 
