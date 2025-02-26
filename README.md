@@ -1,5 +1,6 @@
 # Level_UP
 
+## 🚀 프로젝트 소개
 🛍️ **Level_UP** - 게임을 잘하고 싶은 사람들에게 멘토를 매칭해 주는 서비스입니다! 매칭된 사람들끼리의 실시간 채팅, 전체 커뮤니티등 다양한 기능을 함께 제공해 드립니다.
 
 **프로젝트 기간**: 2025/02/10 ~ 2025/03/17
@@ -13,12 +14,9 @@
 
 - **김효중**: Redis, 커뮤니티, 프로젝트 총괄
 - **최대현**: 소켓,배포
-- **이경훈**: ElasticSearch를 이용한 인기 검색어 조회 기능, 자동완성, 감성분석과 집계를 통한 Top3 선정, 클러스터를 이용한 분산 데이터 처리
+- **이경훈**: ElasticSearch를 이용한 인기 검색어 조회 기능, 자동완성, 감성분석과 집계를 통한 Top3 선정, 클러스터를 이용한 분산 데이터 처리, ELK 기반 Log 관
 - **이동건**: 결제, 락
 - **정영균**: 스프링 시큐리티
-
-
-## 🚀 프로젝트 소개
 
 ### 🎯 프로젝트 목표
 
@@ -26,23 +24,30 @@
 - JWT 및 Spring Security 설정을 통해 인증 및 인가 로직 구현
 - OAuth 2.0을 사용하여 소셜 로그인 기능 구현
 
-### 2. 데이터 처리 능력 강화
+### 2. ElasticSearch를 활용한 검색 서비스
 - **동시성 문제 해결**: 다수의 요청을 안정적으로 처리하기 위한 동시성 제어 방법 구현
   - 락을 설정하지 않으면 동시성 이슈가 발생하는지 검증하는 테스트 코드 작성
   - Redis Lock을 사용하여 동시성 이슈 제어
   - 동시성 이슈를 락을 통해 제어하는 테스트 코드 작성
 
-### 3. Cache를 이용한 성능 개선
+### 3. 모니터링 서비스
 - 상품 목록 조회 API에 In-memory Cache 적용하여 성능 개선
 - 적용 전, 적용 후 성능 테스트
 
-### 4. ElasticSearch를 활용한 검색 서비스
-- ElasticSearch를 이용한 인기 검색어 조회 및 상품 검색 기능 구현
+### 4. 
+- 
 
-### 5. AWS 배포
-- 클라우드에서 서버 배포 및 운영 환경 구축
-- 자동화된 파이프라인을 통해 안정적이고 신속한 배포 환경 구축
-- 관리형 데이터베이스를 사용하여 안정적인 데이터 관리 및 운영 실습
+### 5. 
+- 
+
+### 6. 
+- 
+
+### 7. 
+- 
+
+### 8. 
+- 
 
 
 ## 🏆 **Architecture** 
@@ -64,13 +69,6 @@
 ![ERD](https://github.com/user-attachments/assets/e36a5524-ed83-4636-9b5d-a77596d88c50)
 </details>
 
-
-## 📽️ 프로젝트 목표
-
-- **선착순 쿠폰 발급**: 대량 트래픽을 처리하며 빠르고 정확한 쿠폰 발급 서비스를 제공합니다.
-- **분산 락을 통한 동시성 제어**: 선착순 쿠폰 발급 시스템을 구현하여 사용자들의 동시 요청을 처리합니다.
-- **AWS 환경에서 배포**: EC2, RDS, 로드밸런싱, S3 및 도메인 관리 등 AWS 서비스를 활용하여 안정적이고 확장 가능한 시스템을 구축합니다.
-
 ---
 
 ## 📚 **기술 스택**
@@ -82,13 +80,15 @@
 ![MySQL](https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Redis](https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![Elasticsearch](https://img.shields.io/badge/elasticsearch-47A248?style=for-the-badge&logo=elasticsearch&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-6DZ44F?style=for-the-badge&logo=MongoDB&logoColor=white)
 
 - **Java**: Spring Boot 기반 서버 개발
 - **Spring**: 의존성 주입 및 AOP, 트랜잭션 관리 등 다양한 엔터프라이즈 기능을 제공하는 프레임워크
 - **Spring Boot**: 빠른 설정 및 간단한 구성을 통해 스프링 기반 애플리케이션을 개발할 수 있도록 돕는 프레임워크
 - **Redis**: 캐시 관리 및 분산 락을 통한 동시성 제어
 - **MySQL**: AWS RDS에서 제공되는 관계형 데이터베이스
-- **Elasticsearch**: 인기 검색어 순위 및 빠른 검색 기능 제공
+- **Elasticsearch**: 인기 검색어 순위 및 빠른 검색 기능, 감성분석, 집계, 모니터링 기능 제공
+- **MongoDB**: 실시간 데이터 처리를 통한 채팅 기능 제공
 
 
 ### AWS
