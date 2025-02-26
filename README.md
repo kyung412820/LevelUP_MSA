@@ -61,10 +61,13 @@
 ## 💬 **ERD**
 ![ERD](https://github.com/user-attachments/assets/e36a5524-ed83-4636-9b5d-a77596d88c50)
 </details>
+
 <br>
+
 | 📚 Level_UP Team Notion | 📄 발표 보고서 | 🎬 발표 영상 |
 |:------:|:----------------------:|:----------------------:|
 | [Notion 보러가기](https://www.notion.so/teamsparta/9-1962dc3ef51480d5b934d27f143c3c41) | [발표 보고서 보러가기](https://www.canva.com/design/DAGaRbld9so/37ehM1xDZDsknpC-fXeebQ/edit?utm_content=DAGaRbld9so&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) | [발표 영상 보러가기](https://www.youtube.com/watch?v=-8S3XLLW6jA) |
+
 <br>
 
 ## 📚 **기술 스택**
