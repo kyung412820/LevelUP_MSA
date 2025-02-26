@@ -49,9 +49,8 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
 
 #### 🛠 주요 모니터링 항목  
 - **로그 모니터링(Log Monitoring)**: Logstash & Filebeat를 활용하여 서버 및 애플리케이션 로그 수집  
-- **메트릭 모니터링(Metrics Monitoring)**: Prometheus & Grafana를 활용한 시스템 리소스 사용량 시각화  
+- **메트릭 모니터링(Metrics Monitoring)**: Kibana를 활용한 시스템 리소스 사용량 시각화  
 - **ElasticSearch 검색 성능 모니터링**: 검색 응답 시간 및 인덱스 크기 모니터링  
-- **데이터베이스 성능 모니터링**: MySQL Slow Query 분석 및 캐싱 활용도 점검  
 
 #### 📌 모니터링 시스템 구성  
 - **Elastic Stack(ELK)**: Elasticsearch + Logstash + Kibana를 이용한 로그 분석  
