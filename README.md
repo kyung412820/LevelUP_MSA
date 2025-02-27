@@ -1,12 +1,8 @@
-![img.png](doc/levelup-logo.png)
+<img width="500px" src="assets/levelup-logo.png">
 <br>
 
-## 🚀 프로젝트 소개
-🛍️ **Level_UP** - 게임을 잘하고 싶은 사람들에게 멘토를 매칭해 주는 서비스입니다! 
+## 🎮 Level_UP - 원하는 멘토를 선택하고 실력을 키우는 게임 코칭 플랫폼! 🚀
 
-매칭된 사람들끼리의 실시간 채팅, 전체 커뮤니티등 다양한 기능을 함께 제공해 드립니다.
-
-개발 기간: 2025.02.10 ~ 2025.03.17
 
 <br>
 
@@ -21,91 +17,34 @@
 
 <br>
 
-## 🎯 프로젝트 목표
-
-### 1. JWT 및 스프링 시큐리티 / OAuth 2.0 소셜 로그인
-- JWT 및 Spring Security 설정을 통해 인증 및 인가 로직 구현
-- OAuth 2.0을 사용하여 소셜 로그인 기능 구현
-  
-#### 주요 기능  
-- **일반 로그인**: email과 비밀번호를 통한 일반 로그인 기능
-- **소셜 로그인**: 구글, 네이버 로그인을 통한 소셜 로그인 기능
-- **자동 로그인**: 리프레시 토큰을 통한 자동 로그인 기능
-
-#### 로그인 시스템 구성  
-- **Spring Security**: 스프링 시큐리티를 통한 로그인 시스템 기본 구성  
-- **JWT**: 액세스 토큰과 리프레시 토큰 발급을 위한 JWT
-- **OAUTH2**: 소셜 로그인을 위한 OAUTH2 인증 시스템 
-- **MySQL**: 회원 정보 저장을 위한 RDB.
+## 목차
+1. [주요 기능](#1)
+2. [기능 설명](#2)
+3. [아키텍처]()
+4. [ERD]()
 
 <br>
 
-### 2. ElasticSearch를 활용한 검색 서비스  
+## 🚀 프로젝트 소개
+🛍️ **Level_UP** - 게임을 잘하고 싶은 사람들에게 **멘토**를 **매칭**해 주는 서비스입니다! 
 
-ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 수 있는 분산형 검색 엔진입니다.  
-본 서비스에서는 ElasticSearch를 활용하여 **빠르고 정확한 검색 기능**을 제공합니다.
+매칭된 사람들끼리의 실시간 채팅, 전체 커뮤니티등 다양한 기능을 함께 제공해 드립니다.
 
-#### 주요 기능  
-- **키워드 검색**: 상품명, 게임 장르, 설명(Contents) 등을 기반으로 검색 가능  
-- **자동 완성(Auto-Suggest)**: 입력 중인 검색어에 대한 추천어 제공  
-- **필터링 및 정렬**: 가격, 인기순, 최신 등록일 등의 필터 및 정렬 기능  
-- **리뷰 감성 분석**: 검색 결과에 포함된 리뷰의 감성 점수를 분석하여 긍정적/부정적 리뷰 제공  
+개발 기간: 2025.02.10 ~ 2025.03.17
 
-#### 검색 성능 최적화  
-- **n-gram 토크나이저 적용**: 한국어 및 영어 검색을 위한 형태소 분석기 적용  
-- **검색 인덱스 튜닝**: 불필요한 필드 제외 및 검색 성능 향상을 위한 캐싱 적용  
-- **ElasticSearch Query DSL 활용**: 다중 필드 검색 및 적용  
 
-<br>
+## 💡 주요 기능
 
-### 3. 모니터링 서비스  
+|       기능       | 내용                                                                                                |
+|:--------------:|:--------------------------------------------------------------------------------------------------|
+|     소셜 로그인     | 구글, 네이버를 통한 소셜 로그인                                                                                |
+|   상품 검색 서비스    | 이것 저것 여러 방식으로 상품 검색 가능                                                                            |
+|     알림 서비스     | 회원 정보 변경시 알림이 가요                                                                                  |
+|     결제 서비스     | 상품 결제 가능해요                                                                                        |
+|    커뮤니티 서비스    | 사용자들 끼리 글을 작성하고 조회가 가능                                                                            |
+|      모니터링      | 로그 모니터링 가능~                                                                                       |
+|       채팅       | 사용자들끼리 채팅기능을 활용하고 소통 가능~                                                                          |
 
-서비스의 원활한 운영을 위해 **실시간 모니터링 시스템**을 구축하여 장애 예방 및 성능 개선을 지원합니다.
-
-#### 주요 모니터링 항목  
-- **로그 모니터링(Log Monitoring)**: Logstash & Filebeat를 활용하여 서버 및 애플리케이션 로그 수집  
-- **모니터링 시각화**: Kibana를 활용한 시스템 로그, 데이터 관리 시각화  
-- **ElasticSearch 검색 성능 모니터링**: 검색 응답 시간 및 인덱스 크기 모니터링  
-
-#### 모니터링 시스템 구성  
-- **Elastic Stack(ELK)**: Elasticsearch + Logstash + Kibana를 이용한 로그 분석  
-- **Fleet Server**: 서버 및 애플리케이션 성능 시각화  
-
-<br>
-
-### 4.알림 서비스
-
-- 회원가입 완료시 회원가입 환영메시지가 가입 이메일을 통해 발송.
-- 회원정보 변경감지시 로그인된 사용자에게 알림이 가도록 구현.
-
-#### 알림 서비스 시스템 구성
-
-- **Server Sent Event(SSE)**: 클라이언트와 서버의 연결 유지를 위한 표준 기술. 단방향 통신
-- **Spring Event**: 알림을 변경 작업과 별개의 스레드로 동작시켜 변경 작업의 속도에 영향을 미치지 않게 하기 위한 스프링 이벤트
-- **Redis**: SSE 연결 끊김 발생시 수신 성공한 메시지부터 다시 받아오기 위한 임시 보관용 Redis 캐시
-- **MySQL**: 변경메시지와 타겟 유저, 변경시각, 알림 전송 성공 여부를 기록하기 위한 추가 RDB. 관리자만 접근가능.
-  
-<br>
-
-### 5. 
-- 
-
-### 6. 빠르고 안전한 결제 경험 제공
-- 카드, 간편결제, 계좌이체 토스페이 지원
-- 토스 개발자 문서를 활용하여 빠르게API 연동 가능
-- 실 결제 없이 테스트 가능
-- 결제 관련 이메일 알림 전송
-- 결제 취소 및 환불기능 지원
-- 결제 승인 실패 시 재시도 전략 적용
-- 안정적인 주문 처리 (트랜잭션 롤백, 재고 검증 및 관리)
-- 재고 관리에 대한 악성유저 방지(Redis TTL발생 10분이내 결제되지않으면 HardDelete)
-
-### 7. 
-- 
-
-### 8. 
-- 
-<br>
 <br>
 
 ## 🏆 **Architecture** 
@@ -139,68 +78,11 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
     <td width="80px" height="60px">
       <a href="https://www.w3schools.com/css/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/css3-original-wordmark.svg" alt="CSS3"/></a>
     </td>
-    <td width="80px" height="60px">
-      <a href="https://reactjs.org/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/react-original-wordmark.svg" alt="HTML5"  /></a>  
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://www.typescriptlang.org/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/typescript-original.svg" alt="TypeScript" /></a>  
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://www.tailwindcss.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/tailwindcss.svg" alt="Tailwind CSS"/></a>
-    </td>
+
   </tr>
   <tr align='center'>
     <td>HTML5</td>
     <td>CSS3</td>
-    <td>React</td>
-    <td>Typescript</td>
-    <td>Tailwind<br/> CSS</td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <td width="80px" height="60px">
-      <a href="https://tanstack.com/query/latest/docs/framework/react/overview" target="_blank"><img style="margin: 10px" width="60px" src="./assets/react_query.png" alt="react query" /></a>
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://openvidu.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/openvidu.png" alt="openvidu"/></a>
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://stomp-js.github.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/websocket.png" alt="stomp"/></a> 
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://axios-http.com/kr/docs/intro" target="_blank"><img style="margin: 10px" width="60px" src="./assets/axios.png" alt="axios"/></a>
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://zustand-demo.pmnd.rs/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/zustand.png" alt="zustand"/></a>
-    </td>
-  </tr>
-  <tr align='center'>
-    <td>React<br/>Query</td>
-    <td>Openvidu</td>
-    <td>Stomp js</td>
-    <td>Axios</td>
-    <td>Zustand</td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <td width="80px" height="60px">
-      <a href="https://eslint.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/eslint.png" alt="eslint"/></a>
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://prettier.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/prettier.png" alt="prettier"/></a>
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://vitejs.dev/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/vite.png" alt="vite"/></a>
-    </td>
-  </tr>
-  <tr align='center'>
-    <td>Eslint</td>
-    <td>Prettier</td>
-    <td>Vite</td>
   </tr>
 </table>
 
@@ -217,10 +99,7 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
       <a href="https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html#:~:text=The%20Spring%20Expression%20Language%20(SpEL,and%20basic%20string%20templating%20functionality." target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/springio-icon.svg" alt="Spring"/></a>   
     </td>
     <td width="80px" height="60px">
-      <a href="https://hibernate.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/hibernate.png" alt="hibernate"/></a>  
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://mariadb.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/mariaDB.png" alt="mariadb"/></a>  
+      <a href="https://mariadb.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/mariaDB.png" alt="mariadb"/></a>  
     </td>
     <td width="80px" height="60px">
       <a href="https://www.mongodb.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/mongodb-original-wordmark.svg" alt="MongoDB"/></a>
@@ -229,8 +108,7 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
   <tr align='center'>
     <td>Java</td>
     <td>Spring</td>
-    <td>Hibernate</td>
-    <td>Mariadb</td>
+    <td>Mysql</td>
     <td>MongoDB</td>
   </tr>
 </table>
@@ -241,35 +119,20 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
       <a href="https://redis.io/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/redis-original-wordmark.svg" alt="Redis"/></a>
     </td>
     <td width="80px" height="60px">
-      <a href="https://swagger.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/swagger.png" alt="swagger"/></a>
+      <a href="https://https://spring.io/projects/spring-security" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/spring-security.png" alt="Spring security"/></a>
     </td>
     <td width="80px" height="60px">
-      <a href="http://www.jasypt.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/jwt.png" alt="jasypt"/></a>
+      <a href="https://stomp-js.github.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/stomp.png" alt="stomp"/></a>
     </td>
     <td width="80px" height="60px">
-      <a href="https://spring.io/projects/spring-security" target="_blank"><img style="margin: 10px" width="60px" src="./assets/security.png" alt="security"/></a>
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://openvidu.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/openvidu.png" alt="openvidu"/></a>
+      <a href="https://stomp-js.github.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/websocket.png" alt="websocket"/></a>
     </td>
   </tr>
   <tr align='center'>
     <td>Redis</td>
-    <td>Swagger</td>
-    <td>Jasypt</td>
     <td>Spring<br/>security</td>
-    <td>Openvidu</td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <td width="80px" height="60px">
-      <a href="https://stomp-js.github.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/websocket.png" alt="Stomp js"/></a>
-    </td>
-  </tr>
-  <tr align='center'>
-    <td>Stomp js</td>
+    <td>Stomp</td>
+    <td>Websocket</td>
   </tr>
 </table>
 
@@ -296,7 +159,7 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
     <td>AWS</td>
     <td>Docker</td>
     <td>Nginx</td>
-    <td>Jenkins</td>
+    <td>GithubActions</td>
   </tr>
 </table>
 
@@ -310,24 +173,16 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
       <a href="https://www.notion.so/" target="_blank"><img style="margin: 10px" width="60px" src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="notion"/></a>
     </td>
     <td width="80px" height="60px">
-      <a href="https://about.gitlab.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/gitlab.png" alt="gitlab"/></a>
+      <a href="https://about.gitlab.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/gitlab.png" alt="gitlab"/></a>
     </td>
     <td width="80px" height="60px">
-      <a href="https://www.atlassian.com/ko/software/jira" target="_blank"><img style="margin: 10px" width="60px" src="./assets/jira.png" alt="jira"/></a>  
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://www.gerritcodereview.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/gerrit.png" alt="gerrit"/></a>
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://mattermost.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/mattermost.png" alt="Tailwind CSS"/></a>
+      <a href="https://www.atlassian.com/ko/software/jira" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/jira.png" alt="jira"/></a>  
     </td>
   </tr>
   <tr align='center'>
     <td>Notion</td>
-    <td>Gitlab</td>
-    <td>Jira</td>
-    <td>Gerrit</td>
-    <td>Mattermost</td>
+    <td>Github</td>
+    <td>slack</td>
   </tr>
 </table>
 
@@ -381,9 +236,9 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
   
 ### 3. **Redis TTL** : 주문 후 10 분 결제 누락 시 악성재고관리 방지
 
-![img.png](doc/Pendding_img.png)
+![img.png](assets/Pendding_img.png)
 위 상황은 주문을 만들었지만 결제를 진행하지않고 PENDDING 상태로 유지중.
-![img.png](doc/PenddingAmount_img.png)
+![img.png](assets/PenddingAmount_img.png)
 주문 생성이 되면 재고 감소가 이루어진상황.
 
 ### 1. **개요**
@@ -398,11 +253,11 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
    TTL이 만료되면 삭제 이벤트를 감지하여 로그 기록.
    주문 삭제 시 재고를 원상 복구하여 악성 재고 방지.
 
-![img.png](doc/TTL.png)
+![img.png](assets/TTL.png)
 - Redis Listener 활용
 - 재고 감소가 이루어질 부분 분산락 적용
 - TTL을 발생 시킨 후 만료되어 삭제 될때 로깅
-![img.png](doc/TTLCreate.png)
+![img.png](assets/TTLCreate.png)
 TTL 발생을 로직으로 적용시켜 발생하면 레디스에 TTL데이터가 생성이됩니다.
 10분 이내로 상태 변경이 일어나면 TTL은 삭제 되고 변경이 되지않는다면 
 생성 되었던 Order는 HardDelete가 이루어집니다.
