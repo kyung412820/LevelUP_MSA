@@ -124,47 +124,211 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
 
 ## 📚 **기술 스택**
 
-### Back-end
-![Java](https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white)
-![Spring](https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
-![MySQL](https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
-![Redis](https://img.shields.io/badge/redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
-![Elasticsearch](https://img.shields.io/badge/elasticsearch-47A248?style=for-the-badge&logo=elasticsearch&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-6DZ44F?style=for-the-badge&logo=MongoDB&logoColor=white)
+### Frontend
 
-- **Java**: Spring Boot 기반 서버 개발
-- **Spring**: 의존성 주입 및 AOP, 트랜잭션 관리 등 다양한 엔터프라이즈 기능을 제공하는 프레임워크
-- **Spring Boot**: 빠른 설정 및 간단한 구성을 통해 스프링 기반 애플리케이션을 개발할 수 있도록 돕는 프레임워크
-- **Redis**: 캐시 관리 및 분산 락을 통한 동시성 제어
-- **MySQL**: AWS RDS에서 제공되는 관계형 데이터베이스
-- **Elasticsearch**: 인기 검색어 순위 및 빠른 검색 기능, 감성분석, 집계, 모니터링 기능 제공
-- **MongoDB**: 실시간 데이터 처리를 통한 채팅 기능 제공
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://www.tcpschool.com/html/html5_intro_intro" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/html5-original-wordmark.svg" alt="React"  /></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.w3schools.com/css/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/css3-original-wordmark.svg" alt="CSS3"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://reactjs.org/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/react-original-wordmark.svg" alt="HTML5"  /></a>  
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.typescriptlang.org/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/typescript-original.svg" alt="TypeScript" /></a>  
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.tailwindcss.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/tailwindcss.svg" alt="Tailwind CSS"/></a>
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>HTML5</td>
+    <td>CSS3</td>
+    <td>React</td>
+    <td>Typescript</td>
+    <td>Tailwind<br/> CSS</td>
+  </tr>
+</table>
 
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://tanstack.com/query/latest/docs/framework/react/overview" target="_blank"><img style="margin: 10px" width="60px" src="./assets/react_query.png" alt="react query" /></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://openvidu.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/openvidu.png" alt="openvidu"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://stomp-js.github.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/websocket.png" alt="stomp"/></a> 
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://axios-http.com/kr/docs/intro" target="_blank"><img style="margin: 10px" width="60px" src="./assets/axios.png" alt="axios"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://zustand-demo.pmnd.rs/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/zustand.png" alt="zustand"/></a>
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>React<br/>Query</td>
+    <td>Openvidu</td>
+    <td>Stomp js</td>
+    <td>Axios</td>
+    <td>Zustand</td>
+  </tr>
+</table>
 
-### AWS
-![EC2](https://img.shields.io/badge/amazon_ec2-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)
-![RDS](https://img.shields.io/badge/amazon_rds-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)
-![Loadbalancer](https://img.shields.io/badge/amazon_loadbalancer-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)
-![S3](https://img.shields.io/badge/amazon_s3-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)
-![Route 53](https://img.shields.io/badge/route_53-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://eslint.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/eslint.png" alt="eslint"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://prettier.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/prettier.png" alt="prettier"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://vitejs.dev/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/vite.png" alt="vite"/></a>
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>Eslint</td>
+    <td>Prettier</td>
+    <td>Vite</td>
+  </tr>
+</table>
 
-- **EC2**: 애플리케이션 서버 운영
-- **RDS**: 관계형 데이터베이스 관리
-- **로드밸런싱**: 트래픽을 여러 EC2 인스턴스에 분산하여 처리
-- **S3**: 이미지 및 기타 파일 저장 관리
-- **도메인 관리**: AWS Route 53을 통해 도메인 설정
+<br/>
+
+### Backend
+
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://www.java.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/java-original-wordmark.svg" alt="Java"/></a> 
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html#:~:text=The%20Spring%20Expression%20Language%20(SpEL,and%20basic%20string%20templating%20functionality." target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/springio-icon.svg" alt="Spring"/></a>   
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://hibernate.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/hibernate.png" alt="hibernate"/></a>  
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://mariadb.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/mariaDB.png" alt="mariadb"/></a>  
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.mongodb.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/mongodb-original-wordmark.svg" alt="MongoDB"/></a>
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>Java</td>
+    <td>Spring</td>
+    <td>Hibernate</td>
+    <td>Mariadb</td>
+    <td>MongoDB</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://redis.io/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/redis-original-wordmark.svg" alt="Redis"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://swagger.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/swagger.png" alt="swagger"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="http://www.jasypt.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/jwt.png" alt="jasypt"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://spring.io/projects/spring-security" target="_blank"><img style="margin: 10px" width="60px" src="./assets/security.png" alt="security"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://openvidu.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/openvidu.png" alt="openvidu"/></a>
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>Redis</td>
+    <td>Swagger</td>
+    <td>Jasypt</td>
+    <td>Spring<br/>security</td>
+    <td>Openvidu</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://stomp-js.github.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/websocket.png" alt="Stomp js"/></a>
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>Stomp js</td>
+  </tr>
+</table>
+
+<br/>
+
+### DevOps
+
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://aws.amazon.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/amazonwebservices-original-wordmark.svg" alt="AWS"/></a> 
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.docker.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/docker-original-wordmark.svg" alt="Docker"/></a> 
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.nginx.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/nginx-original.svg" alt="Nginx"/></a>  
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.jenkins.io/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/jenkins-icon.svg" alt="Jenkins"/></a>  
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>AWS</td>
+    <td>Docker</td>
+    <td>Nginx</td>
+    <td>Jenkins</td>
+  </tr>
+</table>
+
+<br/>
 
 ### Tools
-![JMeter](https://img.shields.io/badge/jmeter-F5A500?style=for-the-badge&logo=apachejmeter&logoColor=white)
-![Docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Git](https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white)
 
-- **JMeter**: 성능 테스트 및 로드 테스트를 통한 시스템 안정성 검증
-- **Docker**: 개발 및 배포 환경을 컨테이너화하여 일관성 있는 개발 환경 제공
-- **Git**: 버전 관리 시스템
-- **GitHub**: GitHub을 사용한 협업 및 코드 관리
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://www.notion.so/" target="_blank"><img style="margin: 10px" width="60px" src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="notion"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://about.gitlab.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/gitlab.png" alt="gitlab"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.atlassian.com/ko/software/jira" target="_blank"><img style="margin: 10px" width="60px" src="./assets/jira.png" alt="jira"/></a>  
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.gerritcodereview.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/gerrit.png" alt="gerrit"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://mattermost.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/mattermost.png" alt="Tailwind CSS"/></a>
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>Notion</td>
+    <td>Gitlab</td>
+    <td>Jira</td>
+    <td>Gerrit</td>
+    <td>Mattermost</td>
+  </tr>
+</table>
+
+<br/>
+
+<div id="3"></div>
 
 <br>
 
