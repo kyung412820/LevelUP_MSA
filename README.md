@@ -167,7 +167,7 @@
     <td>Logback</td>
     <td>Slf4j</td>
     <td>OAuth 2.0</td>
-    <td>Jwtt</td>
+    <td>Jwt</td>
   </tr>
 </table>
 
