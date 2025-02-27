@@ -99,10 +99,13 @@
       <a href="https://docs.spring.io/spring-framework/docs/3.0.x/reference/expressions.html#:~:text=The%20Spring%20Expression%20Language%20(SpEL,and%20basic%20string%20templating%20functionality." target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/springio-icon.svg" alt="Spring"/></a>   
     </td>
     <td width="80px" height="60px">
-      <a href="https://mariadb.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/mariaDB.png" alt="mariadb"/></a>  
+      <a href="https://www.mysql.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/mysql.png" alt="mysql"/></a>  
     </td>
     <td width="80px" height="60px">
-      <a href="https://www.mongodb.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/mongodb-original-wordmark.svg" alt="MongoDB"/></a>
+      <a href="https://www.mongodb.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/stomp.png" alt="MongoDB"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://hibernate.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/Hibernate.png" alt="Hibernate"/></a>
     </td>
   </tr>
   <tr align='center'>
@@ -110,6 +113,7 @@
     <td>Spring</td>
     <td>Mysql</td>
     <td>MongoDB</td>
+    <td>Hibernate</td>
   </tr>
 </table>
 
@@ -127,12 +131,58 @@
     <td width="80px" height="60px">
       <a href="https://stomp-js.github.io/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/websocket.png" alt="websocket"/></a>
     </td>
+   <td width="80px" height="60px">
+      <a href="https://gradle.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/gradle.png" alt="gradle"/></a>
+    </td>
   </tr>
   <tr align='center'>
     <td>Redis</td>
     <td>Spring<br/>security</td>
     <td>Stomp</td>
     <td>Websocket</td>
+    <td>Gradle</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://logback.qos.ch/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/Logback.png" alt="Logback"/></a>
+    </td>
+   <td width="80px" height="60px">
+      <a href="https://www.slf4j.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/slf4j.png" alt="Slf4j"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://oauth.net/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/OAuth.png" alt="OAuth"/></a>
+    </td>
+   <td width="80px" height="60px">
+      <a href="http://www.jasypt.org/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/jwt.png" alt="jasypt"/></a>
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>Logback</td>
+    <td>Slf4j</td>
+    <td>OAuth 2.0</td>
+    <td>Jasypt</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td width="80px" height="60px">
+      <a href="https://www.elastic.co/kr/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/elasticsearch.png" alt="elasticsearch"/></a>
+    </td>
+   <td width="80px" height="60px">
+      <a href="https://www.elastic.co/kr/kibana" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/kibana.png" alt="kibana"/></a>
+    </td>
+    <td width="80px" height="60px">
+      <a href="https://www.elastic.co/kr/logstash" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/logstash.png" alt="logstash"/></a>
+    </td>
+  </tr>
+  <tr align='center'>
+    <td>elasticsearch</td>
+    <td>kibana</td>
+    <td>logstash 2.0</td>
   </tr>
 </table>
 
@@ -149,16 +199,12 @@
       <a href="https://www.docker.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/docker-original-wordmark.svg" alt="Docker"/></a> 
     </td>
     <td width="80px" height="60px">
-      <a href="https://www.nginx.com/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/nginx-original.svg" alt="Nginx"/></a>  
-    </td>
-    <td width="80px" height="60px">
-      <a href="https://www.jenkins.io/" target="_blank"><img style="margin: 10px" width="60px" src="https://profilinator.rishav.dev/skills-assets/jenkins-icon.svg" alt="Jenkins"/></a>  
+      <a href="https://github.com/features/actions" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/github_actions.png" alt="GithubActions"/></a>  
     </td>
   </tr>
   <tr align='center'>
     <td>AWS</td>
     <td>Docker</td>
-    <td>Nginx</td>
     <td>GithubActions</td>
   </tr>
 </table>
@@ -173,16 +219,16 @@
       <a href="https://www.notion.so/" target="_blank"><img style="margin: 10px" width="60px" src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="notion"/></a>
     </td>
     <td width="80px" height="60px">
-      <a href="https://about.gitlab.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/gitlab.png" alt="gitlab"/></a>
+      <a href="https://github.com/" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/Github.png" alt="Github"/></a>
     </td>
     <td width="80px" height="60px">
-      <a href="https://www.atlassian.com/ko/software/jira" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/jira.png" alt="jira"/></a>  
+      <a href="https://slack.com/intl/ko-kr" target="_blank"><img style="margin: 10px" width="60px" src="./assets/logo/slack.png" alt="Slack"/></a>  
     </td>
   </tr>
   <tr align='center'>
     <td>Notion</td>
     <td>Github</td>
-    <td>slack</td>
+    <td>Slack</td>
   </tr>
 </table>
 

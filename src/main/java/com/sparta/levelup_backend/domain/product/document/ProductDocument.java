@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Document(indexName = "product", createIndex = true)
+@Document(indexName = "product")
 public class ProductDocument {
 
 	@Id
@@ -62,8 +62,8 @@ public class ProductDocument {
 	public ProductDocument(Long productId, String productName, String contents, Long price, Integer amount,
 		ProductStatus status, String imgUrl, Long userId, Long gameId, String gameGenre, Double sentimentScore,
 		Boolean isDeleted) {
-		this.id = String.valueOf(productId);
 		this.productId = productId;
+		this.id = String.valueOf(this.productId);
 		this.productName = productName;
 		this.contents = contents;
 		this.price = price;
