@@ -326,8 +326,10 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
 - **Redis Listener** :Redis TTL발생 10분이내 결제되지않으면 HardDelete, 유저간 결제 관련 알림
 - **TossPayments API** : 토스페이먼츠 외부 API를 호출 하여 승인 및 취소
 
-### 7.
-- 
+### 7. 커뮤니티 서비스
+사용자들이 자유롭게 게시글을 작성하고, 타인의 게시글을 조회하는 기능
+- Redis에 저장된 데이터를 스프링 부트에서 조회 및 관리하기 위해 RedisTemplate을 활용 
+- Redis의 Sorted Set을 활용하여 조회수를 저장 -> 글 검색시 조회수가 높은 순서대로 응답
 
 ### 8.
 - 
