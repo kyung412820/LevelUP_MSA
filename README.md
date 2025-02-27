@@ -186,7 +186,7 @@
   <tr align='center'>
     <td>elasticsearch</td>
     <td>kibana</td>
-    <td>logstash 2.0</td>
+    <td>logstash</td>
   </tr>
 </table>
 
