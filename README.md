@@ -167,7 +167,7 @@
     <td>Logback</td>
     <td>Slf4j</td>
     <td>OAuth 2.0</td>
-    <td>Jwtt</td>
+    <td>Jwt</td>
   </tr>
 </table>
 
@@ -186,7 +186,7 @@
   <tr align='center'>
     <td>elasticsearch</td>
     <td>kibana</td>
-    <td>logstash 2.0</td>
+    <td>logstash</td>
   </tr>
 </table>
 
