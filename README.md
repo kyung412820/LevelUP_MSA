@@ -1,4 +1,4 @@
-# Level_UP
+![img.png](doc/levelup-logo.png)
 <br>
 
 ## 🚀 프로젝트 소개
@@ -116,7 +116,7 @@ ElasticSearch는 대용량 데이터를 실시간으로 검색하고 분석할 �
 
 ## 💬 **ERD**
 ![ERD](https://github.com/user-attachments/assets/e36a5524-ed83-4636-9b5d-a77596d88c50)
-</details>
+
 
 <br>
 
