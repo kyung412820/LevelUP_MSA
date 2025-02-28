@@ -2,6 +2,8 @@ package com.sparta.levelup_backend.domain.auth.service;
 
 import static com.sparta.levelup_backend.domain.user.dto.UserMessage.*;
 
+import com.sparta.levelup_backend.exception.common.ErrorCode;
+import com.sparta.levelup_backend.exception.common.PasswordIncorrectException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -76,23 +78,27 @@ public class AuthServiceImpl implements AuthService {
 
 		CustomUserDetails userDetails = (CustomUserDetails)userDetailsService.loadUserByUsername(dto.getEmail());
 
-		String email = userDetails.getUsername();
-		Long userId = userDetails.getId();
-		String nickName = userDetails.getNickName();
-		String role = userDetails.getAuthorities().iterator().next().getAuthority();
+		if(bCryptPasswordEncoder.matches(dto.getPassword(),userDetails.getPassword())) {
+			String email = userDetails.getUsername();
+			Long userId = userDetails.getId();
+			String nickName = userDetails.getNickName();
+			String role = userDetails.getAuthorities().iterator().next().getAuthority();
 
-		String accessToken = jwtUtils.createAccessToken(email, userId, nickName, role);
-		String refreshToken = jwtUtils.createRefreshToken(email, userId, nickName, role);
+			String accessToken = jwtUtils.createAccessToken(email, userId, nickName, role);
+			String refreshToken = jwtUtils.createRefreshToken(email, userId, nickName, role);
 
-		ResponseCookie accessCookie = createCookie("accessToken", accessToken, 30 * 60);
-		ResponseCookie refreshCookie = createCookie("refreshToken", refreshToken, 12 * 60 * 60);
+			ResponseCookie accessCookie = createCookie("accessToken", accessToken, 30 * 60);
+			ResponseCookie refreshCookie = createCookie("refreshToken", refreshToken, 12 * 60 * 60);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", accessToken);
-		headers.add(HttpHeaders.SET_COOKIE, accessCookie.toString());
-		headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Authorization", accessToken);
+			headers.add(HttpHeaders.SET_COOKIE, accessCookie.toString());
+			headers.add(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
-		return headers;
+			return headers;
+		}else {
+			throw new PasswordIncorrectException();
+		}
 	}
 
 	private ResponseCookie createCookie(String name, String token, long maxAge) {
