@@ -30,7 +30,7 @@ public enum ErrorCode {
 
 	// 401 UNAUTHORIZED
 	UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "ERR101", "로그인이 필요합니다."),
-	LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "ERR102", "로그인에 실패했습니다."),
+	PASSWORD_INCORRECT(HttpStatus.UNAUTHORIZED, "ERR102", "비밀번호가 일치하지 않습니다."),
 	INVALID_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "ERR103", "유효하지 않는 JWT 서명입니다."),
 	EXPIRED_JWT_TOKEN(HttpStatus.UNAUTHORIZED, "ERR104", "만료된 JWT 토큰입니다."),
 
