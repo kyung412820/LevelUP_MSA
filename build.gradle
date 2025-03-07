@@ -30,7 +30,7 @@ subprojects {
         mavenCentral()
     }
 
-    if (!(it.name in ['module-eureka', 'module-kafka'])) {
+    if (!(it.name in ['module-eureka', 'module-kafka', 'module-apigateway'])) {
         dependencies {
             implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
             implementation 'org.springframework.boot:spring-boot-starter-web'
