@@ -1,0 +1,26 @@
+package com.sparta.config;
+
+import static java.nio.charset.StandardCharsets.*;
+import static org.springframework.http.MediaType.*;
+
+import java.util.List;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import com.sparta.levelup_backend.config.FormToJsonHttpMessageConverter;
+
+@Configuration
+public class HttpMessageConverterConfigurer implements WebMvcConfigurer {
+
+	@Override
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+		FormToJsonHttpMessageConverter<?> converter = new FormToJsonHttpMessageConverter<>();
+		MediaType media = new MediaType(APPLICATION_FORM_URLENCODED, UTF_8);
+		converter.setSupportedMediaTypes(List.of(media));
+		converters.add(converter);
+	}
+
+}
