@@ -1,9 +1,10 @@
 package com.sparta.exception.common;
 
+import com.sparta.levelup_backend.exception.common.BusinessException;
 import com.sparta.levelup_backend.exception.common.ErrorCode;
 
 public class NotFoundException extends BusinessException {
-    public NotFoundException(ErrorCode errorCode) {
+    public NotFoundException(com.sparta.levelup_backend.exception.common.ErrorCode errorCode) {
         super(errorCode);
     }
 

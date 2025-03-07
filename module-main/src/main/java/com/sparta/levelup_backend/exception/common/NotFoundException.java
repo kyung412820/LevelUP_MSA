@@ -8,4 +8,5 @@ public class NotFoundException extends BusinessException {
     public NotFoundException(ErrorCode errorCode, String detail) {
         super(errorCode, detail);
     }
+
 }

@@ -1,7 +1,7 @@
 package com.sparta.domain.community.repositoryES;
 
 import com.sparta.domain.community.document.CommunityDocument;
-import com.sparta.exception.common.NotFoundException;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;

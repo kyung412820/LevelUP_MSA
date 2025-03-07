@@ -13,10 +13,7 @@ import com.sparta.domain.game.entity.GameEntity;
 import com.sparta.domain.game.repository.GameRepository;
 import com.sparta.domain.user.entity.UserEntity;
 import com.sparta.domain.user.repository.UserRepository;
-import com.sparta.exception.common.DuplicateException;
-import com.sparta.exception.common.ForbiddenException;
-import com.sparta.exception.common.NotFoundException;
-import com.sparta.exception.common.PageOutOfBoundsException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

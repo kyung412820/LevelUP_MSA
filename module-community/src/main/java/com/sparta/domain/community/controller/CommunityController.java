@@ -1,7 +1,6 @@
 package com.sparta.domain.community.controller;
 
 import com.sparta.common.ApiResponse;
-import com.sparta.config.CustomUserDetails;
 import com.sparta.domain.community.dto.request.CommnunityCreateRequestDto;
 import com.sparta.domain.community.dto.request.CommunityUpdateRequestDto;
 import com.sparta.domain.community.dto.response.CommunityListResponseDto;

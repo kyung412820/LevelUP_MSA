@@ -19,9 +19,7 @@ import co.elastic.clients.transport.rest_client.RestClientTransport;
 
 @Configuration
 @EnableElasticsearchRepositories(basePackages = { // 레파지토리 생성지(패키지) 넣을 것
-	"com.sparta.levelup_backend.domain.community.repositoryES",
-	"com.sparta.levelup_backend.domain.product.repositoryES",
-	"com.sparta.levelup_backend.domain.review.repositoryES"
+	"com.sparta.domain.community.repositoryES",
 })
 public class ElasticsearchConfig {
 

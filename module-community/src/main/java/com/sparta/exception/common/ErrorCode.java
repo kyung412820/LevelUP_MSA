@@ -2,6 +2,8 @@ package com.sparta.exception.common;
 
 import org.springframework.http.HttpStatus;
 
+import com.sparta.exception.common.NotFoundException;
+
 import lombok.Getter;
 
 @Getter
