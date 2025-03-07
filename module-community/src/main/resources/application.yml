@@ -46,6 +46,8 @@ spring:
         spring.json.trusted.packages: "*"
 
 
+
+
 feign:
   client:
     config:
@@ -54,3 +56,6 @@ feign:
         readTimeout: 5000
     entity-service:
       url: http://localhost:8080
+
+server:
+  port: 8082
