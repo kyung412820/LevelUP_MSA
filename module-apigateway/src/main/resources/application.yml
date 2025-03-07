@@ -21,6 +21,12 @@ spring:
           filters:
             - name: JwtFilter
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.JsonSerializer
+
 
 eureka:
   client:
