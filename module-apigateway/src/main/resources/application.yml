@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: module-apiCloudGateway
+  cloud:
+    gateway:
+      routes:
+        - id: security
+          uri: lb://security
+          predicates:
+            - Path=/v2/sign**
+        - id: adminuser
+          uri: lb://user
+          predicates:
+            - Path=/v2/admin/users/**
+          filters:
+            - name: JwtFilter
+        - id: user
+          uri: lb://user
+          predicates:
+            - Path=/v2/users/**
+          filters:
+            - name: JwtFilter
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+server:
+  port: 9000
+
+jwt:
+  secret:
+    key: NDkxOWJkYzRmNTU3N2RjMGMyZDFlZmM5NDMxODk3ZTUxYjdkZDNkOGZmNzU2YTJiMmQ0ZmNlNzVmYzE1MTRhZA==
