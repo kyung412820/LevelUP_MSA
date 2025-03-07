@@ -1,5 +1,8 @@
 package com.sparta.exception;
 
+import com.sparta.common.ErrorResponse;
+import com.sparta.exception.common.BusinessException;
+import com.sparta.exception.common.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -8,9 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.sparta.levelup_backend.common.ErrorResponse;
-import com.sparta.levelup_backend.exception.common.BusinessException;
-import com.sparta.levelup_backend.exception.common.ErrorCode;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

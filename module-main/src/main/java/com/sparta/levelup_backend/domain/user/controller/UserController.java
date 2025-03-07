@@ -3,8 +3,11 @@ package com.sparta.levelup_backend.domain.user.controller;
 import static com.sparta.levelup_backend.common.ApiResMessage.*;
 import static com.sparta.levelup_backend.common.ApiResponse.*;
 
+import com.sparta.levelup_backend.domain.user.dto.request.UserAuthenticationRequestDto;
+import com.sparta.levelup_backend.domain.user.dto.response.UserResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,14 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.levelup_backend.common.ApiResponse;
-import com.sparta.levelup_backend.config.CustomUserDetails;
 import com.sparta.levelup_backend.domain.user.dto.request.ChangePasswordDto;
 import com.sparta.levelup_backend.domain.user.dto.request.DeleteUserRequestDto;
 import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordConfirmDto;
 import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserImgUrlReqeustDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserRequestDto;
-import com.sparta.levelup_backend.domain.user.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.domain.user.dto.response.UserUpdateResponseDto;
 import com.sparta.levelup_backend.domain.user.service.UserService;
 
 import jakarta.validation.Valid;
@@ -35,63 +37,85 @@ public class UserController {
 
 	private final UserService userService;
 
-	@GetMapping("/admin/users/{userId}")
-	public ApiResponse<UserResponseDto> findUserById(
-			@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long userId) {
-		String role = customUserDetails.
-				getAuthorities().
-				iterator().next().
-				getAuthority();
-		UserResponseDto responseDto = userService.findUserById(role, userId);
+    @GetMapping("/users/findUserById/{userId}")
+    UserUpdateResponseDto findUserById(@PathVariable("userId") Long userId) {
+        return null;
+    }
+
+    @GetMapping("/users/findAllUsers")
+    List<UserResponseDto> findAllUsers(@RequestBody List<Long> userIds) {
+        return null;
+    }
+
+
+    @GetMapping("/admin/users/{userId}")
+	public ApiResponse<UserUpdateResponseDto> findUserById(
+		HttpServletRequest request, @PathVariable Long userId) {
+
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+		UserUpdateResponseDto responseDto = userService.findUserById(authRequest.getRole(), userId);
 
 		return success(HttpStatus.OK, FIND_SUCCESS, responseDto);
 	}
 
 	@GetMapping("/users")
-	public ApiResponse<UserResponseDto> findUser(
-			@AuthenticationPrincipal CustomUserDetails customUserDetails
+	public ApiResponse<UserUpdateResponseDto> findUser(
+		HttpServletRequest request
 	) {
-		UserResponseDto responseDto = userService.findUser(customUserDetails.getId());
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		UserUpdateResponseDto responseDto = userService.findUser(authRequest.getId());
 
 		return success(HttpStatus.OK, FIND_SUCCESS, responseDto);
 	}
 
 	@PatchMapping("/users")
-	public ApiResponse<UserResponseDto> updateUser(
-			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@Valid @RequestBody UpdateUserRequestDto dto
+	public ApiResponse<UserUpdateResponseDto> updateUser(
+		HttpServletRequest request,
+		@Valid @RequestBody UpdateUserRequestDto dto
 	) {
 
-		UserResponseDto responseDto = userService.updateUser(customUserDetails.getId(), dto);
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		UserUpdateResponseDto responseDto = userService.updateUser(authRequest.getId(), dto);
 
 		return success(HttpStatus.OK, UPDATE_SUCCESS, responseDto);
 	}
 
 	@PatchMapping("/users/changingPassword")
 	public ApiResponse<Void> changePassword(
-			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@Valid @RequestBody ChangePasswordDto dto) {
-		userService.changePassword(customUserDetails.getId(), dto);
+		HttpServletRequest request,
+		@Valid @RequestBody ChangePasswordDto dto) {
+
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		userService.changePassword(authRequest.getId(), dto);
 
 		return success(HttpStatus.OK, PASSWORD_CHANGE_SUCCESS);
 	}
 
 	@PatchMapping("/users/profileImage")
-	public ApiResponse<UserResponseDto> updateImgUrl(
-			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@Valid @RequestBody UpdateUserImgUrlReqeustDto dto
+	public ApiResponse<UserUpdateResponseDto> updateImgUrl(
+		HttpServletRequest request,
+		@Valid @RequestBody UpdateUserImgUrlReqeustDto dto
 	) {
-		UserResponseDto responseDto = userService.updateImgUrl(customUserDetails.getId(), dto);
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		UserUpdateResponseDto responseDto = userService.updateImgUrl(authRequest.getId(), dto);
 
 		return success(HttpStatus.OK, UPDATE_SUCCESS, responseDto);
 	}
 
 	@DeleteMapping("/users")
 	public ApiResponse<Void> deleteUser(
-			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@Valid @RequestBody DeleteUserRequestDto dto
+		HttpServletRequest request,
+		@Valid @RequestBody DeleteUserRequestDto dto
 	) {
-		userService.deleteUser(customUserDetails.getId(), dto);
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		userService.deleteUser(authRequest.getId(), dto);
 
 		return success(HttpStatus.OK, DELETE_SUCCESS);
 	}

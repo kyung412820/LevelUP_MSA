@@ -2,6 +2,7 @@ package com.sparta.domain.community.repository;
 
 import com.sparta.domain.community.entity.CommunityEntity;
 
+import com.sparta.exception.common.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

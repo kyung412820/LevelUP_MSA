@@ -1,7 +1,8 @@
 package com.sparta.common;
 
-import com.sparta.levelup_backend.exception.common.ErrorCode;
+;
 
+import com.sparta.exception.common.ErrorCode;
 import lombok.Getter;
 
 @Getter

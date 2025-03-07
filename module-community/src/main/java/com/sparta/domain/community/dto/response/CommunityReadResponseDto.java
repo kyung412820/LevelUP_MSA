@@ -2,8 +2,6 @@ package com.sparta.domain.community.dto.response;
 
 import com.sparta.domain.community.document.CommunityDocument;
 import com.sparta.domain.community.entity.CommunityEntity;
-import com.sparta.domain.game.entity.GameEntity;
-import com.sparta.domain.user.entity.UserEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +18,7 @@ public class CommunityReadResponseDto {
 			communityDocument.getGameName());
 	}
 
-	public static CommunityReadResponseDto of(CommunityEntity community, UserEntity user, GameEntity game) {
+	public static CommunityReadResponseDto of(CommunityEntity community, UserResponseDto user, GameResponseDto game) {
 		return new CommunityReadResponseDto(String.valueOf(community.getId()), community.getTitle(), user.getEmail(), game.getName());
 	}
 }

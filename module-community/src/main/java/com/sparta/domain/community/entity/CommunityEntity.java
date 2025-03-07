@@ -1,9 +1,12 @@
 package com.sparta.domain.community.entity;
 
 import com.sparta.common.entity.BaseEntity;
-import com.sparta.domain.game.entity.GameEntity;
-import com.sparta.domain.user.entity.UserEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,13 +28,9 @@ public class CommunityEntity extends BaseEntity {
 	@Column(nullable = false)
 	private Integer recommendation;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private UserEntity user;
+	private Long userId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "game_id")
-	private GameEntity game;
+	private Long gameId;
 
 	public void updateTitle(String title) {
 		this.title = title;
@@ -45,11 +44,11 @@ public class CommunityEntity extends BaseEntity {
 		this.delete();
 	}
 
-	public CommunityEntity(String title, String content, UserEntity user, GameEntity game) {
+	public CommunityEntity(String title, String content, Long userId, Long gameId) {
 		this.title = title;
 		this.content = content;
-		this.user = user;
-		this.game = game;
+		this.userId = userId;
+		this.gameId = gameId;
 		recommendation = 0;
 	}
 
