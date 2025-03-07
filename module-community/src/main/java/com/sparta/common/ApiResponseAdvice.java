@@ -7,7 +7,7 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import com.sparta.levelup_backend.common.ApiResponse;
+;
 
 @ControllerAdvice
 public class ApiResponseAdvice implements ResponseBodyAdvice<Object> {

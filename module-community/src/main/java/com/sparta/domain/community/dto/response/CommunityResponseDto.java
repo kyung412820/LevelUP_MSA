@@ -2,8 +2,6 @@ package com.sparta.domain.community.dto.response;
 
 import com.sparta.domain.community.document.CommunityDocument;
 import com.sparta.domain.community.entity.CommunityEntity;
-import com.sparta.domain.game.entity.GameEntity;
-import com.sparta.domain.user.entity.UserEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -16,10 +14,10 @@ public class CommunityResponseDto {
 	private final String author; //글을 생성한 사용자의 email
 	private final String game; // 글이 포함된 game의 name;
 
-	public static CommunityResponseDto from(CommunityEntity community) {
+	public static CommunityResponseDto from(CommunityEntity community, UserResponseDto user, GameResponseDto game) {
 		return new CommunityResponseDto(community.getId(), community.getTitle(), community.getContent(),
-			community.getUser().getEmail(),
-			community.getGame().getName());
+			user.getEmail(),
+			game.getName());
 	}
 
 	public static CommunityResponseDto from(CommunityDocument communityDocument) {
@@ -28,7 +26,7 @@ public class CommunityResponseDto {
 			communityDocument.getUserEmail(), communityDocument.getGameName());
 	}
 
-	public static CommunityResponseDto of(CommunityEntity community, UserEntity user, GameEntity game) {
+	public static CommunityResponseDto of(CommunityEntity community, UserResponseDto user, GameResponseDto game) {
 		return new CommunityResponseDto(community.getId(), community.getTitle(), community.getContent(),
 			user.getEmail(), game.getName());
 	}

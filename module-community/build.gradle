@@ -25,6 +25,9 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-data-redis"
     implementation 'org.redisson:redisson-spring-boot-starter:3.23.1'
 
+    //Feign Client
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
 }
 
 test {

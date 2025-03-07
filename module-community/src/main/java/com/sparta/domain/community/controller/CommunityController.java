@@ -6,6 +6,8 @@ import com.sparta.domain.community.dto.request.CommunityUpdateRequestDto;
 import com.sparta.domain.community.dto.response.CommunityListResponseDto;
 import com.sparta.domain.community.dto.response.CommunityResponseDto;
 import com.sparta.domain.community.service.CommunityService;
+import com.sparta.dto.requestDto.UserAuthenticationRequestDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,10 +25,15 @@ public class CommunityController {
 
 	// community 생성
 	@PostMapping
-	public ApiResponse<CommunityResponseDto> SaveCommunity(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+	public ApiResponse<CommunityResponseDto> SaveCommunity(HttpServletRequest request,
 		@Valid @RequestBody CommnunityCreateRequestDto dto) {
 
-		Long userId = customUserDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+
+
+		Long userId = authRequest.getId();
 		CommunityResponseDto responseDto = communityService.saveCommunity(userId, dto);
 		return success(OK, COMMUNITY_SAVE_SUCCESS, responseDto);
 	}
@@ -49,10 +56,13 @@ public class CommunityController {
 	// community 수정
 	@PatchMapping
 	public ApiResponse<CommunityResponseDto> updateCommunity(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		HttpServletRequest request,
 		@Valid @RequestBody CommunityUpdateRequestDto dto) {
 
-		Long userId = customUserDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+		Long userId = authRequest.getId();
 
 		CommunityResponseDto requestDto = communityService.update(userId, dto);
 		return success(OK, COMMUNITY_UPDATE_SUCCESS, requestDto);
@@ -60,10 +70,13 @@ public class CommunityController {
 
 	// community 삭제
 	@DeleteMapping
-	public ApiResponse<Void> deleteCommunity(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+	public ApiResponse<Void> deleteCommunity(HttpServletRequest request,
 		@RequestParam Long communityId) {
 
-		Long userId = customUserDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+		Long userId = authRequest.getId();
 
 		communityService.delete(userId, communityId);
 		return success(OK, COMMUNITY_DELETE_SUCCESS);
@@ -72,10 +85,12 @@ public class CommunityController {
 	// community 생성(elasticSearch 사용)
 	@PostMapping("/es")
 	public ApiResponse<CommunityResponseDto> saveCommunityES(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		HttpServletRequest request,
 		@RequestBody CommnunityCreateRequestDto dto) {
 
-		Long userId = customUserDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		Long userId = authRequest.getId();
 
 		CommunityResponseDto responseDto = communityService.saveCommunityES(userId, dto);
 		return success(OK, COMMUNITY_SAVE_SUCCESS, responseDto);
@@ -100,10 +115,12 @@ public class CommunityController {
 	// community 수정(elasticSearch 사용)
 	@PatchMapping("/es")
 	public ApiResponse<CommunityResponseDto> updateCommunityES(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		HttpServletRequest request,
 		@Valid @RequestBody CommunityUpdateRequestDto dto) {
 
-		Long userId = customUserDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		Long userId = authRequest.getId();
 
 		CommunityResponseDto responseDto = communityService.updateCommunityES(userId, dto);
 		return success(OK, COMMUNITY_UPDATE_SUCCESS, responseDto);
@@ -111,10 +128,12 @@ public class CommunityController {
 
 	// community 삭제(elasticSearch 사용)
 	@DeleteMapping("/es")
-	public ApiResponse<Void> deleteCommunityES(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+	public ApiResponse<Void> deleteCommunityES(HttpServletRequest request,
 		@RequestParam Long communityId) {
 
-		Long userId = customUserDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		Long userId = authRequest.getId();
 
 		communityService.deleteCommunityES(userId, communityId);
 		return success(OK, COMMUNITY_DELETE_SUCCESS);
@@ -122,15 +141,18 @@ public class CommunityController {
 
 	/**
 	 * community 생성(redis활용)
-	 * @param customUserDetails 사용자 Id
+	 * @param request 사용자 Id
 	 * @param dto title, content, gameId
 	 * @return ApiResponse<CommunityResponseDto>
 	 */
 	@PostMapping("/redis")
 	public ApiResponse<CommunityResponseDto> saveCommunityRedis(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		HttpServletRequest request,
 		@Valid @RequestBody CommnunityCreateRequestDto dto) {
-		Long userId = customUserDetails.getId();
+
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		Long userId = authRequest.getId();
 
 		CommunityResponseDto responseDto = communityService.saveCommunityRedis(userId, dto);
 		return success(OK, COMMUNITY_SAVE_SUCCESS, responseDto);
@@ -155,16 +177,18 @@ public class CommunityController {
 
 	/**
 	 * community 수정(redis 활용)
-	 * @param customUserDetails 사용자 Id
+	 * @param request 사용자 Id
 	 * @param dto communityId, title, content
 	 * @return ApiResponse<CommunityResponseDto>
 	 */
 	@PatchMapping("/redis")
 	public ApiResponse<CommunityResponseDto> updateCommunityRedis(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		HttpServletRequest request,
 		@Valid @RequestBody CommunityUpdateRequestDto dto) {
 
-		Long userId = customUserDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		Long userId = authRequest.getId();
 
 		CommunityResponseDto requestDto = communityService.updateCommunityRedis(userId, dto);
 		return success(OK, COMMUNITY_UPDATE_SUCCESS, requestDto);
@@ -172,15 +196,17 @@ public class CommunityController {
 
 	/**
 	 * community 삭제(redis 활용)
-	 * @param customUserDetails 사용자 Id
+	 * @param request 사용자 Id
 	 * @param communityId community Id
 	 * @return ApiResponse<Void>
 	 */
 	@DeleteMapping("/redis")
-	public ApiResponse<Void> deleteCommunityRedis(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+	public ApiResponse<Void> deleteCommunityRedis(HttpServletRequest request,
 		@RequestParam Long communityId) {
 
-		Long userId = customUserDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+		Long userId = authRequest.getId();
 
 		communityService.deleteCommunityRedis(userId, communityId);
 		return success(OK, COMMUNITY_DELETE_SUCCESS);
