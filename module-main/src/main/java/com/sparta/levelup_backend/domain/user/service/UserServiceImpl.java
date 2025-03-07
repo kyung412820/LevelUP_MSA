@@ -26,7 +26,7 @@ import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordConfirmDt
 import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserImgUrlReqeustDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserRequestDto;
-import com.sparta.levelup_backend.domain.user.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.domain.user.dto.response.UserUpdateResponseDto;
 import com.sparta.levelup_backend.domain.user.entity.UserEntity;
 import com.sparta.levelup_backend.domain.user.repository.UserRepository;
 import com.sparta.levelup_backend.exception.common.CurrentPasswordNotMatchedException;
@@ -49,26 +49,26 @@ public class UserServiceImpl implements UserService {
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	@Override
-	public UserResponseDto findUserById(String role, Long id) {
+	public UserUpdateResponseDto findUserById(String role, Long id) {
 
 		if (role.equals("ROLE_ADMIN")) {
 			UserEntity user = userRepository.findByIdOrElseThrow(id);
 
-			return UserResponseDto.from(user);
+			return UserUpdateResponseDto.from(user);
 		}
 		throw new ForbiddenException(FORBIDDEN_ACCESS);
 	}
 
 	@Override
-	public UserResponseDto findUser(Long id) {
+	public UserUpdateResponseDto findUser(Long id) {
 		UserEntity user = userRepository.findByIdOrElseThrow(id);
 
-		return UserResponseDto.from(user);
+		return UserUpdateResponseDto.from(user);
 	}
 
 	@Override
 	@Transactional
-	public UserResponseDto updateUser(Long id, UpdateUserRequestDto dto) {
+	public UserUpdateResponseDto updateUser(Long id, UpdateUserRequestDto dto) {
 
 		UserEntity user = userRepository.findByIdOrElseThrow(id);
 
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
 		AlertMessageLogEntity savedLog = alertMessageLogRepository.save(log);
 		alertEvent.publisher(user.getId(), savedLog.getId(), alertMessageEntity);
 
-		return UserResponseDto.from(user);
+		return UserUpdateResponseDto.from(user);
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public UserResponseDto updateImgUrl(Long id, UpdateUserImgUrlReqeustDto dto) {
+	public UserUpdateResponseDto updateImgUrl(Long id, UpdateUserImgUrlReqeustDto dto) {
 
 		UserEntity user = userRepository.findByIdOrElseThrow(id);
 		user.updateImgUrl(dto.getImgUrl());
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
 		AlertMessageLogEntity savedLog = alertMessageLogRepository.save(log);
 		alertEvent.publisher(user.getId(), savedLog.getId(), alertMessageEntity);
 
-		return UserResponseDto.from(user);
+		return UserUpdateResponseDto.from(user);
 
 	}
 

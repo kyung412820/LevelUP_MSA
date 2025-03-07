@@ -6,19 +6,19 @@ import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordConfirmDt
 import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserImgUrlReqeustDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserRequestDto;
-import com.sparta.levelup_backend.domain.user.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.domain.user.dto.response.UserUpdateResponseDto;
 
 public interface UserService {
 
-	UserResponseDto findUserById(String role, Long id);
+	UserUpdateResponseDto findUserById(String role, Long id);
 
-	UserResponseDto findUser(Long id);
+	UserUpdateResponseDto findUser(Long id);
 
-	UserResponseDto updateUser(Long id, UpdateUserRequestDto dto);
+	UserUpdateResponseDto updateUser(Long id, UpdateUserRequestDto dto);
 
 	void changePassword(Long id, ChangePasswordDto dto);
 
-	UserResponseDto updateImgUrl(Long id, UpdateUserImgUrlReqeustDto dto);
+	UserUpdateResponseDto updateImgUrl(Long id, UpdateUserImgUrlReqeustDto dto);
 
 	void deleteUser(Long id, DeleteUserRequestDto dto);
 
