@@ -56,7 +56,7 @@ public class CommunityDocument {
 		this.isDeleted = isDeleted;
 	}
 
-	public static CommunityDocument from(CommunityEntity community, UserResponseDto user, GameResponseDto game) {
+	public static CommunityDocument of(CommunityEntity community, UserResponseDto user, GameResponseDto game) {
 		return new CommunityDocument().builder()
 			.communityId(community.getId())
 			.title(community.getTitle())

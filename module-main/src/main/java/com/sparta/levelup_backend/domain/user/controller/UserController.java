@@ -4,7 +4,7 @@ import static com.sparta.levelup_backend.common.ApiResMessage.*;
 import static com.sparta.levelup_backend.common.ApiResponse.*;
 
 import com.sparta.levelup_backend.domain.user.dto.request.UserAuthenticationRequestDto;
-import com.sparta.levelup_backend.domain.user.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.domain.user.dto.response.UserEntityResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordConfirmDt
 import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserImgUrlReqeustDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserRequestDto;
-import com.sparta.levelup_backend.domain.user.dto.response.UserUpdateResponseDto;
+import com.sparta.levelup_backend.domain.user.dto.response.UserResponseDto;
 import com.sparta.levelup_backend.domain.user.service.UserService;
 
 import jakarta.validation.Valid;
@@ -38,48 +38,48 @@ public class UserController {
 	private final UserService userService;
 
     @GetMapping("/users/findUserById/{userId}")
-    UserUpdateResponseDto findUserById(@PathVariable("userId") Long userId) {
-        return null;
+	UserEntityResponseDto findUserById(@PathVariable("userId") Long userId) {
+        return userService.findCommunityUserById(userId);
     }
 
-    @GetMapping("/users/findAllUsers")
-    List<UserResponseDto> findAllUsers(@RequestBody List<Long> userIds) {
-        return null;
+    @PostMapping("/users/findAllUsers")
+    List<UserEntityResponseDto> findAllUsers(@RequestBody List<Long> userIds) {
+        return userService.findAllCommunityUsers(userIds);
     }
 
 
     @GetMapping("/admin/users/{userId}")
-	public ApiResponse<UserUpdateResponseDto> findUserById(
+	public ApiResponse<UserResponseDto> findUserById(
 		HttpServletRequest request, @PathVariable Long userId) {
 
 		String encodedAuth = request.getHeader("UserAuthentication");
 		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
 
-		UserUpdateResponseDto responseDto = userService.findUserById(authRequest.getRole(), userId);
+		UserResponseDto responseDto = userService.findUserById(authRequest.getRole(), userId);
 
 		return success(HttpStatus.OK, FIND_SUCCESS, responseDto);
 	}
 
 	@GetMapping("/users")
-	public ApiResponse<UserUpdateResponseDto> findUser(
+	public ApiResponse<UserResponseDto> findUser(
 		HttpServletRequest request
 	) {
 		String encodedAuth = request.getHeader("UserAuthentication");
 		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
-		UserUpdateResponseDto responseDto = userService.findUser(authRequest.getId());
+		UserResponseDto responseDto = userService.findUser(authRequest.getId());
 
 		return success(HttpStatus.OK, FIND_SUCCESS, responseDto);
 	}
 
 	@PatchMapping("/users")
-	public ApiResponse<UserUpdateResponseDto> updateUser(
+	public ApiResponse<UserResponseDto> updateUser(
 		HttpServletRequest request,
 		@Valid @RequestBody UpdateUserRequestDto dto
 	) {
 
 		String encodedAuth = request.getHeader("UserAuthentication");
 		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
-		UserUpdateResponseDto responseDto = userService.updateUser(authRequest.getId(), dto);
+		UserResponseDto responseDto = userService.updateUser(authRequest.getId(), dto);
 
 		return success(HttpStatus.OK, UPDATE_SUCCESS, responseDto);
 	}
@@ -97,13 +97,13 @@ public class UserController {
 	}
 
 	@PatchMapping("/users/profileImage")
-	public ApiResponse<UserUpdateResponseDto> updateImgUrl(
+	public ApiResponse<UserResponseDto> updateImgUrl(
 		HttpServletRequest request,
 		@Valid @RequestBody UpdateUserImgUrlReqeustDto dto
 	) {
 		String encodedAuth = request.getHeader("UserAuthentication");
 		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
-		UserUpdateResponseDto responseDto = userService.updateImgUrl(authRequest.getId(), dto);
+		UserResponseDto responseDto = userService.updateImgUrl(authRequest.getId(), dto);
 
 		return success(HttpStatus.OK, UPDATE_SUCCESS, responseDto);
 	}

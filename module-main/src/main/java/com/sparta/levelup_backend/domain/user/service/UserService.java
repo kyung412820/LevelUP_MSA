@@ -6,23 +6,29 @@ import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordConfirmDt
 import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserImgUrlReqeustDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserRequestDto;
-import com.sparta.levelup_backend.domain.user.dto.response.UserUpdateResponseDto;
+import com.sparta.levelup_backend.domain.user.dto.response.UserEntityResponseDto;
+import com.sparta.levelup_backend.domain.user.dto.response.UserResponseDto;
+import java.util.List;
 
 public interface UserService {
 
-	UserUpdateResponseDto findUserById(String role, Long id);
+	UserResponseDto findUserById(String role, Long id);
 
-	UserUpdateResponseDto findUser(Long id);
+	UserResponseDto findUser(Long id);
 
-	UserUpdateResponseDto updateUser(Long id, UpdateUserRequestDto dto);
+	UserResponseDto updateUser(Long id, UpdateUserRequestDto dto);
 
 	void changePassword(Long id, ChangePasswordDto dto);
 
-	UserUpdateResponseDto updateImgUrl(Long id, UpdateUserImgUrlReqeustDto dto);
+	UserResponseDto updateImgUrl(Long id, UpdateUserImgUrlReqeustDto dto);
 
 	void deleteUser(Long id, DeleteUserRequestDto dto);
 
 	void resetPassword(ResetPasswordDto dto);
 
 	void resetPasswordConfirm(ResetPasswordConfirmDto dto);
+
+	UserEntityResponseDto findCommunityUserById(Long userId);
+
+	List<UserEntityResponseDto> findAllCommunityUsers(List<Long> userIds);
 }

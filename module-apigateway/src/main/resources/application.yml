@@ -5,19 +5,21 @@ spring:
     gateway:
       routes:
         - id: security
-          uri: lb://security
+          uri: lb://module-main
           predicates:
             - Path=/v2/sign**
-        - id: adminuser
-          uri: lb://user
-          predicates:
-            - Path=/v2/admin/users/**
-          filters:
-            - name: JwtFilter
         - id: user
-          uri: lb://user
+          uri: lb://module-main
           predicates:
-            - Path=/v2/users/**
+            - Path=/v2/user**
+        - id: game
+          uri: lb://module-main
+          predicates:
+            - Path=/v1/game**
+        - id: community
+          uri: lb://module-community
+          predicates:
+            - Path=/v2/community
           filters:
             - name: JwtFilter
 
@@ -33,7 +35,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://host.docker.internal:8761/eureka/
 
 server:
   port: 9000

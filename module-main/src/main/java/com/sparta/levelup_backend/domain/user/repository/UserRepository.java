@@ -2,6 +2,8 @@ package com.sparta.levelup_backend.domain.user.repository;
 
 import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
 
+import com.sparta.levelup_backend.domain.user.dto.response.UserEntityResponseDto;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,4 +36,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 	}
 
 	Optional<UserEntity> findByCustomerKey(String userCustomerId);
+
+	 List<UserEntityResponseDto> findAllByIdIn(List<Long> userIds);
 }

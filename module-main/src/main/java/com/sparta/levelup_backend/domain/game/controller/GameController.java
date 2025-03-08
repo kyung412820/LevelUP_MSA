@@ -4,6 +4,8 @@ import static com.sparta.levelup_backend.common.ApiResMessage.*;
 import static com.sparta.levelup_backend.common.ApiResponse.*;
 import static org.springframework.http.HttpStatus.*;
 
+import com.sparta.levelup_backend.domain.game.dto.responseDto.GameEntityResponseDto;
+import java.util.List;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +33,16 @@ import lombok.RequiredArgsConstructor;
 public class GameController {
 
 	private final GameService gameService;
+
+	@GetMapping("/games/findGameById/{gameId}")
+	GameEntityResponseDto findCommunityGameById(@PathVariable("gameId") Long gameId){
+		return gameService.findCommunityGameById(gameId);
+	};
+
+	@PostMapping("/games/findAllGames")
+	List<GameEntityResponseDto> findCommunityAllGames(@RequestBody List<Long> gameIds){
+			return gameService.findCommunityAllGames(gameIds);
+	};
 
 	@PostMapping("/admin/games")
 	public ApiResponse<GameResponseDto> saveGame(@AuthenticationPrincipal CustomUserDetails customUserDetails,

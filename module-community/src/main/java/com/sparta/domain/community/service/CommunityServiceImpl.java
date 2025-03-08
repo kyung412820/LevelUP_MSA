@@ -72,7 +72,7 @@ public class CommunityServiceImpl implements CommunityService {
 		List<Long> userIdList = new ArrayList<>();
 		List<Long> gameIdList = new ArrayList<>();
 		for(CommunityEntity communityEntity :communityEntityList){
-			userIdList.add(communityEntity.getId());
+			userIdList.add(communityEntity.getUserId());
 			gameIdList.add(communityEntity.getGameId());
 		}
 
@@ -133,7 +133,7 @@ public class CommunityServiceImpl implements CommunityService {
 		GameResponseDto game = entityServiceClient.findGameById(dto.getGameId());
 		CommunityEntity community = communityRepository.save(
 			new CommunityEntity(dto.getTitle(), dto.getContent(), user.getId(), game.getId()));
-		CommunityDocument communityDocument = communityESRepository.save(CommunityDocument.from(community, user, game));
+		CommunityDocument communityDocument = communityESRepository.save(CommunityDocument.of(community, user, game));
 
 		return CommunityResponseDto.from(communityDocument);
 	}

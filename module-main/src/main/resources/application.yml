@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: module-main
   mail:
     host: smtp.gmail.com
     port: 587
@@ -83,3 +85,10 @@ toss:
 jwt:
   secret:
     key: ${JWT_SECRET}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://host.docker.internal:8761/eureka/

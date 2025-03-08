@@ -4,7 +4,9 @@ import static com.sparta.levelup_backend.domain.alert.dto.request.AlertMessageDt
 import static com.sparta.levelup_backend.domain.user.dto.UserMessage.*;
 import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
 
+import com.sparta.levelup_backend.domain.user.dto.response.UserEntityResponseDto;
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,7 +28,7 @@ import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordConfirmDt
 import com.sparta.levelup_backend.domain.user.dto.request.ResetPasswordDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserImgUrlReqeustDto;
 import com.sparta.levelup_backend.domain.user.dto.request.UpdateUserRequestDto;
-import com.sparta.levelup_backend.domain.user.dto.response.UserUpdateResponseDto;
+import com.sparta.levelup_backend.domain.user.dto.response.UserResponseDto;
 import com.sparta.levelup_backend.domain.user.entity.UserEntity;
 import com.sparta.levelup_backend.domain.user.repository.UserRepository;
 import com.sparta.levelup_backend.exception.common.CurrentPasswordNotMatchedException;
@@ -49,26 +51,26 @@ public class UserServiceImpl implements UserService {
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	@Override
-	public UserUpdateResponseDto findUserById(String role, Long id) {
+	public UserResponseDto findUserById(String role, Long id) {
 
 		if (role.equals("ROLE_ADMIN")) {
 			UserEntity user = userRepository.findByIdOrElseThrow(id);
 
-			return UserUpdateResponseDto.from(user);
+			return UserResponseDto.from(user);
 		}
 		throw new ForbiddenException(FORBIDDEN_ACCESS);
 	}
 
 	@Override
-	public UserUpdateResponseDto findUser(Long id) {
+	public UserResponseDto findUser(Long id) {
 		UserEntity user = userRepository.findByIdOrElseThrow(id);
 
-		return UserUpdateResponseDto.from(user);
+		return UserResponseDto.from(user);
 	}
 
 	@Override
 	@Transactional
-	public UserUpdateResponseDto updateUser(Long id, UpdateUserRequestDto dto) {
+	public UserResponseDto updateUser(Long id, UpdateUserRequestDto dto) {
 
 		UserEntity user = userRepository.findByIdOrElseThrow(id);
 
@@ -95,7 +97,7 @@ public class UserServiceImpl implements UserService {
 		AlertMessageLogEntity savedLog = alertMessageLogRepository.save(log);
 		alertEvent.publisher(user.getId(), savedLog.getId(), alertMessageEntity);
 
-		return UserUpdateResponseDto.from(user);
+		return UserResponseDto.from(user);
 	}
 
 	@Override
@@ -123,7 +125,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public UserUpdateResponseDto updateImgUrl(Long id, UpdateUserImgUrlReqeustDto dto) {
+	public UserResponseDto updateImgUrl(Long id, UpdateUserImgUrlReqeustDto dto) {
 
 		UserEntity user = userRepository.findByIdOrElseThrow(id);
 		user.updateImgUrl(dto.getImgUrl());
@@ -136,7 +138,7 @@ public class UserServiceImpl implements UserService {
 		AlertMessageLogEntity savedLog = alertMessageLogRepository.save(log);
 		alertEvent.publisher(user.getId(), savedLog.getId(), alertMessageEntity);
 
-		return UserUpdateResponseDto.from(user);
+		return UserResponseDto.from(user);
 
 	}
 
@@ -197,5 +199,15 @@ public class UserServiceImpl implements UserService {
 			throw new MismatchException(INVALID_RESETCODE);
 		}
 
+	}
+
+	@Override
+	public UserEntityResponseDto findCommunityUserById(Long userId) {
+		return UserEntityResponseDto.from(userRepository.findByIdOrElseThrow(userId));
+	}
+
+	@Override
+	public List<UserEntityResponseDto> findAllCommunityUsers(List<Long> userIds) {
+		return userRepository.findAllByIdIn(userIds);
 	}
 }

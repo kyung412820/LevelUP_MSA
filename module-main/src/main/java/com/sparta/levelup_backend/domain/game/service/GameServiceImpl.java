@@ -2,6 +2,8 @@ package com.sparta.levelup_backend.domain.game.service;
 
 import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
 
+import com.sparta.levelup_backend.domain.game.dto.responseDto.GameEntityResponseDto;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -102,5 +104,15 @@ public class GameServiceImpl implements GameService {
 		if (game.getIsDeleted()) {
 			throw new DuplicateException(GAME_ISDELETED);
 		}
+	}
+
+	@Override
+	public GameEntityResponseDto findCommunityGameById(Long gameId) {
+		return GameEntityResponseDto.from(gameRepository.findByIdOrElseThrow((gameId)));
+	}
+
+	@Override
+	public List<GameEntityResponseDto> findCommunityAllGames(List<Long> gameIds) {
+		return gameRepository.findAllByIdIn(gameIds);
 	}
 }
