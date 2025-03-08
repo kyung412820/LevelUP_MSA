@@ -32,7 +32,7 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
         List<BillEntity> results = queryFactory
                 .selectFrom(billEntity)
                 .where(
-                        billEntity.tutor.id.eq(tutorId),
+                        billEntity.tutorId.eq(tutorId),
                         billEntity.tutorIsDeleted.eq(false)
                 )
                 .orderBy(getSortedOrder())
@@ -45,7 +45,7 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
                                 .select(billEntity.count())
                                 .from(billEntity)
                                 .where(
-                                        billEntity.tutor.id.eq(tutorId),
+                                        billEntity.tutorId.eq(tutorId),
                                         billEntity.tutorIsDeleted.eq(false)
                                 )
                                 .fetchOne())
@@ -59,7 +59,7 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
         List<BillEntity> results = queryFactory
                 .selectFrom(billEntity)
                 .where(
-                        billEntity.student.id.eq(studentId),
+                        billEntity.studentId.eq(studentId),
                         billEntity.studentIsDeleted.eq(false)
                 )
                 .orderBy(getSortedOrder())
@@ -71,7 +71,7 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
                         .select(billEntity.count())
                         .from(billEntity)
                         .where(
-                                billEntity.student.id.eq(studentId),
+                                billEntity.studentId.eq(studentId),
                                 billEntity.studentIsDeleted.eq(false)
                         );
         return PageableExecutionUtils.getPage(results, pageable, totalCount::fetchOne);

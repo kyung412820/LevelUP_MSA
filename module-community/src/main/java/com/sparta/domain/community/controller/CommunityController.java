@@ -3,10 +3,11 @@ package com.sparta.domain.community.controller;
 import com.sparta.common.ApiResponse;
 import com.sparta.domain.community.dto.request.CommnunityCreateRequestDto;
 import com.sparta.domain.community.dto.request.CommunityUpdateRequestDto;
+import com.sparta.domain.community.dto.request.UserAuthenticationRequestDto;
 import com.sparta.domain.community.dto.response.CommunityListResponseDto;
 import com.sparta.domain.community.dto.response.CommunityResponseDto;
 import com.sparta.domain.community.service.CommunityService;
-import com.sparta.dto.requestDto.UserAuthenticationRequestDto;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +30,6 @@ public class CommunityController {
 
 		String encodedAuth = request.getHeader("UserAuthentication");
 		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
-
-
 
 		Long userId = authRequest.getId();
 		CommunityResponseDto responseDto = communityService.saveCommunity(userId, dto);

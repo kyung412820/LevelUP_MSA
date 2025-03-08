@@ -1,19 +1,25 @@
 package com.sparta.levelup_backend.domain.payment.controller;
 
-import com.sparta.levelup_backend.common.ApiResponse;
-import com.sparta.levelup_backend.config.CustomUserDetails;
-import com.sparta.levelup_backend.domain.payment.dto.request.CancelPaymentRequestDto;
-import com.sparta.levelup_backend.domain.payment.dto.response.CancelResponseDto;
-import com.sparta.levelup_backend.domain.payment.dto.response.PaymentResponseDto;
-import com.sparta.levelup_backend.domain.payment.service.PaymentService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
 import static com.sparta.levelup_backend.common.ApiResMessage.*;
 import static com.sparta.levelup_backend.common.ApiResponse.*;
 import static org.springframework.http.HttpStatus.*;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.sparta.levelup_backend.common.ApiResponse;
+import com.sparta.levelup_backend.domain.payment.dto.request.CancelPaymentRequestDto;
+import com.sparta.levelup_backend.domain.payment.dto.request.UserAuthenticationRequestDto;
+import com.sparta.levelup_backend.domain.payment.dto.response.CancelResponseDto;
+import com.sparta.levelup_backend.domain.payment.dto.response.PaymentResponseDto;
+import com.sparta.levelup_backend.domain.payment.service.PaymentService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -25,19 +31,25 @@ public class PaymentRestController {
 
     @PostMapping("/v3/request/{orderId}")
     public ApiResponse<PaymentResponseDto> createPayment(
-            @AuthenticationPrincipal CustomUserDetails auth,
+            HttpServletRequest request,
             @PathVariable Long orderId
     ) {
-        PaymentResponseDto response = paymentService.createPayment(auth, orderId);
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        PaymentResponseDto response = paymentService.createPayment(authRequest, orderId);
         return success(OK, OK_REQUEST, response);
     }
 
     @PostMapping("v3/request/cancel")
     public ApiResponse<CancelResponseDto> requestCancel(
-            @AuthenticationPrincipal CustomUserDetails auth,
+            HttpServletRequest request,
             @RequestBody CancelPaymentRequestDto dto
     ) {
-        CancelResponseDto response = paymentService.requestCancel(auth, dto);
+
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+        CancelResponseDto response = paymentService.requestCancel(authRequest, dto);
         return success(OK, OK_REQUEST_CANCEL, response);
     }
 }

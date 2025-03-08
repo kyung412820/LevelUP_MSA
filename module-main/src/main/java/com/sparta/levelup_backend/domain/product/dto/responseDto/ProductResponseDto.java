@@ -20,7 +20,7 @@ public class ProductResponseDto {
 
 	public ProductResponseDto(ProductEntity entity) {
 		this.productId = entity.getId();
-		this.userId = entity.getUser().getId();
+		this.userId = entity.getUserId();
 		this.gameId = entity.getGame().getId();
 		this.productName = entity.getProductName();
 		this.contents = entity.getContents();

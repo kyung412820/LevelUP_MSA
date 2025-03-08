@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,38 +19,44 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.levelup_backend.common.ApiResponse;
-import com.sparta.levelup_backend.config.CustomUserDetails;
 import com.sparta.levelup_backend.domain.product.document.ProductDocument;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductCreateRequestDto;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductRequestAllDto;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductUpdateRequestDto;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.UserAuthenticationRequestDto;
 import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductCreateResponseDto;
 import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductDeleteResponseDto;
 import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductResponseDto;
 import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductUpdateResponseDto;
 import com.sparta.levelup_backend.domain.product.service.ProductService;
-import com.sparta.levelup_backend.domain.product.service.ProductmakedataService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/v1/products")
+@RequiredArgsConstructor
 public class ProductController {
 
 	private final ProductService productService;
-	private final ProductmakedataService productmakedataService;
+	// private final ProductmakedataService productmakedataService;
 
-	public ProductController(ProductService productService, ProductmakedataService productmakedataService) {
-		this.productService = productService;
-		this.productmakedataService = productmakedataService;
-	}
+	// public ProductController(ProductService productService, ProductmakedataService productmakedataService) {
+	// 	this.productService = productService;
+	// 	this.productmakedataService = productmakedataService;
+	// }
 
 	@PostMapping
 	public ApiResponse<ProductCreateResponseDto> saveProduct(
 		@Valid @RequestBody ProductCreateRequestDto dto,
-		@AuthenticationPrincipal CustomUserDetails userDetails
+		HttpServletRequest request
 	) {
-		Long userId = userDetails.getId();
+
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+		Long userId = authRequest.getId();
 		ProductCreateResponseDto responseDto = productService.saveProduct(userId, dto);
 		return success(OK, PRODUCT_CREATE, responseDto);
 	}
@@ -67,9 +72,12 @@ public class ProductController {
 	@GetMapping("/{id}")
 	public ApiResponse<ProductResponseDto> findProductById(
 		@PathVariable Long id,
-		@AuthenticationPrincipal CustomUserDetails userDetails
+		HttpServletRequest request
 	) {
-		Long userId = userDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+		Long userId = authRequest.getId();
 		ProductResponseDto responseDto = productService.getProductById(id, userId);
 		return success(OK, PRODUCT_READ, responseDto);
 	}
@@ -79,9 +87,12 @@ public class ProductController {
 	public ApiResponse<ProductUpdateResponseDto> updateProduct(
 		@PathVariable Long id,
 		@Valid @RequestBody ProductUpdateRequestDto requestDto,
-		@AuthenticationPrincipal CustomUserDetails userDetails
+		HttpServletRequest request
 	) {
-		Long userId = userDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+		Long userId = authRequest.getId();
 		ProductUpdateResponseDto responseDto = productService.updateProduct(id, userId, requestDto);
 		return success(OK, PRODUCT_UPDATE, responseDto);
 	}
@@ -90,33 +101,36 @@ public class ProductController {
 	@DeleteMapping("/{id}")
 	public ApiResponse<ProductDeleteResponseDto> deleteProduct(
 		@PathVariable Long id,
-		@AuthenticationPrincipal CustomUserDetails userDetails
+		HttpServletRequest request
 	) {
-		Long userId = userDetails.getId();
+		String encodedAuth = request.getHeader("UserAuthentication");
+		UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+		Long userId = authRequest.getId();
 		ProductDeleteResponseDto responseDto = productService.deleteProduct(id, userId);
 		return success(OK, PRODUCT_DELETE, responseDto);
 	}
 
-	// 유저 데이터 생성 (테스트용)
-	@PostMapping("/users/{count}")
-	public ResponseEntity<String> generateUsers(@PathVariable int count) {
-		productmakedataService.generateUsers(count);
-		return ResponseEntity.ok(count + "명의 유저 데이터가 생성되었습니다.");
-	}
+	// // 유저 데이터 생성 (테스트용)
+	// @PostMapping("/users/{count}")
+	// public ResponseEntity<String> generateUsers(@PathVariable int count) {
+	// 	productmakedataService.generateUsers(count);
+	// 	return ResponseEntity.ok(count + "명의 유저 데이터가 생성되었습니다.");
+	// }
 
-	// 게임 데이터 생성 (테스트용)
-	@PostMapping("/games/{count}")
-	public ResponseEntity<String> generateGames(@PathVariable int count) {
-		productmakedataService.generateGames(count);
-		return ResponseEntity.ok(count + "개의 게임 데이터가 생성되었습니다.");
-	}
-
-	// 상품 데이터 생성 (테스트용)
-	@PostMapping("/products/{count}")
-	public ResponseEntity<String> generateProducts(@PathVariable int count) {
-		productmakedataService.generateProducts(count);
-		return ResponseEntity.ok(count + "개의 상품 데이터가 생성되었습니다.");
-	}
+	// // 게임 데이터 생성 (테스트용)
+	// @PostMapping("/games/{count}")
+	// public ResponseEntity<String> generateGames(@PathVariable int count) {
+	// 	productmakedataService.generateGames(count);
+	// 	return ResponseEntity.ok(count + "개의 게임 데이터가 생성되었습니다.");
+	// }
+	//
+	// // 상품 데이터 생성 (테스트용)
+	// @PostMapping("/products/{count}")
+	// public ResponseEntity<String> generateProducts(@PathVariable int count) {
+	// 	productmakedataService.generateProducts(count);
+	// 	return ResponseEntity.ok(count + "개의 상품 데이터가 생성되었습니다.");
+	// }
 
 	// Elasticsearch를 활용한 전체 상품 검색 (ES)
 	@GetMapping("/es")

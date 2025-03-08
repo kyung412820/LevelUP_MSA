@@ -1,5 +1,13 @@
 package com.sparta.levelup_backend.domain.payment.controller;
 
+import static com.sparta.levelup_backend.exception.common.ErrorCode.BILL_NOT_FOUND;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.CONFLICT_LOCK_ERROR;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.CONFLICT_LOCK_GET;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.CONFLICT_PRICE_EQUALS;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.PAYMENT_FAILED;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.PAYMENT_FAILED_RETRY;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.PAYMENT_NOT_FOUND;
+
 import com.sparta.levelup_backend.domain.bill.entity.BillEntity;
 import com.sparta.levelup_backend.domain.bill.repository.BillRepository;
 import com.sparta.levelup_backend.domain.bill.service.BillEventPubService;
@@ -8,15 +16,22 @@ import com.sparta.levelup_backend.domain.payment.dto.request.CancelPaymentReques
 import com.sparta.levelup_backend.domain.payment.entity.PaymentEntity;
 import com.sparta.levelup_backend.domain.payment.repository.PaymentRepository;
 import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
-import com.sparta.levelup_backend.domain.product.service.ProductService;
 import com.sparta.levelup_backend.domain.product.service.ProductServiceImpl;
-import com.sparta.levelup_backend.exception.common.ErrorCode;
 import com.sparta.levelup_backend.exception.common.LockException;
 import com.sparta.levelup_backend.exception.common.NotFoundException;
 import com.sparta.levelup_backend.exception.common.PaymentException;
-import com.sparta.levelup_backend.utill.BillStatus;
 import com.sparta.levelup_backend.utill.OrderStatus;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -31,16 +46,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.concurrent.TimeUnit;
-
-import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
-import static com.sparta.levelup_backend.utill.OrderStatus.CANCELED;
 
 @Slf4j
 @Controller
@@ -106,7 +111,7 @@ public class PaymentController {
                     payment.setCompletedAt(approvedAt);
                     payment.setPayType(method);
                     payment.getOrder().setStatus(OrderStatus.TRADING);
-                    billService.createBill(payment.getOrder().getUser().getId(), payment.getOrder().getId());
+                    billService.createBill(payment.getOrder().getUserId(), payment.getOrder().getId());
                     redisTemplate.delete("order:expire:" + orderId);
                     log.info("영수증 생성");
                     paymentRepository.save(payment);

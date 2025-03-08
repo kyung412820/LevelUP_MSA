@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "module-main")
 public interface EntityServiceClient {
 
-    @GetMapping("/v2/users/findUserById/{userId}")
+    @GetMapping("/v2/users/intra/findUserById/{userId}")
     UserResponseDto findUserById(@PathVariable("userId") Long userId);
 
-    @GetMapping("/v1/games/findGameById/{gameId}")
+    @GetMapping("/v1/games/intra/findGameById/{gameId}")
     GameResponseDto findGameById(@PathVariable("gameId") Long gameId);
 
-    @PostMapping("/v2/users/findAllUsers")
+    @PostMapping("/v2/users/intra/findAllUsers")
     List<UserResponseDto> findAllUsers(@RequestBody List<Long> userIds);
 
-    @PostMapping("/v1/games/findAllGames")
+    @PostMapping("/v1/games/intra/findAllGames")
     List<GameResponseDto> findAllGames(@RequestBody List<Long> gameIds);
 }

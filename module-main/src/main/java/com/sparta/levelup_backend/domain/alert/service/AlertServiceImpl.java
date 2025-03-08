@@ -20,8 +20,6 @@ import com.sparta.levelup_backend.domain.alert.entity.AlertMessageLogEntity;
 import com.sparta.levelup_backend.domain.alert.repository.AlertMessageLogRepository;
 import com.sparta.levelup_backend.domain.alert.repository.AlertMessageRepository;
 import com.sparta.levelup_backend.domain.alert.repository.AlertRepository;
-import com.sparta.levelup_backend.domain.user.entity.UserEntity;
-import com.sparta.levelup_backend.domain.user.repository.UserRepository;
 import com.sparta.levelup_backend.exception.common.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +30,6 @@ public class AlertServiceImpl implements AlertService {
 
 	private final AlertMessageRepository alertMessageRepository;
 	private final AlertRepository alertRepository;
-	private final UserRepository userRepository;
 	private final AlertMessageLogRepository alertMessageLogRepository;
 
 	@Override
@@ -92,8 +89,6 @@ public class AlertServiceImpl implements AlertService {
 
 	@Override
 	public void readAlert(Long userId, Long alertId) {
-
-		UserEntity user = userRepository.findByIdOrElseThrow(userId);
 		List<AlertMessageEntity> readTargetAlertMessage = alertMessageRepository.findById(userId, alertId);
 		alertMessageRepository.deleteById(userId, readTargetAlertMessage);
 

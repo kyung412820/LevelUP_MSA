@@ -1,9 +1,11 @@
 package com.sparta.levelup_backend.domain.bill.controller;
 
 import com.sparta.levelup_backend.common.ApiResponse;
-import com.sparta.levelup_backend.config.CustomUserDetails;
+import com.sparta.levelup_backend.domain.bill.dto.requestDto.UserAuthenticationRequestDto;
 import com.sparta.levelup_backend.domain.bill.dto.responseDto.BillResponseDto;
 import com.sparta.levelup_backend.domain.bill.service.BillServiceImplV2;
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -29,10 +31,13 @@ public class BillControllerV2 {
     // 결제내역 페이징 조회(tutor 전용)
     @GetMapping("/tutor")
     public ApiResponse<Page<BillResponseDto>> findBillsByTutor(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+            HttpServletRequest request,
             @PageableDefault(size = 10) Pageable pageable
     ) {
-        Long userId = authUser.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+        Long userId = authRequest.getId();
+
         Page<BillResponseDto> billById = billService.findBillsByTutor(userId, pageable);
         return success(OK, BILL_FIND, billById);
     }
@@ -40,10 +45,13 @@ public class BillControllerV2 {
     // 결제내역 페이징 조회(student 전용)
     @GetMapping("/student")
     public ApiResponse<Page<BillResponseDto>> findBillsByStudent(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+            HttpServletRequest request,
             @PageableDefault(size = 10) Pageable pageable
     ) {
-        Long userId = authUser.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         Page<BillResponseDto> billById = billService.findBillsByStudent(userId, pageable);
         return success(OK, BILL_FIND, billById);
     }
@@ -51,10 +59,13 @@ public class BillControllerV2 {
     // 결제내역 단건 조회(tutor 전용)
     @GetMapping("/tutor/{billId}")
     public ApiResponse<BillResponseDto> findBillByTutor(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+           HttpServletRequest request,
             @PathVariable Long billId
     ) {
-        Long userId = authUser.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         BillResponseDto bill = billService.findBillByTutor(userId, billId);
         return success(OK, BILL_FIND, bill);
     }
@@ -62,10 +73,13 @@ public class BillControllerV2 {
     // 결제내역 단건 조회(student 전용)
     @GetMapping("/student/{billId}")
     public ApiResponse<BillResponseDto> findBillByStudent(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+            HttpServletRequest request,
             @PathVariable Long billId
     ) {
-        Long userId = authUser.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         BillResponseDto bill = billService.findBillByStudent(userId, billId);
         return success(OK, BILL_FIND, bill);
     }
@@ -73,10 +87,13 @@ public class BillControllerV2 {
     // 결제내역 삭제(tutor)
     @DeleteMapping("/tutor/{billId}")
     public ApiResponse<Void> deleteBillByTutor(
-            @AuthenticationPrincipal CustomUserDetails auth,
+            HttpServletRequest request,
             @PathVariable Long billId
     ) {
-        Long userId = auth.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         billService.deleteBillByTutor(userId, billId);
         return success(OK, BILL_DELETE);
     }
@@ -84,10 +101,13 @@ public class BillControllerV2 {
     // 결제내역 삭제(student)
     @DeleteMapping("/student/{billId}")
     public ApiResponse<Void> deleteBillByStudent(
-            @AuthenticationPrincipal CustomUserDetails auth,
+            HttpServletRequest request,
             @PathVariable Long billId
     ) {
-        Long userId = auth.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         billService.deleteBillByStudent(userId, billId);
         return success(OK, BILL_DELETE);
     }

@@ -5,21 +5,33 @@ spring:
     gateway:
       routes:
         - id: security
-          uri: lb://module-main
+          uri: lb://module-security
           predicates:
             - Path=/v2/sign**
-        - id: user
-          uri: lb://module-main
+        - id: adminuser
+          uri: lb://module-user
           predicates:
-            - Path=/v2/user**
+            - Path=/v2/admin/users/**
+            - Path=!/v2/admin/users/intra/**
+          filters:
+            - name: JwtFilter
+        - id: user
+          uri: lb://module-user
+          predicates:
+            - Path=/v2/users/**
+            - Path=!/v2/users/intra/**
+          filters:
+            - name: JwtFilter
         - id: game
           uri: lb://module-main
           predicates:
-            - Path=/v1/game**
+            - Path=/v1/games**
+            - Path=!/v1/games/intra/**
         - id: community
           uri: lb://module-community
           predicates:
-            - Path=/v2/community
+            - Path=/v2/community**
+            - Path=!/v2/community/intra/**
           filters:
             - name: JwtFilter
 

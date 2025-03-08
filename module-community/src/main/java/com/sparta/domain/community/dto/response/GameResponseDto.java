@@ -13,17 +13,17 @@ public class GameResponseDto {
 	private String name;
 	private String imgUrl;
 	private String genre;
-	private UserResponseDto user;
+	private Long userId;
 	private Boolean isDeleted = false;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	public GameResponseDto(Long id, String name, String imgUrl, String genre, UserResponseDto user, Boolean isDeleted, LocalDateTime createdAt, LocalDateTime updatedAt) {
+	public GameResponseDto(Long id, String name, String imgUrl, String genre, Long userId, Boolean isDeleted, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
 		this.name = name;
 		this.imgUrl = imgUrl;
 		this.genre = genre;
-		this.user = user;
+		this.userId = userId;
 		this.isDeleted = isDeleted;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;

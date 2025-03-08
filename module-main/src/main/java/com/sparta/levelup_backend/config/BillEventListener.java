@@ -21,8 +21,8 @@ public class BillEventListener {
         BillStatusMessageDto message = new BillStatusMessageDto(
                 bill.getId(),
                 bill.getStatus(),
-                bill.getTutor().getId(),
-                bill.getStudent().getId(),
+                bill.getTutorId(),
+                bill.getStudentId(),
                 bill.getBillHistory()
         );
 

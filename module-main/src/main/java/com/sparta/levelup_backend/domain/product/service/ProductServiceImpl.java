@@ -1,47 +1,8 @@
 package com.sparta.levelup_backend.domain.product.service;
 
-import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
-import org.openkoreantext.processor.tokenizer.KoreanTokenizer;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.sparta.levelup_backend.domain.game.entity.GameEntity;
-import com.sparta.levelup_backend.domain.game.repository.GameRepository;
-import com.sparta.levelup_backend.domain.product.document.ProductDocument;
-import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductCreateRequestDto;
-import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductRequestAllDto;
-import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductUpdateRequestDto;
-import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductCreateResponseDto;
-import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductDeleteResponseDto;
-import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductResponseDto;
-import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductUpdateResponseDto;
-import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
-import com.sparta.levelup_backend.domain.product.repository.ProductRepository;
-import com.sparta.levelup_backend.domain.product.repositoryES.ProductESRepository;
-import com.sparta.levelup_backend.domain.review.document.ReviewDocument;
-import com.sparta.levelup_backend.domain.review.repositoryES.ReviewESRepository;
-import com.sparta.levelup_backend.domain.user.entity.UserEntity;
-import com.sparta.levelup_backend.domain.user.repository.UserRepository;
-import com.sparta.levelup_backend.exception.common.DuplicateException;
-import com.sparta.levelup_backend.exception.common.ErrorCode;
-import com.sparta.levelup_backend.exception.common.NotFoundException;
-import com.sparta.levelup_backend.utill.ProductStatus;
-import com.sparta.levelup_backend.utill.UserRole;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.FORBIDDEN_ACCESS;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.PRODUCT_ISDELETED;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.PRODUCT_NOT_FOUND;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
@@ -56,7 +17,45 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import co.elastic.clients.elasticsearch.core.UpdateResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import com.sparta.levelup_backend.domain.game.entity.GameEntity;
+import com.sparta.levelup_backend.domain.game.repository.GameRepository;
+import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
+import com.sparta.levelup_backend.domain.product.document.ProductDocument;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductCreateRequestDto;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductRequestAllDto;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductUpdateRequestDto;
+import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductCreateResponseDto;
+import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductDeleteResponseDto;
+import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductResponseDto;
+import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductUpdateResponseDto;
+import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
+import com.sparta.levelup_backend.domain.product.repository.ProductRepository;
+import com.sparta.levelup_backend.domain.product.repositoryES.ProductESRepository;
+import com.sparta.levelup_backend.domain.review.document.ReviewDocument;
+import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.domain.review.repositoryES.ReviewESRepository;
+import com.sparta.levelup_backend.exception.common.DuplicateException;
+import com.sparta.levelup_backend.exception.common.ErrorCode;
+import com.sparta.levelup_backend.exception.common.NotFoundException;
+import com.sparta.levelup_backend.utill.ProductStatus;
+import com.sparta.levelup_backend.utill.UserRole;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
+import org.openkoreantext.processor.tokenizer.KoreanTokenizer;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
 
@@ -65,7 +64,7 @@ import scala.collection.Seq;
 public class ProductServiceImpl implements ProductService {
 
 	private final ProductRepository productRepository;
-	private final UserRepository userRepository;
+	private final UserServiceClient userServiceClient;
 	private final GameRepository gameRepository;
 	private final ProductESRepository productESRepository;
 	private final ElasticsearchClient elasticsearchClient;
@@ -116,9 +115,9 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	@Override
 	public ProductCreateResponseDto saveProduct(Long userId, ProductCreateRequestDto dto) {
-		UserEntity user = userRepository.findByIdOrElseThrow(userId);
+		UserResponseDto user = userServiceClient.findUserById(userId);
 		GameEntity game = gameRepository.findByIdOrElseThrow(dto.getGameId());
-		ProductEntity product = new ProductEntity(dto, user, game);
+		ProductEntity product = new ProductEntity(dto, user.getId(), game);
 		ProductEntity savedProduct = productRepository.save(product);
 		ProductDocument document = ProductDocument.fromEntity(savedProduct);
 		productESRepository.save(document);
@@ -137,7 +136,6 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public ProductUpdateResponseDto updateProduct(Long id, Long userId, ProductUpdateRequestDto requestDto) {
 		RLock lock = redissonClient.getLock("stock_lock_" + id);
-		UserEntity user = userRepository.findByIdOrElseThrow(userId);
 		ProductEntity saveProduct = null;
 		ProductDocument updatedDocument = null;
 		try {
@@ -175,11 +173,11 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public ProductDeleteResponseDto deleteProduct(Long id, Long userId) {
 		ProductEntity product = productRepository.findByIdOrElseThrow(id);
-		UserEntity user = userRepository.findByIdOrElseThrow(userId);
+		UserResponseDto user = userServiceClient.findUserById(userId);
 		if (product.getIsDeleted()) {
 			throw new DuplicateException(PRODUCT_ISDELETED);
 		}
-		if (!product.getUser().getId().equals(user.getId()) && !user.getRole().equals(UserRole.ADMIN)) {
+		if (!product.getUserId().equals(user.getId()) && !user.getRole().equals(UserRole.ADMIN)) {
 			throw new DuplicateException(FORBIDDEN_ACCESS);
 		}
 
@@ -489,12 +487,12 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	private boolean isAdmin(Long userId) {
-		UserEntity user = userRepository.findByIdOrElseThrow(userId);
+		UserResponseDto user = userServiceClient.findUserById(userId);
 		return user.getRole().equals(UserRole.ADMIN);
 	}
 
 	private boolean isOwner(ProductEntity product, Long userId) {
-		return product.getUser().getId().equals(userId);
+		return product.getUserId().equals(userId);
 	}
 
 	@Transactional

@@ -12,7 +12,6 @@ import com.sparta.levelup_backend.domain.product.entity.QProductEntity;
 import com.sparta.levelup_backend.domain.review.dto.response.QReviewResponseDto;
 import com.sparta.levelup_backend.domain.review.dto.response.ReviewResponseDto;
 import com.sparta.levelup_backend.domain.review.entity.QReviewEntity;
-import com.sparta.levelup_backend.domain.user.entity.QUserEntity;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -32,18 +31,16 @@ public class ReviewQueryRepository {
 	public Slice<ReviewResponseDto> findReviews(Long productId, Pageable pageable) {
 		QReviewEntity review = new QReviewEntity("review");
 		QProductEntity product = new QProductEntity("product");
-		QUserEntity user = new QUserEntity("user");
 
 		List<ReviewResponseDto> reviews = queryFactory
 			.select(new QReviewResponseDto(
 				review.id,
-				user.id,
-				user.nickName,
+				review.userId,
+				review.nickName,
 				review.contents,
 				review.starScore))
 			.from(review)
 			.leftJoin(review.product, product)
-			.leftJoin(review.user, user)
 			.where(review.product.id.eq(productId))
 			.where(review.isDeleted.eq(false))
 			.orderBy(review.id.desc())

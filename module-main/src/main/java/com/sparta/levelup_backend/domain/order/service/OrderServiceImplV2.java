@@ -1,19 +1,36 @@
 package com.sparta.levelup_backend.domain.order.service;
 
+import static com.sparta.levelup_backend.exception.common.ErrorCode.BILL_NOT_FOUND;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.CONFLICT_LOCK_ERROR;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.CONFLICT_LOCK_GET;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.FORBIDDEN_ACCESS;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.INVALID_ORDER_CREATE;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.INVALID_ORDER_STATUS;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.PRODUCT_NOT_FOUND;
+import static com.sparta.levelup_backend.utill.OrderStatus.CANCELED;
+import static com.sparta.levelup_backend.utill.OrderStatus.COMPLETED;
+import static com.sparta.levelup_backend.utill.OrderStatus.PENDING;
+import static com.sparta.levelup_backend.utill.OrderStatus.TRADING;
+
 import com.sparta.levelup_backend.domain.bill.entity.BillEntity;
 import com.sparta.levelup_backend.domain.bill.repository.BillRepository;
 import com.sparta.levelup_backend.domain.bill.service.BillServiceImplV2;
+
 import com.sparta.levelup_backend.domain.order.dto.requestDto.OrderCreateRequestDto;
 import com.sparta.levelup_backend.domain.order.dto.responseDto.OrderResponseDto;
 import com.sparta.levelup_backend.domain.order.entity.OrderEntity;
 import com.sparta.levelup_backend.domain.order.repository.OrderRepository;
 import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
 import com.sparta.levelup_backend.domain.product.service.ProductServiceImpl;
-import com.sparta.levelup_backend.domain.user.entity.UserEntity;
-import com.sparta.levelup_backend.domain.user.repository.UserRepository;
-import com.sparta.levelup_backend.exception.common.*;
-import com.sparta.levelup_backend.utill.OrderStatus;
+import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
+import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.exception.common.ForbiddenException;
+import com.sparta.levelup_backend.exception.common.LockException;
+import com.sparta.levelup_backend.exception.common.NotFoundException;
+import com.sparta.levelup_backend.exception.common.OrderException;
 import com.sparta.levelup_backend.utill.ProductStatus;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -22,19 +39,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
-import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
-import static com.sparta.levelup_backend.utill.OrderStatus.*;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImplV2 implements OrderServiceV2 {
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
+    private final UserServiceClient userServiceClient;
     private final ProductServiceImpl productService;
     private final RedissonClient redissonClient;
     private final BillServiceImplV2 billService;
@@ -53,7 +63,7 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
 
         RLock lock = redissonClient.getLock("stock_lock_" + dto.getProductId());
 
-        UserEntity user = userRepository.findByIdOrElseThrow(userId);
+        UserResponseDto user = userServiceClient.findUserById(userId);
 
         OrderEntity saveOrder = null;
 
@@ -70,14 +80,14 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
                 throw new NotFoundException(PRODUCT_NOT_FOUND);
             }
 
-            if (user.getId() == product.getUser().getId()) {
+            if (user.getId() == product.getUserId()) {
                 throw new OrderException(INVALID_ORDER_CREATE);
             }
 
             product.decreaseAmount();
 
             OrderEntity order = OrderEntity.builder()
-                    .user(user)
+                    .userId(user.getId())
                     .status(PENDING)
                     .totalPrice(product.getPrice())
                     .product(product)
@@ -96,7 +106,7 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
                 lock.unlock();
             }
         }
-        return new OrderResponseDto(saveOrder);
+        return new OrderResponseDto(saveOrder,user);
     }
 
     /**
@@ -109,13 +119,14 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
     public OrderResponseDto findOrder(Long userId, Long orderId) {
 
         OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
+        UserResponseDto user = userServiceClient.findUserById(order.getUserId());
 
         // 구매자와 판매자만 조회 가능
-        if (!order.getUser().getId().equals(userId) && !order.getProduct().getUser().getId().equals(userId)) {
+        if (!order.getUserId().equals(userId) && !order.getProduct().getUserId().equals(userId)) {
             throw new ForbiddenException(FORBIDDEN_ACCESS);
         }
 
-        return new OrderResponseDto(order);
+        return new OrderResponseDto(order, user);
     }
 
     /**
@@ -131,7 +142,7 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
         OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
 
         // 구매자인지 확인
-        if (!order.getUser().getId().equals(userId)) {
+        if (!order.getUserId().equals(userId)) {
             throw new ForbiddenException(FORBIDDEN_ACCESS);
         }
 
@@ -142,8 +153,9 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
 
         order.setStatus(TRADING);
         OrderEntity saveOrder = orderRepository.save(order);
+        UserResponseDto user = userServiceClient.findUserById(saveOrder.getUserId());
         billService.createBill(userId, orderId);
-        return new OrderResponseDto(saveOrder);
+        return new OrderResponseDto(saveOrder, user);
     }
 
     /**
@@ -157,9 +169,10 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
     public OrderResponseDto completeOrder(Long userId, Long orderId) {
 
         OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
+        UserResponseDto user = userServiceClient.findUserById(order.getUserId());
 
         // 구매자인지 확인
-        if (!order.getUser().getId().equals(userId)) {
+        if (!order.getUserId().equals(userId)) {
             throw new ForbiddenException(FORBIDDEN_ACCESS);
         }
 
@@ -171,7 +184,7 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
         order.setStatus(COMPLETED);
         orderRepository.save(order);
         log.info("order {} 거래 완료.", order.getId());
-        return new OrderResponseDto(order);
+        return new OrderResponseDto(order,user);
     }
 
     /**
@@ -190,7 +203,7 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
         RLock lock = redissonClient.getLock("stock_lock_" + order.getProduct().getId());
 
         // 판매자 구매자 둘 다 취소 가능
-        if (!order.getUser().getId().equals(userId) && !order.getProduct().getUser().getId().equals(userId)) {
+        if (!order.getUserId().equals(userId) && !order.getProduct().getUserId().equals(userId)) {
             throw new ForbiddenException(FORBIDDEN_ACCESS);
         }
 
@@ -235,7 +248,7 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
         RLock lock = redissonClient.getLock("stock_lock_" + order.getProduct().getId());
 
         // 판매자인지 확인
-        if (!order.getProduct().getUser().getId().equals(userId)) {
+        if (!order.getProduct().getUserId().equals(userId)) {
             throw new ForbiddenException(FORBIDDEN_ACCESS);
         }
 

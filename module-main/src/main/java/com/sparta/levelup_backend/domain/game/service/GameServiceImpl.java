@@ -14,8 +14,8 @@ import com.sparta.levelup_backend.domain.game.dto.responseDto.GameListResponseDt
 import com.sparta.levelup_backend.domain.game.dto.responseDto.GameResponseDto;
 import com.sparta.levelup_backend.domain.game.entity.GameEntity;
 import com.sparta.levelup_backend.domain.game.repository.GameRepository;
-import com.sparta.levelup_backend.domain.user.entity.UserEntity;
-import com.sparta.levelup_backend.domain.user.repository.UserRepository;
+import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
+import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
 import com.sparta.levelup_backend.exception.common.DuplicateException;
 import com.sparta.levelup_backend.exception.common.ForbiddenException;
 import com.sparta.levelup_backend.utill.UserRole;
@@ -27,11 +27,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
 	private final GameRepository gameRepository;
-	private final UserRepository userRepository;
+	private final UserServiceClient userServiceClient;
+
 
 	@Override
 	public GameEntity saveGame(String name, String imgUrl, String genre, Long userId) {
-		UserEntity user = userRepository.findByIdOrElseThrow(userId);
+		UserResponseDto user = userServiceClient.findUserById(userId);
 		checkAdminAuth(user);
 
 		return gameRepository.save(
@@ -39,14 +40,14 @@ public class GameServiceImpl implements GameService {
 				.name(name)
 				.imgUrl(imgUrl)
 				.genre(genre)
-				.user(user)
+				.userId(user.getId())
 				.build());
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public GameEntity findGame(Long userId, Long gameId) {
-		UserEntity user = userRepository.findByIdOrElseThrow(userId);
+		UserResponseDto user = userServiceClient.findUserById(userId);
 		checkAdminAuth(user);
 
 		GameEntity game = gameRepository.findByIdOrElseThrow(gameId);
@@ -57,7 +58,7 @@ public class GameServiceImpl implements GameService {
 
 	@Override
 	public GameEntity updateGame(Long userId, Long gameId, UpdateGameRequestDto dto) {
-		UserEntity user = userRepository.findByIdOrElseThrow(userId);
+		UserResponseDto user = userServiceClient.findUserById(userId);
 		checkAdminAuth(user);
 
 		GameEntity game = gameRepository.findByIdOrElseThrow(gameId);
@@ -85,7 +86,7 @@ public class GameServiceImpl implements GameService {
 
 	@Override
 	public void deleteGame(Long userId, Long gameId) {
-		UserEntity user = userRepository.findByIdOrElseThrow(userId);
+		UserResponseDto user = userServiceClient.findUserById(userId);
 		checkAdminAuth(user);
 
 		GameEntity game = gameRepository.findByIdOrElseThrow(gameId);
@@ -94,7 +95,7 @@ public class GameServiceImpl implements GameService {
 		game.deleteGame();
 	}
 
-	private void checkAdminAuth(UserEntity user) {
+	private void checkAdminAuth(UserResponseDto user) {
 		if (!user.getRole().equals(UserRole.ADMIN)) {
 			throw new ForbiddenException(FORBIDDEN_ACCESS);
 		}
@@ -108,7 +109,9 @@ public class GameServiceImpl implements GameService {
 
 	@Override
 	public GameEntityResponseDto findCommunityGameById(Long gameId) {
-		return GameEntityResponseDto.from(gameRepository.findByIdOrElseThrow((gameId)));
+		GameEntity game = gameRepository.findByIdOrElseThrow(gameId);
+		UserResponseDto user = userServiceClient.findUserById(game.getUserId());
+		return GameEntityResponseDto.from(game);
 	}
 
 	@Override

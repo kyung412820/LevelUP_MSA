@@ -87,7 +87,7 @@ public class ProductDocument {
 			.amount(product.getAmount())
 			.status(product.getStatus())
 			.imgUrl(product.getImgUrl())
-			.userId(product.getUser().getId())
+			.userId(product.getUserId())
 			.gameId(product.getGame().getId())
 			.gameGenre(product.getGame().getGenre())
 			.sentimentScore(0.0)

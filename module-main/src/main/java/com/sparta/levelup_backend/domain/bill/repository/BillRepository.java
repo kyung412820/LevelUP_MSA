@@ -15,7 +15,7 @@ public interface BillRepository extends JpaRepository<BillEntity, Long>, BillRep
         return findById(billId).orElseThrow(() -> new NotFoundException(ErrorCode.BILL_NOT_FOUND));
     }
 
-    @Query("SELECT b FROM BillEntity b JOIN FETCH b.tutor JOIN FETCH b.student WHERE b.id = :billId")
+    @Query("SELECT b FROM BillEntity b WHERE b.id = :billId")
     Optional<BillEntity> findByIdWithTutorAndStudent(Long billId);
 
     Optional<BillEntity> findByOrderId(Long order);

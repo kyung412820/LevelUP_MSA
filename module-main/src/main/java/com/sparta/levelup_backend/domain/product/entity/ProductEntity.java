@@ -8,7 +8,6 @@ import com.sparta.levelup_backend.common.entity.BaseEntity;
 import com.sparta.levelup_backend.domain.game.entity.GameEntity;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductCreateRequestDto;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductUpdateRequestDto;
-import com.sparta.levelup_backend.domain.user.entity.UserEntity;
 import com.sparta.levelup_backend.exception.common.ProductOutOfAmount;
 import com.sparta.levelup_backend.utill.ProductStatus;
 
@@ -43,9 +42,8 @@ public class ProductEntity extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private UserEntity user;
+
+	private Long userId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "game_id", nullable = false)
@@ -72,8 +70,8 @@ public class ProductEntity extends BaseEntity {
 	@Column(nullable = true)
 	private String imgUrl;
 
-	public ProductEntity(ProductCreateRequestDto dto, UserEntity user, GameEntity game) {
-		this.user = user;
+	public ProductEntity(ProductCreateRequestDto dto, Long userId, GameEntity game) {
+		this.userId = userId;
 		this.game = game;
 		this.productName = dto.getProductName();
 		this.contents = dto.getContents();

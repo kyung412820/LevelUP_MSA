@@ -1,4 +1,4 @@
-package com.sparta.dto.requestDto;
+package com.sparta.domain.community.dto.request;
 
 import static com.sparta.exception.common.ErrorCode.INVALID_JSON_FORMAT;
 

@@ -2,7 +2,6 @@ package com.sparta.levelup_backend.domain.bill.entity;
 
 import com.sparta.levelup_backend.common.entity.BaseEntity;
 import com.sparta.levelup_backend.domain.order.entity.OrderEntity;
-import com.sparta.levelup_backend.domain.user.entity.UserEntity;
 import com.sparta.levelup_backend.utill.BillStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,13 +18,9 @@ public class BillEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tutor_id", nullable = false)
-    private UserEntity tutor;
+    private Long tutorId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = false)
-    private UserEntity student;
+    private Long studentId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)

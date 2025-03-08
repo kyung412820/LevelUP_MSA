@@ -8,11 +8,11 @@ import com.sparta.levelup_backend.domain.order.entity.OrderEntity;
 import com.sparta.levelup_backend.domain.order.repository.OrderRepository;
 import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
 import com.sparta.levelup_backend.domain.product.repository.ProductRepository;
+import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
 import com.sparta.levelup_backend.domain.review.dto.request.ReviewRequestDto;
+import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
 import com.sparta.levelup_backend.domain.review.entity.ReviewEntity;
 import com.sparta.levelup_backend.domain.review.repository.ReviewRepository;
-import com.sparta.levelup_backend.domain.user.entity.UserEntity;
-import com.sparta.levelup_backend.domain.user.repository.UserRepository;
 import com.sparta.levelup_backend.exception.common.BusinessException;
 import com.sparta.levelup_backend.exception.common.DuplicateException;
 import com.sparta.levelup_backend.exception.common.ErrorCode;
@@ -39,7 +39,7 @@ class ReviewServiceImplTest {
     private ReviewRepository reviewRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserServiceClient userServiceClient;
 
     @Mock
     private ProductRepository productRepository;
@@ -51,20 +51,20 @@ class ReviewServiceImplTest {
     private Long userId = 1L;
     private Long productId = 1L;
     private Long reviewId = 1L;
-    private UserEntity normalUser;
-    private UserEntity adminUser;
+    private UserResponseDto normalUser;
+    private UserResponseDto adminUser;
     private ProductEntity product;
     private ReviewEntity review;
     private OrderEntity order;
 
     @BeforeEach
     void setUp() {
-        normalUser = UserEntity.builder()
+        normalUser = UserResponseDto.builder()
             .id(userId)
             .role(UserRole.USER)
             .build();
 
-        adminUser = UserEntity.builder()
+        adminUser = UserResponseDto.builder()
             .id(userId)
             .role(UserRole.ADMIN)
             .build();
@@ -81,13 +81,13 @@ class ReviewServiceImplTest {
         review = ReviewEntity.builder()
             .id(reviewId)
             .starScore(5)
-            .user(normalUser)
+            .userId(normalUser.getId())
             .product(product)
             .order(order)
             .build();
 
         //when
-        when(userRepository.findById(userId)).thenReturn(Optional.of(normalUser));
+        when(userServiceClient.findUserById(userId)).thenReturn(normalUser);
 
         //then
         assertThatThrownBy(() -> {
@@ -109,13 +109,13 @@ class ReviewServiceImplTest {
         review = ReviewEntity.builder()
             .id(reviewId)
             .starScore(5)
-            .user(normalUser)
+            .userId(normalUser.getId())
             .product(product2)
             .order(order)
             .build();
 
         //when
-        when(userRepository.findById(userId)).thenReturn(Optional.of(adminUser));
+        when(userServiceClient.findUserById(userId)).thenReturn(adminUser);
         when(reviewRepository.findByIdOrElseThrow(reviewId)).thenReturn(review);
 
         //then
@@ -132,13 +132,13 @@ class ReviewServiceImplTest {
         review = ReviewEntity.builder()
             .id(reviewId)
             .starScore(5)
-            .user(normalUser)
+            .userId(normalUser.getId())
             .product(product)
             .order(order)
             .build();
 
         //when
-        when(userRepository.findById(userId)).thenReturn(Optional.of(adminUser));
+        when(userServiceClient.findUserById(userId)).thenReturn(adminUser);
         when(reviewRepository.findByIdOrElseThrow(reviewId)).thenReturn(review);
         reviewService.deleteReview(userId, productId, reviewId);
 
@@ -178,7 +178,7 @@ class ReviewServiceImplTest {
         review = ReviewEntity.builder()
         .id(reviewId)
         .starScore(5)
-        .user(adminUser)
+        .userId(adminUser.getId())
         .product(product)
         .order(order)
         .build();
@@ -186,7 +186,7 @@ class ReviewServiceImplTest {
         review.deleteReview();
 
         //when
-        when(userRepository.findById(userId)).thenReturn(Optional.of(adminUser));
+        when(userServiceClient.findUserById(userId)).thenReturn(adminUser);
         when(reviewRepository.findByIdOrElseThrow(reviewId)).thenReturn(review);
 
         //then

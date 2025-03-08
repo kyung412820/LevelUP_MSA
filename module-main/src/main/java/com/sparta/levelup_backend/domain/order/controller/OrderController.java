@@ -1,23 +1,26 @@
 package com.sparta.levelup_backend.domain.order.controller;
 
-import com.sparta.levelup_backend.common.ApiResponse;
-import com.sparta.levelup_backend.config.CustomUserDetails;
-import com.sparta.levelup_backend.domain.auth.controller.AuthController;
-import com.sparta.levelup_backend.domain.order.dto.requestDto.OrderCreateRequestDto;
-import com.sparta.levelup_backend.domain.order.dto.responseDto.OrderResponseDto;
-import com.sparta.levelup_backend.domain.order.service.OrderServiceImpl;
-import lombok.RequiredArgsConstructor;
+import static com.sparta.levelup_backend.common.ApiResMessage.*;
+import static com.sparta.levelup_backend.common.ApiResponse.*;
+import static org.springframework.http.HttpStatus.*;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 
-import static com.sparta.levelup_backend.common.ApiResMessage.*;
-import static com.sparta.levelup_backend.common.ApiResponse.*;
-import static org.springframework.http.HttpStatus.*;
+import com.sparta.levelup_backend.common.ApiResponse;
+import com.sparta.levelup_backend.domain.order.dto.requestDto.OrderCreateRequestDto;
+import com.sparta.levelup_backend.domain.order.dto.requestDto.UserAuthenticationRequestDto;
+import com.sparta.levelup_backend.domain.order.dto.responseDto.OrderResponseDto;
+import com.sparta.levelup_backend.domain.order.service.OrderServiceImpl;
+
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/v1/orders")
@@ -28,10 +31,14 @@ public class OrderController {
 
     @PostMapping
     public ApiResponse<OrderResponseDto> createOrder(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+            HttpServletRequest request,
             @RequestBody OrderCreateRequestDto dto
     ) {
-        Long userId = authUser.getId();
+
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         OrderResponseDto orderResponseDto = orderService.createOrder(userId, dto);
         return success(OK, ORDER_CREATE, orderResponseDto);
     }
@@ -39,10 +46,13 @@ public class OrderController {
     // 주문 조회
     @GetMapping("/{orderId}")
     public ApiResponse<OrderResponseDto> findOrder(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+            HttpServletRequest request,
             @PathVariable Long orderId
     ) {
-        Long userId = authUser.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         OrderResponseDto orderById = orderService.findOrder(userId, orderId);
         return success(OK, ORDER_FIND, orderById);
     }
@@ -50,10 +60,13 @@ public class OrderController {
     // 주문 결제 완료
     @PatchMapping("/{orderId}")
     public ApiResponse<OrderResponseDto> updateOrder(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+            HttpServletRequest request,
             @PathVariable Long orderId
     ) {
-        Long userId = authUser.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         OrderResponseDto order = orderService.updateOrder(userId, orderId);
         return success(OK, ORDER_UPDATE, order);
     }
@@ -61,10 +74,13 @@ public class OrderController {
     // 결제 완료
     @PatchMapping("/student/{orderId}")
     public ApiResponse<OrderResponseDto> completeOrder(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+            HttpServletRequest request,
             @PathVariable Long orderId
     ) {
-        Long userId = authUser.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         OrderResponseDto order = orderService.completeOrder(userId, orderId);
         return success(OK, ORDER_COMPLETE, order);
     }
@@ -72,10 +88,13 @@ public class OrderController {
     // 주문 취소
     @DeleteMapping("/{orderId}")
     public ApiResponse<Void> deleteOrderByPending(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+            HttpServletRequest request,
             @PathVariable Long orderId
     ) {
-        Long userId = authUser.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         orderService.deleteOrderByPending(userId, orderId);
         return success(OK, ORDER_CANCLED);
     }
@@ -83,10 +102,13 @@ public class OrderController {
     // 결제 취소 (거래중 일때)
     @DeleteMapping("/tutor/{orderId}")
     public ApiResponse<Void> deleteOrderByTrading(
-            @AuthenticationPrincipal CustomUserDetails authUser,
+            HttpServletRequest request,
             @PathVariable Long orderId
     ) {
-        Long userId = authUser.getId();
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        Long userId = authRequest.getId();
         orderService.deleteOrderByTrading(userId, orderId);
         return success(OK, ORDER_CANCLED);
     }

@@ -1,16 +1,18 @@
 package com.sparta.levelup_backend.domain.payment.service;
 
-import com.sparta.levelup_backend.config.CustomUserDetails;
 import com.sparta.levelup_backend.config.TossPaymentConfig;
-import com.sparta.levelup_backend.domain.bill.service.BillServiceImplV2;
 import com.sparta.levelup_backend.domain.order.entity.OrderEntity;
 import com.sparta.levelup_backend.domain.order.repository.OrderRepository;
+
 import com.sparta.levelup_backend.domain.payment.dto.request.CancelPaymentRequestDto;
+import com.sparta.levelup_backend.domain.payment.dto.request.UserAuthenticationRequestDto;
 import com.sparta.levelup_backend.domain.payment.dto.response.CancelResponseDto;
 import com.sparta.levelup_backend.domain.payment.dto.response.PaymentResponseDto;
+
 import com.sparta.levelup_backend.domain.payment.entity.PaymentEntity;
 import com.sparta.levelup_backend.domain.payment.repository.PaymentRepository;
-import com.sparta.levelup_backend.domain.user.repository.UserRepository;
+import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
+import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
 import com.sparta.levelup_backend.exception.common.*;
 import com.sparta.levelup_backend.utill.OrderStatus;
 import lombok.AllArgsConstructor;
@@ -32,16 +34,17 @@ public class PaymentServiceImpl implements PaymentService{
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+    private final UserServiceClient userServiceClient;
     private final TossPaymentConfig tossPaymentConfig;
     private final RateLimitService rateLimitService;
 
     @Transactional
     @Override
-    public PaymentResponseDto createPayment(CustomUserDetails auth, Long orderId) {
+    public PaymentResponseDto createPayment(UserAuthenticationRequestDto auth, Long orderId) {
         Long userId = auth.getId();
         OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
-
-        if (!order.getUser().getId().equals(userId)) {
+        UserResponseDto user = userServiceClient.findUserById(order.getUserId());
+        if (!order.getUserId().equals(userId)) {
             throw new ForbiddenException(FORBIDDEN_ACCESS);
         }
 
@@ -54,8 +57,9 @@ public class PaymentServiceImpl implements PaymentService{
 
         // 결제 정보가 있다면 새로 만들지말고 결제 정보를 조회해서 사용
         PaymentEntity existingPayment = paymentRepository.findByOrder(order);
+        UserResponseDto existingUser = userServiceClient.findUserById(existingPayment.getOrder().getUserId());
         if (existingPayment != null) {
-            PaymentResponseDto response = new PaymentResponseDto(existingPayment);
+            PaymentResponseDto response = new PaymentResponseDto(existingPayment,existingUser);
             response.setSuccessUrl(tossPaymentConfig.getSuccessUrl());
             response.setFailUrl(tossPaymentConfig.getFailUrl());
             logger.info("결제정보Id: {}", existingPayment.getPaymentId());
@@ -65,17 +69,17 @@ public class PaymentServiceImpl implements PaymentService{
         PaymentEntity payment = PaymentEntity.builder()
                 .orderId(UUID.randomUUID().toString())
                 .order(order)
-                .customer(order.getUser())
+                .customerUserId(user.getId())
                 .orderName(order.getProduct().getProductName())
                 .amount(order.getTotalPrice())
-                .customerName(order.getUser().getNickName())
-                .customerEmail(order.getUser().getEmail())
-                .userKey(order.getUser().getCustomerKey())
+                .customerName(user.getNickName())
+                .customerEmail(user.getEmail())
+                .userKey(user.getCustomerKey())
                 .ispaid(false)
                 .iscanceled(false)
                 .build();
 
-        PaymentResponseDto response = new PaymentResponseDto(payment);
+        PaymentResponseDto response = new PaymentResponseDto(payment, user);
         response.setSuccessUrl(tossPaymentConfig.getSuccessUrl());
         response.setFailUrl(tossPaymentConfig.getFailUrl());
         paymentRepository.save(payment);
@@ -85,13 +89,13 @@ public class PaymentServiceImpl implements PaymentService{
     }
 
     @Override
-    public CancelResponseDto requestCancel(CustomUserDetails auth, CancelPaymentRequestDto dto) {
+    public CancelResponseDto requestCancel(UserAuthenticationRequestDto auth, CancelPaymentRequestDto dto) {
 
         PaymentEntity payment = paymentRepository.findByPaymentKey(dto.getKey())
                 .orElseThrow(() -> new PaymentException(PAYMENT_NOT_FOUND));
 
         // 판매자 검증
-        if (!payment.getOrder().getProduct().getUser().getId().equals(auth.getId())) {
+        if (!payment.getOrder().getProduct().getUserId().equals(auth.getId())) {
             throw new ForbiddenException(FORBIDDEN_ACCESS);
         }
 

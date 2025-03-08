@@ -63,4 +63,4 @@ feign:
         readTimeout: 5000
 
 server:
-  port: 8082
+  port: 8081

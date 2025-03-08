@@ -1,7 +1,6 @@
 package com.sparta.levelup_backend.domain.payment.entity;
 
 import com.sparta.levelup_backend.domain.order.entity.OrderEntity;
-import com.sparta.levelup_backend.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,9 +34,7 @@ public class PaymentEntity {
     @JoinColumn(name = "payment_order", nullable = false)
     private OrderEntity order;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity customer;
+    private Long customerUserId;
 
     @Column(name = "customer_k")
     private String userKey;

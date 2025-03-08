@@ -3,7 +3,6 @@ package com.sparta.levelup_backend.domain.order.entity;
 import com.sparta.levelup_backend.common.entity.BaseEntity;
 import com.sparta.levelup_backend.domain.payment.entity.PaymentEntity;
 import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
-import com.sparta.levelup_backend.domain.user.entity.UserEntity;
 import com.sparta.levelup_backend.utill.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,9 +29,7 @@ public class OrderEntity extends BaseEntity {
     @Column(name = "total_price", nullable = false)
     private Long totalPrice;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)

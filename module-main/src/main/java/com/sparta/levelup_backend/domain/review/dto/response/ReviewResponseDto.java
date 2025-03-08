@@ -18,8 +18,8 @@ public class ReviewResponseDto {
 
 	public ReviewResponseDto(ReviewEntity review) {
 		this.reviewId = review.getId();
-		this.userId = review.getUser().getId();
-		this.nickname = review.getUser().getNickName();
+		this.userId = review.getUserId();
+		this.nickname = review.getNickName();
 		this.contents = review.getContents();
 		this.starScore = review.getStarScore();
 	}

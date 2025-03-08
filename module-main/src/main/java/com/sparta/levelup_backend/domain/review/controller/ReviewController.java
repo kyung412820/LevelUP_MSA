@@ -1,22 +1,12 @@
 package com.sparta.levelup_backend.domain.review.controller;
 
-import static com.sparta.levelup_backend.common.ApiResMessage.REVIEW_DELETE;
-import static com.sparta.levelup_backend.common.ApiResMessage.REVIEW_LIST_SUCCESS;
-import static com.sparta.levelup_backend.common.ApiResMessage.REVIEW_SUCCESS;
-import static com.sparta.levelup_backend.common.ApiResponse.success;
-import static org.springframework.http.HttpStatus.OK;
+import static com.sparta.levelup_backend.common.ApiResMessage.*;
+import static com.sparta.levelup_backend.common.ApiResponse.*;
+import static org.springframework.http.HttpStatus.*;
 
-import com.sparta.levelup_backend.common.ApiResponse;
-import com.sparta.levelup_backend.config.CustomUserDetails;
-import com.sparta.levelup_backend.domain.review.dto.request.ReviewRequestDto;
-import com.sparta.levelup_backend.domain.review.dto.response.ReviewResponseDto;
-import com.sparta.levelup_backend.domain.review.service.ReviewService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +14,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.sparta.levelup_backend.common.ApiResponse;
+import com.sparta.levelup_backend.domain.review.dto.request.ReviewRequestDto;
+import com.sparta.levelup_backend.domain.review.dto.request.UserAuthenticationRequestDto;
+import com.sparta.levelup_backend.domain.review.dto.response.ReviewResponseDto;
+import com.sparta.levelup_backend.domain.review.service.ReviewService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 
 @RestController
@@ -40,11 +40,14 @@ public class ReviewController {
      */
     @PostMapping("/products/{productId}/reviews")
     public ApiResponse<ReviewResponseDto> saveReview(
-        @AuthenticationPrincipal CustomUserDetails authUser,
+        HttpServletRequest request,
         @Valid @RequestBody ReviewRequestDto dto,
         @PathVariable Long productId
     ) {
-        ReviewResponseDto result = reviewService.saveReview(dto, authUser.getId(), productId);
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        ReviewResponseDto result = reviewService.saveReview(dto, authRequest.getId(), productId);
         return success(OK ,REVIEW_SUCCESS, result);
     }
 
@@ -53,11 +56,14 @@ public class ReviewController {
      */
     @DeleteMapping("/admin/products/{productId}/reviews/{reviewId}")
     public ApiResponse<Void> deleteReview(
-        @AuthenticationPrincipal CustomUserDetails authUser,
+        HttpServletRequest request,
         @PathVariable Long productId,
         @PathVariable Long reviewId
     ) {
-        reviewService.deleteReview(authUser.getId(), productId, reviewId);
+        String encodedAuth = request.getHeader("UserAuthentication");
+        UserAuthenticationRequestDto authRequest = UserAuthenticationRequestDto.from(encodedAuth);
+
+        reviewService.deleteReview(authRequest.getId(), productId, reviewId);
         return success(OK, REVIEW_DELETE);
     }
 

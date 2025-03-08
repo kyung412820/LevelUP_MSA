@@ -16,8 +16,6 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.sparta.levelup_backend.domain.chat.service.RedisSubscriber;
-
 @Configuration
 @EnableRedisRepositories
 public class RedisConfig {
@@ -49,21 +47,6 @@ public class RedisConfig {
         return template;
     }
 
-    /**
-     * Redis 메시지 구성 설정
-     * @param redisConnectionFactory Redis 연결
-     * @param redisSubscriber 수신된 메시지 처리 서비스
-     */
-    @Bean
-    public RedisMessageListenerContainer redisMessageListenerContainer(
-        RedisConnectionFactory redisConnectionFactory,
-        RedisSubscriber redisSubscriber
-    ) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(redisConnectionFactory);
-        container.addMessageListener(redisSubscriber, new PatternTopic("chatroom:*"));
-        return container;
-    }
 
     // Redis 리스너 설정 추가 (주문 생성 자동삭제)
     @Bean
