@@ -7,7 +7,8 @@ import static com.sparta.exception.common.ErrorCode.FORBIDDEN_ACCESS;
 import static com.sparta.exception.common.ErrorCode.GAME_ISDELETED;
 import static com.sparta.exception.common.ErrorCode.PAGE_OUT_OF_BOUNDS;
 
-import com.sparta.domain.community.client.EntityServiceClient;
+import com.sparta.domain.community.client.GameServiceClient;
+import com.sparta.domain.community.client.UserServiceClient;
 import com.sparta.domain.community.document.CommunityDocument;
 import com.sparta.domain.community.dto.request.CommnunityCreateRequestDto;
 import com.sparta.domain.community.dto.request.CommunityUpdateRequestDto;
@@ -41,7 +42,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class CommunityServiceImpl implements CommunityService {
-	private final EntityServiceClient entityServiceClient;
+	private final UserServiceClient userServiceClient;
+	private final GameServiceClient gameServiceClient;
 	private final CommunityRepository communityRepository;
 
 	private final CommunityESRepository communityESRepository;
@@ -52,8 +54,8 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Override
 	public CommunityResponseDto saveCommunity(Long userId, CommnunityCreateRequestDto dto) {
-		UserResponseDto user = entityServiceClient.findUserById(userId);
-		GameResponseDto game = entityServiceClient.findGameById(dto.getGameId());
+		UserResponseDto user = userServiceClient.findUserById(userId);
+		GameResponseDto game = gameServiceClient.findGameById(dto.getGameId());
 		checkGameIsDeleted(game);
 
 		CommunityEntity community = communityRepository.save(
@@ -76,9 +78,9 @@ public class CommunityServiceImpl implements CommunityService {
 			gameIdList.add(communityEntity.getGameId());
 		}
 
-		Map<Long,GameResponseDto> allGames = entityServiceClient.findAllGames(gameIdList).stream().collect(Collectors.
+		Map<Long,GameResponseDto> allGames = gameServiceClient.findAllGames(gameIdList).stream().collect(Collectors.
 			toMap(game -> game.getId(), game -> game));
-		Map<Long,UserResponseDto> allUsers = entityServiceClient.findAllUsers(userIdList).stream().collect(Collectors.
+		Map<Long,UserResponseDto> allUsers = userServiceClient.findAllUsers(userIdList).stream().collect(Collectors.
 			toMap(user -> user.getId(), user -> user));
 
 
@@ -112,8 +114,8 @@ public class CommunityServiceImpl implements CommunityService {
 			community.updateContent(dto.getContent());
 		}
 		return CommunityResponseDto.from(community,
-			entityServiceClient.findUserById(community.getUserId()),
-			entityServiceClient.findGameById(community.getGameId()));
+			userServiceClient.findUserById(community.getUserId()),
+			gameServiceClient.findGameById(community.getGameId()));
 	}
 
 	@Override
@@ -129,8 +131,8 @@ public class CommunityServiceImpl implements CommunityService {
 	@Override
 	public CommunityResponseDto saveCommunityES(Long userId, CommnunityCreateRequestDto dto) {
 
-		UserResponseDto user = entityServiceClient.findUserById(userId);
-		GameResponseDto game = entityServiceClient.findGameById(dto.getGameId());
+		UserResponseDto user = userServiceClient.findUserById(userId);
+		GameResponseDto game = gameServiceClient.findGameById(dto.getGameId());
 		CommunityEntity community = communityRepository.save(
 			new CommunityEntity(dto.getTitle(), dto.getContent(), user.getId(), game.getId()));
 		CommunityDocument communityDocument = communityESRepository.save(CommunityDocument.of(community, user, game));
@@ -215,8 +217,8 @@ public class CommunityServiceImpl implements CommunityService {
 	 */
 	@Override
 	public CommunityResponseDto saveCommunityRedis(Long userId, CommnunityCreateRequestDto dto) {
-		UserResponseDto user = entityServiceClient.findUserById(userId);
-		GameResponseDto game = entityServiceClient.findGameById(dto.getGameId());
+		UserResponseDto user = userServiceClient.findUserById(userId);
+		GameResponseDto game = gameServiceClient.findGameById(dto.getGameId());
 		checkGameIsDeleted(game);
 		CommunityEntity community = communityRepository.save(
 			new CommunityEntity(dto.getTitle(), dto.getContent(), user.getId(), game.getId()));
@@ -318,8 +320,8 @@ public class CommunityServiceImpl implements CommunityService {
 		communityRepository.save(community);
 
 		return CommunityResponseDto.from(community,
-			entityServiceClient.findUserById(community.getUserId()),
-			entityServiceClient.findGameById(community.getGameId()));
+			userServiceClient.findUserById(community.getUserId()),
+			gameServiceClient.findGameById(community.getGameId()));
 	}
 
 	/**
@@ -356,7 +358,7 @@ public class CommunityServiceImpl implements CommunityService {
 	}
 
 	private void checkAuth(CommunityEntity community, Long userId) {
-		UserResponseDto user = entityServiceClient.findUserById(userId);
+		UserResponseDto user = userServiceClient.findUserById(userId);
 		if (!community.getUserId().equals(userId) && !user.getRole().equals(ADMIN)) {
 			throw new ForbiddenException(FORBIDDEN_ACCESS);
 		}

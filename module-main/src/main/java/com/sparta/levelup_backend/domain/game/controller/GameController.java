@@ -34,12 +34,12 @@ public class GameController {
 
 	private final GameService gameService;
 
-	@GetMapping("/games/intra/findGameById/{gameId}")
+	@GetMapping("/admin/games/intra/findGameById/{gameId}")
 	GameEntityResponseDto findCommunityGameById(@PathVariable("gameId") Long gameId){
 		return gameService.findCommunityGameById(gameId);
 	}
 
-	@PostMapping("/games/intra/findAllGames")
+	@PostMapping("/admin/games/intra/findAllGames")
 	List<GameEntityResponseDto> findCommunityAllGames(@RequestBody List<Long> gameIds){
 			return gameService.findCommunityAllGames(gameIds);
 	}

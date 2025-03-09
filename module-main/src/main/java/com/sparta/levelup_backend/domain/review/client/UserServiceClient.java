@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "module-main")
+@FeignClient(name = "module-user")
 public interface UserServiceClient {
 
     @GetMapping("/v2/users/intra/findUserById/{userId}")
