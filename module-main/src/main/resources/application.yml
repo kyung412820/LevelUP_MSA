@@ -57,7 +57,7 @@ spring:
               - name,nickname,email
             client-name: Naver
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+            redirect-uri: http://localhost:9000/login/oauth2/code/naver
         provider:
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize
@@ -78,9 +78,9 @@ toss:
   secret:
     key: ${TOSS_SECRET_KEY}
   success:
-    Url: http://localhost:8080/payment/success.html
+    Url: http://localhost:9000/payment/success.html
   fail:
-    Url: http://localhost:8080/fail.html
+    Url: http://localhost:9000/fail.html
 
 jwt:
   secret:
@@ -91,4 +91,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://host.docker.internal:8761/eureka/
+      defaultZone: http://localhost:8761/eureka

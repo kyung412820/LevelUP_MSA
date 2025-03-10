@@ -1,7 +1,6 @@
 package com.sparta.levelup_backend.domain.order.entity;
 
 import com.sparta.levelup_backend.common.entity.BaseEntity;
-import com.sparta.levelup_backend.domain.payment.entity.PaymentEntity;
 import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
 import com.sparta.levelup_backend.utill.OrderStatus;
 import jakarta.persistence.*;
@@ -38,8 +37,7 @@ public class OrderEntity extends BaseEntity {
     @Column(name = "order_name", nullable = false)
     private String orderName;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private PaymentEntity payment;
+    private Long paymentId;
 
     public void orderDelete() {
         this.delete();

@@ -1,7 +1,7 @@
 package com.sparta.levelup_backend.domain.order.dto.responseDto;
 
 import com.sparta.levelup_backend.domain.order.entity.OrderEntity;
-import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.domain.review.dto.response.UserEntityResponseDto;
 import com.sparta.levelup_backend.utill.OrderStatus;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class OrderResponseDto {
 
     private final Long price;
 
-    public OrderResponseDto(OrderEntity order, UserResponseDto user) {
+    public OrderResponseDto(OrderEntity order, UserEntityResponseDto user) {
         this.orderId = order.getId();
         this.productId = order.getProduct().getId();
         this.Student = user.getNickName();

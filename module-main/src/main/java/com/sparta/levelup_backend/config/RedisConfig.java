@@ -1,6 +1,5 @@
 package com.sparta.levelup_backend.config;
 
-import com.sparta.levelup_backend.domain.bill.service.BillStatusSubscriber;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -58,28 +57,5 @@ public class RedisConfig {
         container.setConnectionFactory(redisConnectionFactory);
         container.addMessageListener(redisExpireListener, new PatternTopic("__keyevent@*__:expired"));
         return container;
-    }
-
-    // Redis 리스너 설정 추가 (결제 관련 알림)
-    @Bean
-    public RedisMessageListenerContainer redisMessageListener(
-        RedisConnectionFactory connectionFactory,
-        MessageListenerAdapter messageListenerAdapter,
-        ChannelTopic BillStatusChannel) {
-
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(messageListenerAdapter, BillStatusChannel);
-        return container;
-    }
-
-    @Bean
-    public MessageListenerAdapter messageListenerAdapter(BillStatusSubscriber subscriber) {
-        return new MessageListenerAdapter(subscriber, "onMessage");
-    }
-
-    @Bean
-    public ChannelTopic BillStatusChannel() {
-        return new ChannelTopic("billStatusChannel");
     }
 }

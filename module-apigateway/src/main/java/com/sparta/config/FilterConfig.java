@@ -24,10 +24,19 @@ public class FilterConfig {
 			.route(user -> user.path("/v2/users/**").and()
 				.not( intra -> intra.path("/v2/users/intra/**"))
 				.filters(filters -> filters.filter(jwtFilter.apply(new JwtFilter.Config())) ).uri("lb://module-user"))
+			.route(chat -> chat.path("/v1/chat**").or().path("/chat**")
+				.filters(filters -> filters.filter(jwtFilter.apply(new JwtFilter.Config())) ).uri("lb://module-user"))
 			.route(cummunity -> cummunity.path("/v2/community/**")
 				.filters(filters -> filters.filter(jwtFilter.apply(new JwtFilter.Config())) ).uri("lb://module-community"))
-			.route(game -> game.path("/v1/admin/games/**").and()
-				.not( intra -> intra.path("/v1/admin/games/intra/**"))
+			.route(main -> main.path("/v2/bills/**").and()
+				.not( intra -> intra.path("/v2/bills/intra/**"))
+				.filters(filters -> filters.filter(jwtFilter.apply(new JwtFilter.Config())) ).uri("lb://module-payment-bill"))
+			.route(main -> main.path("/confirm/payment**").or().path("/cancel/payment**").or().path("/v3/request/**")
+				.filters(filters -> filters.filter(jwtFilter.apply(new JwtFilter.Config())) ).uri("lb://module-payment-bill"))
+			.route(main -> main.path("/**").and()
+				.not( intra -> intra.path("/v1/admin/games/intra/**")).and()
+				.not( intra -> intra.path("/v1/products/intra/**")).and()
+				.not(intra -> intra.path("/v2/orders/intra/**") )
 				.filters(filters -> filters.filter(jwtFilter.apply(new JwtFilter.Config())) ).uri("lb://module-main")).build();
 
 

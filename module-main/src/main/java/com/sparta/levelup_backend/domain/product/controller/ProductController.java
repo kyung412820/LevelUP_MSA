@@ -13,16 +13,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.levelup_backend.common.ApiResponse;
+import com.sparta.levelup_backend.domain.order.dto.responseDto.BooleanStatusDto;
 import com.sparta.levelup_backend.domain.product.document.ProductDocument;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductCreateRequestDto;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductRequestAllDto;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductUpdateRequestDto;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.UpdateProductAmountDto;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.UserAuthenticationRequestDto;
 import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductCreateResponseDto;
 import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductDeleteResponseDto;
@@ -46,6 +49,11 @@ public class ProductController {
 	// 	this.productService = productService;
 	// 	this.productmakedataService = productmakedataService;
 	// }
+
+	@PutMapping("/intra/updateProductAmount")
+	BooleanStatusDto updateProductAmount(@RequestBody UpdateProductAmountDto updateProductAmountDto){
+		return productService.updateProductAmount(updateProductAmountDto);
+	};
 
 	@PostMapping
 	public ApiResponse<ProductCreateResponseDto> saveProduct(

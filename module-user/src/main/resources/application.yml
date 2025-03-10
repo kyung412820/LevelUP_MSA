@@ -27,7 +27,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -57,7 +57,7 @@ spring:
               - name,nickname,email
             client-name: Naver
             authorization-grant-type: authorization_code
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+            redirect-uri: http://localhost:9000/login/oauth2/code/naver
         provider:
           naver:
             authorization-uri: https://nid.naver.com/oauth2.0/authorize

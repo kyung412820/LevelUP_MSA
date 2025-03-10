@@ -1,6 +1,6 @@
 package com.sparta.domain.community.client;
 
-import com.sparta.domain.community.dto.response.UserResponseDto;
+import com.sparta.domain.community.dto.response.UserEntityResponseDto;
 import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface UserServiceClient {
 
     @GetMapping("/v2/users/intra/findUserById/{userId}")
-    UserResponseDto findUserById(@PathVariable("userId") Long userId);
+    UserEntityResponseDto findUserById(@PathVariable("userId") Long userId);
 
     @PostMapping("/v2/users/intra/findAllUsers")
-    List<UserResponseDto> findAllUsers(@RequestBody List<Long> userIds);
+    List<UserEntityResponseDto> findAllUsers(@RequestBody List<Long> userIds);
 
 
 }

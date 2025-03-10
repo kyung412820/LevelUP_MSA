@@ -1,8 +1,50 @@
 package com.sparta.levelup_backend.domain.product.service;
 
-import static com.sparta.levelup_backend.exception.common.ErrorCode.FORBIDDEN_ACCESS;
-import static com.sparta.levelup_backend.exception.common.ErrorCode.PRODUCT_ISDELETED;
-import static com.sparta.levelup_backend.exception.common.ErrorCode.PRODUCT_NOT_FOUND;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
+import org.openkoreantext.processor.tokenizer.KoreanTokenizer;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.sparta.levelup_backend.client.UserServiceClient;
+import com.sparta.levelup_backend.domain.game.entity.GameEntity;
+import com.sparta.levelup_backend.domain.game.repository.GameRepository;
+import com.sparta.levelup_backend.domain.order.dto.responseDto.BooleanStatusDto;
+import com.sparta.levelup_backend.domain.product.document.ProductDocument;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductCreateRequestDto;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductRequestAllDto;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductUpdateRequestDto;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.UpdateProductAmountDto;
+import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductCreateResponseDto;
+import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductDeleteResponseDto;
+import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductResponseDto;
+import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductUpdateResponseDto;
+import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
+import com.sparta.levelup_backend.domain.product.repository.ProductRepository;
+import com.sparta.levelup_backend.domain.product.repositoryES.ProductESRepository;
+import com.sparta.levelup_backend.domain.review.document.ReviewDocument;
+import com.sparta.levelup_backend.domain.review.dto.response.UserEntityResponseDto;
+import com.sparta.levelup_backend.domain.review.repositoryES.ReviewESRepository;
+import com.sparta.levelup_backend.exception.common.DuplicateException;
+import com.sparta.levelup_backend.exception.common.ErrorCode;
+import com.sparta.levelup_backend.exception.common.NetworkTimeoutException;
+import com.sparta.levelup_backend.exception.common.NotFoundException;
+import com.sparta.levelup_backend.utill.ProductStatus;
+import com.sparta.levelup_backend.utill.UserRole;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregate;
@@ -17,45 +59,8 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.UpdateRequest;
 import co.elastic.clients.elasticsearch.core.UpdateResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
-import com.sparta.levelup_backend.domain.game.entity.GameEntity;
-import com.sparta.levelup_backend.domain.game.repository.GameRepository;
-import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
-import com.sparta.levelup_backend.domain.product.document.ProductDocument;
-import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductCreateRequestDto;
-import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductRequestAllDto;
-import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductUpdateRequestDto;
-import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductCreateResponseDto;
-import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductDeleteResponseDto;
-import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductResponseDto;
-import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductUpdateResponseDto;
-import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
-import com.sparta.levelup_backend.domain.product.repository.ProductRepository;
-import com.sparta.levelup_backend.domain.product.repositoryES.ProductESRepository;
-import com.sparta.levelup_backend.domain.review.document.ReviewDocument;
-import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
-import com.sparta.levelup_backend.domain.review.repositoryES.ReviewESRepository;
-import com.sparta.levelup_backend.exception.common.DuplicateException;
-import com.sparta.levelup_backend.exception.common.ErrorCode;
-import com.sparta.levelup_backend.exception.common.NotFoundException;
-import com.sparta.levelup_backend.utill.ProductStatus;
-import com.sparta.levelup_backend.utill.UserRole;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
-import org.openkoreantext.processor.OpenKoreanTextProcessorJava;
-import org.openkoreantext.processor.tokenizer.KoreanTokenizer;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
 
@@ -115,7 +120,7 @@ public class ProductServiceImpl implements ProductService {
 	@Transactional
 	@Override
 	public ProductCreateResponseDto saveProduct(Long userId, ProductCreateRequestDto dto) {
-		UserResponseDto user = userServiceClient.findUserById(userId);
+		UserEntityResponseDto user = getUser(userId);
 		GameEntity game = gameRepository.findByIdOrElseThrow(dto.getGameId());
 		ProductEntity product = new ProductEntity(dto, user.getId(), game);
 		ProductEntity savedProduct = productRepository.save(product);
@@ -173,7 +178,7 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public ProductDeleteResponseDto deleteProduct(Long id, Long userId) {
 		ProductEntity product = productRepository.findByIdOrElseThrow(id);
-		UserResponseDto user = userServiceClient.findUserById(userId);
+		UserEntityResponseDto user = getUser(userId);
 		if (product.getIsDeleted()) {
 			throw new DuplicateException(PRODUCT_ISDELETED);
 		}
@@ -452,6 +457,18 @@ public class ProductServiceImpl implements ProductService {
 			.toList();
 	}
 
+	@Override
+	@Transactional
+	public BooleanStatusDto updateProductAmount(UpdateProductAmountDto updateProductAmountDto) {
+		try{
+		ProductEntity product = productRepository.findByIdOrElseThrow(updateProductAmountDto.getProductId());
+		product.increaseAmount();
+		}catch (Exception e){
+			return new BooleanStatusDto(Boolean.FALSE);
+		}
+		return new BooleanStatusDto(Boolean.TRUE);
+	}
+
 	/**
 	 * 간단한 감성 분석을 수행합니다.
 	 * 토큰화 후 긍정/부정 단어, 부정어, 강조어 등을 분석하여 점수를 계산합니다.
@@ -487,7 +504,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	private boolean isAdmin(Long userId) {
-		UserResponseDto user = userServiceClient.findUserById(userId);
+		UserEntityResponseDto user = getUser(userId);
 		return user.getRole().equals(UserRole.ADMIN);
 	}
 
@@ -503,5 +520,13 @@ public class ProductServiceImpl implements ProductService {
 
 	public ProductEntity findById(Long productId) {
 		return productRepository.findByIdOrElseThrow(productId);
+	}
+
+	public UserEntityResponseDto getUser(Long userId) {
+		try{
+			return userServiceClient.findUserById(userId);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
 	}
 }

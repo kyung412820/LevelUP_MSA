@@ -8,18 +8,18 @@ import com.sparta.levelup_backend.domain.order.entity.OrderEntity;
 import com.sparta.levelup_backend.domain.order.repository.OrderRepository;
 import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
 import com.sparta.levelup_backend.domain.product.repository.ProductRepository;
-import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
+import com.sparta.levelup_backend.client.UserServiceClient;
 import com.sparta.levelup_backend.domain.review.dto.request.ReviewRequestDto;
-import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.domain.review.dto.response.UserEntityResponseDto;
 import com.sparta.levelup_backend.domain.review.entity.ReviewEntity;
 import com.sparta.levelup_backend.domain.review.repository.ReviewRepository;
 import com.sparta.levelup_backend.exception.common.BusinessException;
 import com.sparta.levelup_backend.exception.common.DuplicateException;
 import com.sparta.levelup_backend.exception.common.ErrorCode;
 import com.sparta.levelup_backend.exception.common.ForbiddenException;
+import com.sparta.levelup_backend.exception.common.NetworkTimeoutException;
 import com.sparta.levelup_backend.utill.OrderStatus;
 import com.sparta.levelup_backend.utill.UserRole;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +28,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
+
+import feign.FeignException;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceImplTest {
@@ -51,20 +53,20 @@ class ReviewServiceImplTest {
     private Long userId = 1L;
     private Long productId = 1L;
     private Long reviewId = 1L;
-    private UserResponseDto normalUser;
-    private UserResponseDto adminUser;
+    private UserEntityResponseDto normalUser;
+    private UserEntityResponseDto adminUser;
     private ProductEntity product;
     private ReviewEntity review;
     private OrderEntity order;
 
     @BeforeEach
     void setUp() {
-        normalUser = UserResponseDto.builder()
+        normalUser = UserEntityResponseDto.builder()
             .id(userId)
             .role(UserRole.USER)
             .build();
 
-        adminUser = UserResponseDto.builder()
+        adminUser = UserEntityResponseDto.builder()
             .id(userId)
             .role(UserRole.ADMIN)
             .build();
@@ -87,7 +89,7 @@ class ReviewServiceImplTest {
             .build();
 
         //when
-        when(userServiceClient.findUserById(userId)).thenReturn(normalUser);
+        when(getUser(userId)).thenReturn(normalUser);
 
         //then
         assertThatThrownBy(() -> {
@@ -115,7 +117,7 @@ class ReviewServiceImplTest {
             .build();
 
         //when
-        when(userServiceClient.findUserById(userId)).thenReturn(adminUser);
+        when(getUser(userId)).thenReturn(adminUser);
         when(reviewRepository.findByIdOrElseThrow(reviewId)).thenReturn(review);
 
         //then
@@ -138,7 +140,7 @@ class ReviewServiceImplTest {
             .build();
 
         //when
-        when(userServiceClient.findUserById(userId)).thenReturn(adminUser);
+        when(getUser(userId)).thenReturn(adminUser);
         when(reviewRepository.findByIdOrElseThrow(reviewId)).thenReturn(review);
         reviewService.deleteReview(userId, productId, reviewId);
 
@@ -186,7 +188,7 @@ class ReviewServiceImplTest {
         review.deleteReview();
 
         //when
-        when(userServiceClient.findUserById(userId)).thenReturn(adminUser);
+        when(getUser(userId)).thenReturn(adminUser);
         when(reviewRepository.findByIdOrElseThrow(reviewId)).thenReturn(review);
 
         //then
@@ -194,6 +196,14 @@ class ReviewServiceImplTest {
             reviewService.deleteReview(userId, productId, reviewId);
         }).isInstanceOf(DuplicateException.class)
             .hasMessageContaining(ErrorCode.REVIEW_ISDELETED.getMessage());
+    }
+
+    public UserEntityResponseDto getUser(Long userId) {
+        try{
+            return userServiceClient.findUserById(userId);
+        }catch(FeignException e){
+            throw new NetworkTimeoutException();
+        }
     }
 
 }

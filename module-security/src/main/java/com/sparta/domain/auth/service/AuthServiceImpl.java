@@ -1,6 +1,7 @@
 package com.sparta.domain.auth.service;
 
 import com.sparta.domain.auth.dto.response.UserEntityResponseDto;
+import com.sparta.exception.common.NetworkTimeoutException;
 import com.sparta.exception.common.PasswordIncorrectException;
 
 import org.springframework.http.HttpHeaders;
@@ -15,6 +16,7 @@ import com.sparta.domain.auth.dto.request.SignUpUserRequestDto;
 import com.sparta.util.JwtUtils;
 import com.sparta.client.UserServiceClient;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
 	public void signUpUser(SignUpUserRequestDto signUpUserRequestDto) {
 
 		// ✅ user-service에 회원가입 요청 (FeignClient 사용)
-		userServiceClient.createUser(signUpUserRequestDto); // ✅ 토큰 추가
+		createUser(signUpUserRequestDto); // ✅ 토큰 추가
 
 		log.info("✅ signUpUser - User created via user-service: {}", signUpUserRequestDto.getEmail());
 	}
@@ -41,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public void oAuth2signUpUser(OAuthUserRequestDto dto) {
 		// ✅ user-service에 OAuth 사용자 업데이트 요청 (FeignClient 사용)
-		userServiceClient.updateOAuthUser(dto);
+		updateOAuthUser(dto);
 
 		log.info("✅ oAuth2signUpUser - OAuth user updated via user-service: {}", dto.getEmail());
 	}
@@ -50,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public HttpHeaders authenticate(SignInUserRequestDto dto) {
 		// ✅ user-service에서 사용자 정보 조회 (FeignClient 사용)
-		UserEntityResponseDto user = userServiceClient.getUserByEmail(dto.getEmail());
+		UserEntityResponseDto user = getUser(dto.getEmail());
 
 		// ✅ 비밀번호 검증
 		if (!bCryptPasswordEncoder.matches(dto.getPassword(), user.getPassword())) {
@@ -86,4 +88,27 @@ public class AuthServiceImpl implements AuthService {
 			.build();
 	}
 
+	public UserEntityResponseDto getUser(String email) {
+		try{
+			return userServiceClient.getUserByEmail(email);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
+	}
+
+	public void createUser(SignUpUserRequestDto signUpUserRequestDto) {
+		try {
+			userServiceClient.createUser(signUpUserRequestDto);
+		} catch (FeignException e) {
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
+	}
+
+		public void updateOAuthUser(OAuthUserRequestDto oAuthUserRequestDto) {
+		try{
+			userServiceClient.updateOAuthUser(oAuthUserRequestDto);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
+	}
 }

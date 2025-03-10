@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.sparta.domain.community.dto.response.GameResponseDto;
+import com.sparta.domain.community.dto.response.GameEntityResponseDto;
 
 @FeignClient(name = "module-main")
 public interface GameServiceClient {
 
 	@GetMapping("/v1/admin/games/intra/findGameById/{gameId}")
-	GameResponseDto findGameById(@PathVariable("gameId") Long gameId);
+	GameEntityResponseDto findGameById(@PathVariable("gameId") Long gameId);
 
 	@PostMapping("/v1/admin/games/intra/findAllGames")
-	List<GameResponseDto> findAllGames(@RequestBody List<Long> gameIds);
+	List<GameEntityResponseDto> findAllGames(@RequestBody List<Long> gameIds);
 }

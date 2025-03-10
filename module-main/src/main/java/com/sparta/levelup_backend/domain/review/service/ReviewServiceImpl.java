@@ -3,8 +3,8 @@ package com.sparta.levelup_backend.domain.review.service;
 import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
 import static com.sparta.levelup_backend.utill.OrderStatus.*;
 
-import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
-import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.client.UserServiceClient;
+import com.sparta.levelup_backend.domain.review.dto.response.UserEntityResponseDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -21,8 +21,10 @@ import com.sparta.levelup_backend.domain.review.repository.ReviewRepository;
 import com.sparta.levelup_backend.exception.common.DuplicateException;
 import com.sparta.levelup_backend.exception.common.ForbiddenException;
 import com.sparta.levelup_backend.exception.common.MismatchException;
+import com.sparta.levelup_backend.exception.common.NetworkTimeoutException;
 import com.sparta.levelup_backend.utill.UserRole;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -49,7 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
 			throw new DuplicateException(DUPLICATE_REVIEW);
 		}
 
-		UserResponseDto user = userServiceClient.findUserById(userId);// Todo: 변경 예정
+		UserEntityResponseDto user = getUser(userId);// Todo: 변경 예정
 		ProductEntity product = productRepository.findById(productId).orElseThrow(RuntimeException::new); // Todo: 변경 예정
 
 		ReviewEntity review = ReviewEntity.builder()
@@ -69,7 +71,7 @@ public class ReviewServiceImpl implements ReviewService {
 	@Transactional
 	public void deleteReview(Long userId, Long productId, Long reviewId) {
 
-		UserResponseDto user = userServiceClient.findUserById(userId); // Todo: 변경 예정
+		UserEntityResponseDto user = getUser(userId); // Todo: 변경 예정
 
 		// 리뷰 삭제는 관리자 권한만 실행 가능
 		if (!user.getRole().equals(UserRole.ADMIN)) {
@@ -94,5 +96,13 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public Slice<ReviewResponseDto> findReviews(Long productId, Pageable pageable) {
 		return reviewQueryRepository.findReviews(productId, pageable);
+	}
+
+	public UserEntityResponseDto getUser(Long userId) {
+		try{
+			return userServiceClient.findUserById(userId);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
 	}
 }

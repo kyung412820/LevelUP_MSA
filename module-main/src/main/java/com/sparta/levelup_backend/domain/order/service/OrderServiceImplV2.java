@@ -1,36 +1,43 @@
 package com.sparta.levelup_backend.domain.order.service;
 
-import static com.sparta.levelup_backend.exception.common.ErrorCode.BILL_NOT_FOUND;
-import static com.sparta.levelup_backend.exception.common.ErrorCode.CONFLICT_LOCK_ERROR;
-import static com.sparta.levelup_backend.exception.common.ErrorCode.CONFLICT_LOCK_GET;
-import static com.sparta.levelup_backend.exception.common.ErrorCode.FORBIDDEN_ACCESS;
-import static com.sparta.levelup_backend.exception.common.ErrorCode.INVALID_ORDER_CREATE;
-import static com.sparta.levelup_backend.exception.common.ErrorCode.INVALID_ORDER_STATUS;
-import static com.sparta.levelup_backend.exception.common.ErrorCode.PRODUCT_NOT_FOUND;
+import static com.sparta.levelup_backend.exception.common.ErrorCode.*;
 import static com.sparta.levelup_backend.utill.OrderStatus.CANCELED;
 import static com.sparta.levelup_backend.utill.OrderStatus.COMPLETED;
 import static com.sparta.levelup_backend.utill.OrderStatus.PENDING;
 import static com.sparta.levelup_backend.utill.OrderStatus.TRADING;
 
-import com.sparta.levelup_backend.domain.bill.entity.BillEntity;
-import com.sparta.levelup_backend.domain.bill.repository.BillRepository;
-import com.sparta.levelup_backend.domain.bill.service.BillServiceImplV2;
+import com.sparta.levelup_backend.client.BillServiceClient;
 
+import com.sparta.levelup_backend.domain.order.dto.requestDto.BillCancelRequestDto;
+import com.sparta.levelup_backend.domain.order.dto.requestDto.BillCreateRequestDto;
 import com.sparta.levelup_backend.domain.order.dto.requestDto.OrderCreateRequestDto;
+import com.sparta.levelup_backend.domain.order.dto.requestDto.UpdateOrderStatusDto;
+import com.sparta.levelup_backend.domain.order.dto.responseDto.BillEntityResponseDto;
+import com.sparta.levelup_backend.domain.order.dto.responseDto.BooleanStatusDto;
+import com.sparta.levelup_backend.domain.order.dto.responseDto.OrderEntityResponseDto;
 import com.sparta.levelup_backend.domain.order.dto.responseDto.OrderResponseDto;
+import com.sparta.levelup_backend.domain.order.dto.responseDto.ProductEntityResponseDto;
 import com.sparta.levelup_backend.domain.order.entity.OrderEntity;
 import com.sparta.levelup_backend.domain.order.repository.OrderRepository;
 import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
 import com.sparta.levelup_backend.domain.product.service.ProductServiceImpl;
-import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
-import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.client.UserServiceClient;
+import com.sparta.levelup_backend.domain.review.dto.response.UserEntityResponseDto;
 import com.sparta.levelup_backend.exception.common.ForbiddenException;
 import com.sparta.levelup_backend.exception.common.LockException;
+import com.sparta.levelup_backend.exception.common.MismatchException;
+import com.sparta.levelup_backend.exception.common.NetworkTimeoutException;
 import com.sparta.levelup_backend.exception.common.NotFoundException;
 import com.sparta.levelup_backend.exception.common.OrderException;
 import com.sparta.levelup_backend.utill.ProductStatus;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -38,6 +45,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @Service
@@ -46,9 +54,8 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
     private final OrderRepository orderRepository;
     private final UserServiceClient userServiceClient;
     private final ProductServiceImpl productService;
+    private final BillServiceClient billServiceClient;
     private final RedissonClient redissonClient;
-    private final BillServiceImplV2 billService;
-    private final BillRepository billRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
     /**
@@ -63,7 +70,7 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
 
         RLock lock = redissonClient.getLock("stock_lock_" + dto.getProductId());
 
-        UserResponseDto user = userServiceClient.findUserById(userId);
+        UserEntityResponseDto user = getUser(userId);
 
         OrderEntity saveOrder = null;
 
@@ -119,7 +126,7 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
     public OrderResponseDto findOrder(Long userId, Long orderId) {
 
         OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
-        UserResponseDto user = userServiceClient.findUserById(order.getUserId());
+        UserEntityResponseDto user = getUser(order.getUserId());
 
         // 구매자와 판매자만 조회 가능
         if (!order.getUserId().equals(userId) && !order.getProduct().getUserId().equals(userId)) {
@@ -153,8 +160,11 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
 
         order.setStatus(TRADING);
         OrderEntity saveOrder = orderRepository.save(order);
-        UserResponseDto user = userServiceClient.findUserById(saveOrder.getUserId());
-        billService.createBill(userId, orderId);
+        UserEntityResponseDto user = getUser(saveOrder.getUserId());
+
+        if(!createBill(new BillCreateRequestDto(userId, orderId)).isStatus()) {
+            throw new NotFoundException(BILL_NOT_FOUND);
+        }
         return new OrderResponseDto(saveOrder, user);
     }
 
@@ -169,7 +179,7 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
     public OrderResponseDto completeOrder(Long userId, Long orderId) {
 
         OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
-        UserResponseDto user = userServiceClient.findUserById(order.getUserId());
+        UserEntityResponseDto user = getUser(order.getUserId());
 
         // 구매자인지 확인
         if (!order.getUserId().equals(userId)) {
@@ -267,21 +277,97 @@ public class OrderServiceImplV2 implements OrderServiceV2 {
             order.setStatus(CANCELED);
             order.orderDelete();
 
-            BillEntity bill = billRepository.findByOrderId(orderId)
-                    .orElseThrow(() -> new NotFoundException(BILL_NOT_FOUND));
-
-            bill.cancelBill();
+            BillEntityResponseDto bill = findBillById(orderId);
+            if(!cancelBill(new BillCancelRequestDto(bill.getId())).isStatus()) {
+               throw new MismatchException(MISMATCH_BILL_STATUS);
+            }
 
             orderRepository.save(order);
-            billRepository.save(bill);
 
         } catch (InterruptedException e) {
             throw new LockException(CONFLICT_LOCK_ERROR);
-        } finally {
+        }
+        finally {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
 
     }
+
+    @Override
+    public OrderEntityResponseDto findOrderById(Long orderId) {
+        OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
+        return new OrderEntityResponseDto(order, new ProductEntityResponseDto(order.getProduct()));
+    }
+
+    @Override
+    public List<OrderEntityResponseDto> findAllOrders(List<Long> orderIds) {
+        List<OrderEntity> allOrders = orderRepository.findAllById(orderIds);
+        List<Long> userIdList = allOrders.stream().map(OrderEntity::getUserId).toList();
+        Map<Long, UserEntityResponseDto> users = findAllUsers(userIdList).stream().collect(Collectors.
+            toMap(user -> user.getId(), user -> user));
+
+        List<OrderEntityResponseDto> orderResponseDtos = new ArrayList<>();
+
+        for (OrderEntity order : allOrders) {
+            orderResponseDtos.add(new OrderEntityResponseDto(order, new ProductEntityResponseDto(order.getProduct())));
+        }
+
+        return orderResponseDtos;
+    }
+
+    @Override
+    @Transactional
+    public BooleanStatusDto updateOrderStatus(UpdateOrderStatusDto updateOrderStatusDto) {
+        try {
+            OrderEntity order = orderRepository.findByIdOrElseThrow(updateOrderStatusDto.getOrderId());
+            order.setStatus(updateOrderStatusDto.getOrderStatus());
+            return new BooleanStatusDto(true);
+
+        }catch(Exception e){
+            return new BooleanStatusDto(false);
+        }
+    }
+
+    public UserEntityResponseDto getUser(Long userId) {
+        try{
+            return userServiceClient.findUserById(userId);
+        }catch(FeignException e){
+            throw new NetworkTimeoutException(e.contentUTF8());
+        }
+    }
+
+    public List<UserEntityResponseDto> findAllUsers(List<Long> userIds) {
+        try{
+            return userServiceClient.findAllUsers(userIds);
+        }catch(FeignException e){
+            throw new NetworkTimeoutException(e.contentUTF8());
+        }
+    }
+
+    public BooleanStatusDto createBill(BillCreateRequestDto billCreateRequestDto) {
+        try{
+            return billServiceClient.createBill(billCreateRequestDto);
+        }catch(FeignException e){
+            throw new NetworkTimeoutException(e.contentUTF8());
+        }
+    }
+
+    public BillEntityResponseDto findBillById(Long billId) {
+        try{
+            return billServiceClient.findBillById(billId);
+        }catch(FeignException e){
+            throw new NetworkTimeoutException(e.contentUTF8());
+        }
+    }
+
+    public BooleanStatusDto cancelBill(BillCancelRequestDto billCancelRequestDto) {
+        try{
+            return billServiceClient.cancelBill(billCancelRequestDto);
+        }catch(FeignException e){
+            throw new NetworkTimeoutException(e.contentUTF8());
+        }
+    }
+
 }

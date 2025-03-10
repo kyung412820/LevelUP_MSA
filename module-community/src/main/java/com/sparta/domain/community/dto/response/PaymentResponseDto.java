@@ -14,7 +14,7 @@
 //	private Long amount;
 //	private String orderName;
 //	private OrderResponseDto order;
-//	private UserResponseDto customer;
+//	private UserEntityResponseDto customer;
 //	private String userKey;
 //	private String paymentKey;
 //	private String completedAt;
@@ -24,7 +24,7 @@
 //	private String customerName;
 //
 //	public PaymentResponseDto(Long paymentId, String orderId, String payType, Long amount, String orderName,
-//		OrderResponseDto order, UserResponseDto customer, String userKey, String paymentKey,
+//		OrderResponseDto order, UserEntityResponseDto customer, String userKey, String paymentKey,
 //		String completedAt, boolean isPaid, boolean isCanceled, String customerEmail, String customerName) {
 //		this.paymentId = paymentId;
 //		this.orderId = orderId;

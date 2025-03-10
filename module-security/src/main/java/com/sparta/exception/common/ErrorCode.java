@@ -1,7 +1,8 @@
 package com.sparta.exception.common;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
+import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
@@ -26,6 +27,10 @@ public enum ErrorCode {
 	INVALID_NICKNAME(HttpStatus.BAD_REQUEST, "ERR017", "유저이름이 일치하지 않습니다."),
 	INVALID_RESETCODE(HttpStatus.BAD_REQUEST, "ERR018", "인증코드가 만료되었거나 일치하지 않습니다."),
 	AUTH_TYPE_NOT_GENERAL(HttpStatus.BAD_REQUEST, "ERR019", "소셜로그인은 비밀번호 초기화가 불가능합니다."),
+	MISMATCH_ORDER_STATUS(HttpStatus.BAD_REQUEST, "ERR020", "서비스가 유효하지 않거나 네트워크 이상으로 주문 상태가 바뀌지 않았습니다."),
+	MISMATCH_PRODUCT_AMOUNT(HttpStatus.BAD_REQUEST, "ERR021", "서비스가 유효하지 않거나 네트워크 이상으로 상품 개수가 바뀌지 않았습니다."),
+	NETWORK_TIMEOUT(HttpStatus.BAD_REQUEST, "ERR022", "서비스가 유효하지 않거나 네트워크 이상이 발생했습니다."),
+	MISMATCH_BILL_STATUS(HttpStatus.BAD_REQUEST, "ERR023", "서비스가 유효하지 않거나 네트워크 이상으로 결제 상태가 바뀌지 않았습니다."),
 
 	// 401 UNAUTHORIZED
 	UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "ERR101", "로그인이 필요합니다."),

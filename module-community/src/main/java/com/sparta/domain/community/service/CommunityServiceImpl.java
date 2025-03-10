@@ -15,13 +15,14 @@ import com.sparta.domain.community.dto.request.CommunityUpdateRequestDto;
 import com.sparta.domain.community.dto.response.CommunityListResponseDto;
 import com.sparta.domain.community.dto.response.CommunityReadResponseDto;
 import com.sparta.domain.community.dto.response.CommunityResponseDto;
-import com.sparta.domain.community.dto.response.GameResponseDto;
-import com.sparta.domain.community.dto.response.UserResponseDto;
+import com.sparta.domain.community.dto.response.GameEntityResponseDto;
+import com.sparta.domain.community.dto.response.UserEntityResponseDto;
 import com.sparta.domain.community.entity.CommunityEntity;
 import com.sparta.domain.community.repository.CommunityRepository;
 import com.sparta.domain.community.repositoryES.CommunityESRepository;
 import com.sparta.exception.common.DuplicateException;
 import com.sparta.exception.common.ForbiddenException;
+import com.sparta.exception.common.NetworkTimeoutException;
 import com.sparta.exception.common.NotFoundException;
 import com.sparta.exception.common.PageOutOfBoundsException;
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,8 +57,8 @@ public class CommunityServiceImpl implements CommunityService {
 
 	@Override
 	public CommunityResponseDto saveCommunity(Long userId, CommnunityCreateRequestDto dto) {
-		UserResponseDto user = userServiceClient.findUserById(userId);
-		GameResponseDto game = gameServiceClient.findGameById(dto.getGameId());
+		UserEntityResponseDto user = getUser(userId);
+		GameEntityResponseDto game = getGame(dto.getGameId());
 		checkGameIsDeleted(game);
 
 		CommunityEntity community = communityRepository.save(
@@ -78,9 +81,9 @@ public class CommunityServiceImpl implements CommunityService {
 			gameIdList.add(communityEntity.getGameId());
 		}
 
-		Map<Long,GameResponseDto> allGames = gameServiceClient.findAllGames(gameIdList).stream().collect(Collectors.
+		Map<Long, GameEntityResponseDto> allGames = findAllGames(gameIdList).stream().collect(Collectors.
 			toMap(game -> game.getId(), game -> game));
-		Map<Long,UserResponseDto> allUsers = userServiceClient.findAllUsers(userIdList).stream().collect(Collectors.
+		Map<Long, UserEntityResponseDto> allUsers = findAllUsers(userIdList).stream().collect(Collectors.
 			toMap(user -> user.getId(), user -> user));
 
 
@@ -114,8 +117,8 @@ public class CommunityServiceImpl implements CommunityService {
 			community.updateContent(dto.getContent());
 		}
 		return CommunityResponseDto.from(community,
-			userServiceClient.findUserById(community.getUserId()),
-			gameServiceClient.findGameById(community.getGameId()));
+			getUser(community.getUserId()),
+			getGame(community.getGameId()));
 	}
 
 	@Override
@@ -131,8 +134,8 @@ public class CommunityServiceImpl implements CommunityService {
 	@Override
 	public CommunityResponseDto saveCommunityES(Long userId, CommnunityCreateRequestDto dto) {
 
-		UserResponseDto user = userServiceClient.findUserById(userId);
-		GameResponseDto game = gameServiceClient.findGameById(dto.getGameId());
+		UserEntityResponseDto user = getUser(userId);
+		GameEntityResponseDto game = getGame(dto.getGameId());
 		CommunityEntity community = communityRepository.save(
 			new CommunityEntity(dto.getTitle(), dto.getContent(), user.getId(), game.getId()));
 		CommunityDocument communityDocument = communityESRepository.save(CommunityDocument.of(community, user, game));
@@ -217,8 +220,8 @@ public class CommunityServiceImpl implements CommunityService {
 	 */
 	@Override
 	public CommunityResponseDto saveCommunityRedis(Long userId, CommnunityCreateRequestDto dto) {
-		UserResponseDto user = userServiceClient.findUserById(userId);
-		GameResponseDto game = gameServiceClient.findGameById(dto.getGameId());
+		UserEntityResponseDto user = getUser(userId);
+		GameEntityResponseDto game = getGame(dto.getGameId());
 		checkGameIsDeleted(game);
 		CommunityEntity community = communityRepository.save(
 			new CommunityEntity(dto.getTitle(), dto.getContent(), user.getId(), game.getId()));
@@ -320,8 +323,8 @@ public class CommunityServiceImpl implements CommunityService {
 		communityRepository.save(community);
 
 		return CommunityResponseDto.from(community,
-			userServiceClient.findUserById(community.getUserId()),
-			gameServiceClient.findGameById(community.getGameId()));
+			getUser(community.getUserId()),
+			getGame(community.getGameId()));
 	}
 
 	/**
@@ -345,7 +348,7 @@ public class CommunityServiceImpl implements CommunityService {
 		redisTemplate.opsForZSet().incrementScore(COMMUNITY_ZSET_KEY, communityKey, 1);
 	}
 
-	private void checkGameIsDeleted(GameResponseDto game) {
+	private void checkGameIsDeleted(GameEntityResponseDto game) {
 		if (game.getIsDeleted()) {
 			throw new DuplicateException(GAME_ISDELETED);
 		}
@@ -358,9 +361,41 @@ public class CommunityServiceImpl implements CommunityService {
 	}
 
 	private void checkAuth(CommunityEntity community, Long userId) {
-		UserResponseDto user = userServiceClient.findUserById(userId);
+		UserEntityResponseDto user = getUser(userId);
 		if (!community.getUserId().equals(userId) && !user.getRole().equals(ADMIN)) {
 			throw new ForbiddenException(FORBIDDEN_ACCESS);
+		}
+	}
+
+	public UserEntityResponseDto getUser(Long userId) {
+		try{
+			return userServiceClient.findUserById(userId);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
+	}
+
+	public List<UserEntityResponseDto> findAllUsers(List<Long> userIds) {
+		try{
+			return userServiceClient.findAllUsers(userIds);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
+	}
+
+	public GameEntityResponseDto getGame(Long gameId) {
+		try{
+			return gameServiceClient.findGameById(gameId);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
+	}
+
+	public List<GameEntityResponseDto> findAllGames(List<Long> gameIds) {
+		try{
+			return gameServiceClient.findAllGames(gameIds);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
 		}
 	}
 }

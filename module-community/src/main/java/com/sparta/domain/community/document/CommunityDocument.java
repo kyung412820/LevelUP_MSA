@@ -1,8 +1,8 @@
 package com.sparta.domain.community.document;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.sparta.domain.community.dto.response.UserResponseDto;
-import com.sparta.domain.community.dto.response.GameResponseDto;
+import com.sparta.domain.community.dto.response.GameEntityResponseDto;
+import com.sparta.domain.community.dto.response.UserEntityResponseDto;
 import com.sparta.domain.community.entity.CommunityEntity;
 import lombok.Builder;
 import lombok.Getter;
@@ -56,7 +56,7 @@ public class CommunityDocument {
 		this.isDeleted = isDeleted;
 	}
 
-	public static CommunityDocument of(CommunityEntity community, UserResponseDto user, GameResponseDto game) {
+	public static CommunityDocument of(CommunityEntity community, UserEntityResponseDto user, GameEntityResponseDto game) {
 		return new CommunityDocument().builder()
 			.communityId(community.getId())
 			.title(community.getTitle())

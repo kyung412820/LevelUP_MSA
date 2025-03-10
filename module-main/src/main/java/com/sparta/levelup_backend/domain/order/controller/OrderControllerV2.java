@@ -4,18 +4,24 @@ import static com.sparta.levelup_backend.common.ApiResMessage.*;
 import static com.sparta.levelup_backend.common.ApiResponse.*;
 import static org.springframework.http.HttpStatus.*;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.levelup_backend.common.ApiResponse;
 import com.sparta.levelup_backend.domain.order.dto.requestDto.OrderCreateRequestDto;
+import com.sparta.levelup_backend.domain.order.dto.requestDto.UpdateOrderStatusDto;
 import com.sparta.levelup_backend.domain.order.dto.requestDto.UserAuthenticationRequestDto;
+import com.sparta.levelup_backend.domain.order.dto.responseDto.BooleanStatusDto;
+import com.sparta.levelup_backend.domain.order.dto.responseDto.OrderEntityResponseDto;
 import com.sparta.levelup_backend.domain.order.dto.responseDto.OrderResponseDto;
 import com.sparta.levelup_backend.domain.order.service.OrderServiceImplV2;
 
@@ -30,6 +36,21 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderControllerV2 {
 
     private final OrderServiceImplV2 orderService;
+
+    @GetMapping("/intra/findOrderById/{orderId}")
+    OrderEntityResponseDto findOrderById(@PathVariable("orderId") Long orderId){
+        return orderService.findOrderById(orderId);
+    };
+
+    @PostMapping("/intra/findAllOrders")
+    List<OrderEntityResponseDto> findAllOrders(@RequestBody List<Long> orderIds){
+        return orderService.findAllOrders(orderIds);
+    };
+
+    @PutMapping("/intra/updateOrderStatus")
+    BooleanStatusDto updateOrderStatus(@RequestBody UpdateOrderStatusDto updateOrderStatusDto){
+        return orderService.updateOrderStatus(updateOrderStatusDto);
+    };
 
     @PostMapping
     public ApiResponse<OrderResponseDto> createOrder(

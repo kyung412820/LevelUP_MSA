@@ -14,7 +14,7 @@ public class CommunityResponseDto {
 	private final String author; //글을 생성한 사용자의 email
 	private final String game; // 글이 포함된 game의 name;
 
-	public static CommunityResponseDto from(CommunityEntity community, UserResponseDto user, GameResponseDto game) {
+	public static CommunityResponseDto from(CommunityEntity community, UserEntityResponseDto user, GameEntityResponseDto game) {
 		return new CommunityResponseDto(community.getId(), community.getTitle(), community.getContent(),
 			user.getEmail(),
 			game.getName());
@@ -26,7 +26,7 @@ public class CommunityResponseDto {
 			communityDocument.getUserEmail(), communityDocument.getGameName());
 	}
 
-	public static CommunityResponseDto of(CommunityEntity community, UserResponseDto user, GameResponseDto game) {
+	public static CommunityResponseDto of(CommunityEntity community, UserEntityResponseDto user, GameEntityResponseDto game) {
 		return new CommunityResponseDto(community.getId(), community.getTitle(), community.getContent(),
 			user.getEmail(), game.getName());
 	}

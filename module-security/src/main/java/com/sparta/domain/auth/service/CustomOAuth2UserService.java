@@ -10,7 +10,11 @@ import com.sparta.domain.auth.dto.response.OAuth2ResponseDto;
 import com.sparta.domain.auth.dto.response.UserEntityResponseDto;
 import com.sparta.domain.auth.enums.UserRole;
 import com.sparta.exception.common.ErrorCode;
+import com.sparta.exception.common.NetworkTimeoutException;
+
 import java.util.Map;
+
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -45,7 +49,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		try {
 			// ✅ user-service에서 사용자 정보 조회 (FeignClient 사용)
-			user = userServiceClient.getUserByEmail(oAuth2ResponseDto.getEmail());
+			user = getUser(oAuth2ResponseDto.getEmail());
 
 			// ✅ 기존 사용자가 삭제된 경우 예외 처리
 			if (user.getIsDeleted()) {
@@ -66,12 +70,29 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 				.provider(registrationId + "new")
 				.build();
 
-			userServiceClient.createOAuthUser(newUserDto);
+			createOAuthUser(newUserDto);
 
 			// ✅ 새로 생성된 사용자의 정보를 다시 불러옴
-			user = userServiceClient.getUserByEmail(oAuth2ResponseDto.getEmail());
+			user = getUser(oAuth2ResponseDto.getEmail());
 		}
 
 		return new CustomOAuth2User(user);
 	}
+
+	public UserEntityResponseDto getUser(String email) {
+		try{
+			return userServiceClient.getUserByEmail(email);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
+	}
+
+	public void createOAuthUser(OAuthUserRequestDto oAuthUserRequestDto) {
+		try{
+			userServiceClient.createOAuthUser(oAuthUserRequestDto);
+		}catch(FeignException e){
+			throw new NetworkTimeoutException(e.contentUTF8());
+		}
+	}
+
 }

@@ -3,10 +3,12 @@ package com.sparta.levelup_backend.domain.product.service;
 import java.util.List;
 import java.util.Map;
 
+import com.sparta.levelup_backend.domain.order.dto.responseDto.BooleanStatusDto;
 import com.sparta.levelup_backend.domain.product.document.ProductDocument;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductCreateRequestDto;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductRequestAllDto;
 import com.sparta.levelup_backend.domain.product.dto.requestDto.ProductUpdateRequestDto;
+import com.sparta.levelup_backend.domain.product.dto.requestDto.UpdateProductAmountDto;
 import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductCreateResponseDto;
 import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductDeleteResponseDto;
 import com.sparta.levelup_backend.domain.product.dto.responseDto.ProductResponseDto;
@@ -41,5 +43,7 @@ public interface ProductService {
 	List<ProductDocument> getTop10PopularProductsES();
 
 	List<ProductRequestAllDto> getTop3Products();
+
+	BooleanStatusDto updateProductAmount(UpdateProductAmountDto updateProductAmountDto);
 }
 

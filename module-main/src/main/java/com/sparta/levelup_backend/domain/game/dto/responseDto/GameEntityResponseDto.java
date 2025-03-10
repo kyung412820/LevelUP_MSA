@@ -1,7 +1,6 @@
 package com.sparta.levelup_backend.domain.game.dto.responseDto;
 
 import com.sparta.levelup_backend.domain.game.entity.GameEntity;
-import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
 
 import java.time.LocalDateTime;
 import lombok.Getter;

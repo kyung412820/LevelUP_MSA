@@ -1,22 +1,19 @@
 package com.sparta.levelup_backend.domain.payment.controller;
 
-import com.sparta.levelup_backend.domain.payment.repository.PaymentRepository;
-import com.sparta.levelup_backend.exception.common.ErrorCode;
-import com.sparta.levelup_backend.exception.common.PaymentException;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.sparta.levelup_backend.exception.common.ErrorCode;
+import com.sparta.levelup_backend.exception.common.PaymentException;
 
 
 @ExtendWith(MockitoExtension.class)
 class PaymentControllerTest {
 
-    @Mock
-    private PaymentRepository paymentRepository;
 
     private static final String ORDER_ID = "test-order-id";
     private static final String PAYMENT_KEY = "test-payment-Key";

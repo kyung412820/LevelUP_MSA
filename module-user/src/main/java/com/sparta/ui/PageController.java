@@ -21,42 +21,6 @@ public class PageController {
 	private final ChatroomMongoRepository chatroomMongoRepository;
 	private final ChatroomService chatroomService;
 
-	@GetMapping("/v2/signin")
-	public String signInPage() {
-		return "signin";
-	}
-
-	@GetMapping("/v2/signup")
-	public String signUpUserPage() {
-		return "signup";
-	}
-
-	@GetMapping("/v2/oauth2signup")
-	public String oAuth2SignUpUserPage(Model model, HttpServletRequest request) {
-
-		model.addAttribute("email", request.getAttribute("email"));
-		model.addAttribute("nickName", request.getAttribute("nickName"));
-		model.addAttribute("phoneNummber", request.getAttribute("phoneNumber"));
-
-		return "oauth2signup";
-	}
-
-	@GetMapping("/v2/home")
-	public String homePage() {
-
-		return "home";
-	}
-
-	@GetMapping("/login")
-	public String loginPage() {
-		return "login";
-	}
-
-	// 메인 페이지
-	@GetMapping("/")
-	public String mainPage() {
-		return "main";
-	}
 
 	// 메인 페이지
 	@GetMapping("/chat-main")
@@ -93,19 +57,4 @@ public class PageController {
 		return "chatroomList";
 	}
 
-	@GetMapping("/product-detail")
-	public String productDetail(@RequestParam("productId") Long productId, Model model) {
-		model.addAttribute("productId", productId);
-		return "productDetail";
-	}
-
-	@GetMapping("/resetPassword")
-	public String resetPassword() {
-		return "resetPassword";
-	}
-
-	@GetMapping("/resetPasswordConfirm")
-	public String resetPasswordConfirm() {
-		return "resetPasswordConfirm";
-	}
 }

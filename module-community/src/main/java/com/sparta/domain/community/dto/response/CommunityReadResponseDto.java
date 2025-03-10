@@ -18,7 +18,7 @@ public class CommunityReadResponseDto {
 			communityDocument.getGameName());
 	}
 
-	public static CommunityReadResponseDto of(CommunityEntity community, UserResponseDto user, GameResponseDto game) {
+	public static CommunityReadResponseDto of(CommunityEntity community, UserEntityResponseDto user, GameEntityResponseDto game) {
 		return new CommunityReadResponseDto(String.valueOf(community.getId()), community.getTitle(), user.getEmail(), game.getName());
 	}
 }

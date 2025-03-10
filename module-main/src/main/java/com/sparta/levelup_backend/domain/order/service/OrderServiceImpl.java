@@ -6,11 +6,13 @@ import com.sparta.levelup_backend.domain.order.entity.OrderEntity;
 import com.sparta.levelup_backend.domain.order.repository.OrderRepository;
 import com.sparta.levelup_backend.domain.product.entity.ProductEntity;
 import com.sparta.levelup_backend.domain.product.service.ProductServiceImpl;
-import com.sparta.levelup_backend.domain.review.client.UserServiceClient;
-import com.sparta.levelup_backend.domain.review.dto.response.UserResponseDto;
+import com.sparta.levelup_backend.client.UserServiceClient;
+import com.sparta.levelup_backend.domain.review.dto.response.UserEntityResponseDto;
 import com.sparta.levelup_backend.exception.common.*;
 import com.sparta.levelup_backend.utill.OrderStatus;
 import com.sparta.levelup_backend.utill.ProductStatus;
+
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -44,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
 
         RLock lock = redissonClient.getLock("stock_lock_" + dto.getProductId());
 
-        UserResponseDto user = userServiceClient.findUserById(userId);
+        UserEntityResponseDto user = getUser(userId);
 
         OrderEntity saveOrder = null;
 
@@ -96,7 +99,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto findOrder(Long userId, Long orderId) {
 
         OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
-        UserResponseDto user = userServiceClient.findUserById(order.getUserId());
+        UserEntityResponseDto user = getUser(order.getUserId());
 
         // 구매자와 판매자만 조회 가능
         if (!order.getUserId().equals(userId) && !order.getProduct().getUserId().equals(userId)) {
@@ -116,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto updateOrder(Long userId, Long orderId) {
 
         OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
-        UserResponseDto user = userServiceClient.findUserById(order.getUserId());
+        UserEntityResponseDto user = getUser(order.getUserId());
 
         // 판매자인지 확인
         if (!order.getProduct().getUserId().equals(userId)) {
@@ -144,7 +147,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDto completeOrder(Long userId, Long orderId) {
 
         OrderEntity order = orderRepository.findByIdOrElseThrow(orderId);
-        UserResponseDto user = userServiceClient.findUserById(order.getUserId());
+        UserEntityResponseDto user = getUser(order.getUserId());
 
         // 구매자인지 확인
         if (!order.getUserId().equals(userId)) {
@@ -247,6 +250,14 @@ public class OrderServiceImpl implements OrderService {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
+        }
+    }
+
+    public UserEntityResponseDto getUser(Long userId) {
+        try{
+            return userServiceClient.findUserById(userId);
+        }catch(FeignException e){
+            throw new NetworkTimeoutException(e.contentUTF8());
         }
     }
 }
