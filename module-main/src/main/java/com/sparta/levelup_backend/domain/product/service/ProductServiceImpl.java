@@ -519,14 +519,15 @@ public class ProductServiceImpl implements ProductService {
 		// 	throw new RuntimeException("Simulated Failure");
 		// }
 
-		ProductEntity product = productRepository.findByuserIdOrElseThrow(userId);
-
+		List<ProductEntity> productList = productRepository.findAllByuserId(Long.valueOf(userId));
 		// 1. userId에 해당하는 모든 게시글 삭제
-		product.deleteProduct();
+		for (ProductEntity product : productList) {
+			product.deleteProduct();
+			ProductDocument document = ProductDocument.fromEntity(product);
+			document.updateIsDeleted(true);
+			productESRepository.save(document);
+		}
 
-		ProductDocument document = ProductDocument.fromEntity(product);
-		document.updateIsDeleted(true);
-		productESRepository.save(document);
 
 		log.info("Deleted all posts by userId: {}", userId);
 	}

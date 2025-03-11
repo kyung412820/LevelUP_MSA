@@ -357,21 +357,20 @@ public class CommunityServiceImpl implements CommunityService {
 		// if (new Random().nextInt(5) == 0) {
 		// 	throw new RuntimeException("Simulated Failure");
 		// }
+		deleteCommunities(communityRepository.findAllByuserId(Long.valueOf(userId)));
 
-		CommunityEntity community = communityRepository.findByuserIdOrElseThrow(userId);
-		community.deleteCommunity();
 		log.info("Deleted all posts by userId: {}", userId);
+
 	}
 
 
 	@KafkaListener(topics = "game-delete-events", groupId = "community-group")
 	public void handleGameDeleteEvent(String gameId) {
 		log.info("Received Kafka Event: gameId = {}", gameId);
-		CommunityEntity community = communityRepository.findBygameIdOrElseThrow(gameId);
 
-		// 1. userId에 해당하는 모든 게시글 삭제
-		community.deleteCommunity();
-		log.info("Deleted all posts by userId: {}", gameId);
+		// 1. gameId에 해당하는 모든 게시글 삭제
+		deleteCommunities(communityRepository.findAllBygameId(Long.valueOf(gameId)));
+		log.info("Deleted all posts by gameId: {}", gameId);
 	}
 
 	public void incrementViews(String communityKey) {
@@ -426,6 +425,12 @@ public class CommunityServiceImpl implements CommunityService {
 			return gameServiceClient.findAllGames(gameIds);
 		}catch(FeignException e){
 			throw new NetworkTimeoutException(e.contentUTF8());
+		}
+	}
+
+	public void deleteCommunities(List<CommunityEntity> communityEntityList) {
+		for(CommunityEntity community : communityEntityList){
+			community.deleteCommunity();
 		}
 	}
 }

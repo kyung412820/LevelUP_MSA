@@ -37,4 +37,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 	default ProductEntity findByuserIdOrElseThrow(String userId) {
 		return findById(Long.valueOf(userId)).orElseThrow(() -> new NotFoundException(ErrorCode.PRODUCT_NOT_FOUND));
 	}
+
+	List<ProductEntity> findAllByuserId(Long userId);
 }

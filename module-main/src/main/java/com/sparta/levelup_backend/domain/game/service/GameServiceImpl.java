@@ -104,7 +104,7 @@ public class GameServiceImpl implements GameService {
 
 		try {
 			String key = String.valueOf(game.getId());
-			kafkaTemplate.send(TOPIC, key, "Game deleted: " + game.getId());
+			kafkaTemplate.send(TOPIC, key, String.valueOf(game.getId()));
 			log.info("Kafka 메시지 전송 성공: userId = {}", game.getId());
 		} catch (Exception e) {
 			log.error("Kafka 메시지 전송 실패: userId = {}, 오류: {}", game.getId(), e.getMessage());
