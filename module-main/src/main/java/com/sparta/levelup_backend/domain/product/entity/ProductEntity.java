@@ -102,4 +102,9 @@ public class ProductEntity extends BaseEntity {
 			this.amount += 1;
 		}
 	}
+
+	public void deleteProduct() {
+		this.delete();
+	}
+
 }

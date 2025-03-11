@@ -15,4 +15,12 @@ public interface CommunityRepository extends JpaRepository<CommunityEntity, Long
 	default CommunityEntity findByIdOrElseThrow(Long id) {
 		return findById(id).orElseThrow(() -> new NotFoundException(COMMUNITY_NOT_FOUND));
 	}
+
+	default CommunityEntity findByuserIdOrElseThrow(String userId){
+		return findById(Long.valueOf(userId)).orElseThrow(() -> new NotFoundException(COMMUNITY_NOT_FOUND));
+	}
+
+	default CommunityEntity findBygameIdOrElseThrow(String gameId){
+		return findById(Long.valueOf(gameId)).orElseThrow(() -> new NotFoundException(COMMUNITY_NOT_FOUND));
+	}
 }

@@ -18,12 +18,16 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -31,6 +35,9 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private static final String TOPIC = "user-delete-events";
 
     @Override
     public UserResponseDto findUserById(String role, Long id) {
@@ -111,10 +118,16 @@ public class UserServiceImpl implements UserService {
 
         UserEntity user = userRepository.findByIdOrElseThrow(id);
 
-        if (user.getPassword() == null) {
+        if (user.getPassword() == null || bCryptPasswordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
             user.delete();
-        } else if (bCryptPasswordEncoder.matches(dto.getCurrentPassword(), user.getPassword())) {
-            user.delete();
+            try {
+                String key = String.valueOf(user.getId());
+                kafkaTemplate.send(TOPIC, key, "User deleted: " + user.getId());
+                log.info("Kafka 메시지 전송 성공: userId = {}", user.getId());
+            } catch (Exception e) {
+                log.error("Kafka 메시지 전송 실패: userId = {}, 오류: {}", user.getId(), e.getMessage());
+            }
+
         } else {
             throw new CurrentPasswordNotMatchedException();
         }

@@ -6,6 +6,7 @@ import com.sparta.levelup_backend.domain.game.dto.responseDto.GameEntityResponse
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +24,18 @@ import com.sparta.levelup_backend.utill.UserRole;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Transactional
 @Service
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
 	private final GameRepository gameRepository;
 	private final UserServiceClient userServiceClient;
+
+	private final KafkaTemplate<String, String> kafkaTemplate;
+	private static final String TOPIC = "game-delete-events";
 
 
 	@Override
@@ -95,6 +101,14 @@ public class GameServiceImpl implements GameService {
 		checkIsDeleted(game);
 
 		game.deleteGame();
+
+		try {
+			String key = String.valueOf(game.getId());
+			kafkaTemplate.send(TOPIC, key, "Game deleted: " + game.getId());
+			log.info("Kafka 메시지 전송 성공: userId = {}", game.getId());
+		} catch (Exception e) {
+			log.error("Kafka 메시지 전송 실패: userId = {}, 오류: {}", game.getId(), e.getMessage());
+		}
 	}
 
 	private void checkAdminAuth(UserEntityResponseDto user) {

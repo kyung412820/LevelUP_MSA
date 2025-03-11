@@ -34,13 +34,17 @@ import java.util.stream.Collectors;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -342,6 +346,32 @@ public class CommunityServiceImpl implements CommunityService {
 		redisTemplate.delete(key);
 		community.deleteCommunity();
 
+	}
+
+	// @RetryableTopic(attempts = "5", backoff = @Backoff(delay = 2000))
+	@KafkaListener(topics = "user-delete-events", groupId = "community-group")
+	public void handleUserDeleteEvent(String userId) {
+		log.info("Received Kafka Event: userId = {}", userId);
+
+		// // ✅ 장애 발생 시 자동 재시도
+		// if (new Random().nextInt(5) == 0) {
+		// 	throw new RuntimeException("Simulated Failure");
+		// }
+
+		CommunityEntity community = communityRepository.findByuserIdOrElseThrow(userId);
+		community.deleteCommunity();
+		log.info("Deleted all posts by userId: {}", userId);
+	}
+
+
+	@KafkaListener(topics = "game-delete-events", groupId = "community-group")
+	public void handleGameDeleteEvent(String gameId) {
+		log.info("Received Kafka Event: gameId = {}", gameId);
+		CommunityEntity community = communityRepository.findBygameIdOrElseThrow(gameId);
+
+		// 1. userId에 해당하는 모든 게시글 삭제
+		community.deleteCommunity();
+		log.info("Deleted all posts by userId: {}", gameId);
 	}
 
 	public void incrementViews(String communityKey) {

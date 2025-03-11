@@ -16,6 +16,8 @@ import org.openkoreantext.processor.tokenizer.KoreanTokenizer;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,9 +63,11 @@ import co.elastic.clients.elasticsearch.core.UpdateResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import scala.collection.JavaConverters;
 import scala.collection.Seq;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -185,6 +189,8 @@ public class ProductServiceImpl implements ProductService {
 		if (!product.getUserId().equals(user.getId()) && !user.getRole().equals(UserRole.ADMIN)) {
 			throw new DuplicateException(FORBIDDEN_ACCESS);
 		}
+
+		product.deleteProduct();
 
 		ProductDocument document = ProductDocument.fromEntity(product);
 		document.updateIsDeleted(true);
@@ -501,6 +507,28 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 		return score;
+	}
+
+	// @RetryableTopic(attempts = "5", backoff = @Backoff(delay = 2000))
+	@KafkaListener(topics = "user-delete-events", groupId = "game-group")
+	public void handleUserDeleteEvent(String userId, Acknowledgment ack) {
+		log.info("Received Kafka Event: userId = {}", userId);
+
+		// // 장애 발생 시 5번까지 재시도 (2초 간격)
+		// if (new Random().nextInt(5) == 0) {
+		// 	throw new RuntimeException("Simulated Failure");
+		// }
+
+		ProductEntity product = productRepository.findByuserIdOrElseThrow(userId);
+
+		// 1. userId에 해당하는 모든 게시글 삭제
+		product.deleteProduct();
+
+		ProductDocument document = ProductDocument.fromEntity(product);
+		document.updateIsDeleted(true);
+		productESRepository.save(document);
+
+		log.info("Deleted all posts by userId: {}", userId);
 	}
 
 	private boolean isAdmin(Long userId) {
