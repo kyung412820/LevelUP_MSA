@@ -18,7 +18,7 @@ import com.sparta.client.UserServiceClient;
 import com.sparta.config.TossPaymentConfig;
 import com.sparta.domain.bill.dto.requestDto.UserAuthenticationRequestDto;
 import com.sparta.domain.bill.dto.responseDto.OrderEntityResponseDto;
-import com.sparta.domain.bill.dto.responseDto.UserResponseDto;
+import com.sparta.domain.bill.dto.responseDto.UserEntityResponseDto;
 import com.sparta.domain.payment.dto.response.CancelResponseDto;
 import com.sparta.domain.payment.dto.response.PaymentResponseDto;
 import com.sparta.domain.payment.entity.PaymentEntity;
@@ -48,7 +48,7 @@ public class PaymentServiceImpl implements PaymentService{
     public PaymentResponseDto createPayment(UserAuthenticationRequestDto auth, Long orderId) {
         Long userId = auth.getId();
             OrderEntityResponseDto order = getOrder(orderId);
-           UserResponseDto  user = getUser(order.getUserId());
+           UserEntityResponseDto user = getUser(order.getUserId());
         if (!order.getUserId().equals(userId)) {
             throw new ForbiddenException(FORBIDDEN_ACCESS);
         }
@@ -64,7 +64,7 @@ public class PaymentServiceImpl implements PaymentService{
         PaymentEntity existingPayment = paymentRepository.findByPaymentOrderId(order.getId());
         if (existingPayment != null) {
             OrderEntityResponseDto existingPaymentOrder = getOrder(existingPayment.getPaymentOrderId());
-            UserResponseDto existingUser = getUser(existingPaymentOrder.getUserId());
+            UserEntityResponseDto existingUser = getUser(existingPaymentOrder.getUserId());
             PaymentResponseDto response = new PaymentResponseDto(existingPayment,existingPaymentOrder,existingUser);
             response.setSuccessUrl(tossPaymentConfig.getSuccessUrl());
             response.setFailUrl(tossPaymentConfig.getFailUrl());
@@ -136,7 +136,7 @@ public class PaymentServiceImpl implements PaymentService{
         }
     }
 
-    public UserResponseDto getUser(Long userId) {
+    public UserEntityResponseDto getUser(Long userId) {
         try{
             return userServiceClient.findUserById(userId);
         }catch(FeignException e){

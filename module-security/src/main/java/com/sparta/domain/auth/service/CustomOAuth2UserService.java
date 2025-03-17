@@ -48,15 +48,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		UserEntityResponseDto user;
 
 		try {
-			// ✅ user-service에서 사용자 정보 조회 (FeignClient 사용)
+
 			user = getUser(oAuth2ResponseDto.getEmail());
 
-			// ✅ 기존 사용자가 삭제된 경우 예외 처리
+
 			if (user.getIsDeleted()) {
 				throw new OAuth2AuthenticationException(ErrorCode.ALREADY_DELETED_USER.toString());
 			}
 
-			// ✅ 기존 사용자의 provider가 다를 경우 예외 처리
+
 			if (!user.getProvider().startsWith(registrationId)) {
 				throw new OAuth2AuthenticationException(ErrorCode.AUTH_TYPE_MISMATCH.toString());
 			}
@@ -72,7 +72,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 			createOAuthUser(newUserDto);
 
-			// ✅ 새로 생성된 사용자의 정보를 다시 불러옴
+
 			user = getUser(oAuth2ResponseDto.getEmail());
 		}
 

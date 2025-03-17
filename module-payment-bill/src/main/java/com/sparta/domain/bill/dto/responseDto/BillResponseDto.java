@@ -32,7 +32,7 @@ public class BillResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private final LocalDateTime paymentDate;
 
-    public BillResponseDto(BillEntity bill, UserResponseDto tutor, UserResponseDto student) {
+    public BillResponseDto(BillEntity bill, UserEntityResponseDto tutor, UserEntityResponseDto student) {
         this.billId = bill.getId();
         this.tutorName = tutor.getNickName();
         this.tutorNumber = tutor.getPhoneNumber();

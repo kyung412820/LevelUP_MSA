@@ -1,5 +1,7 @@
 package com.sparta.levelup_backend.client;
 
+import com.sparta.levelup_backend.config.CustomErrorDecoder;
+import com.sparta.levelup_backend.config.FeignConfig;
 import com.sparta.levelup_backend.domain.review.dto.response.UserEntityResponseDto;
 import java.util.List;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -8,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "module-user")
+@FeignClient(name = "module-user", configuration = {CustomErrorDecoder.class, FeignConfig.class})
 public interface UserServiceClient {
 
     @GetMapping("/v2/users/intra/findUserById/{userId}")
@@ -16,5 +18,6 @@ public interface UserServiceClient {
 
     @PostMapping("/v2/users/intra/findAllUsers")
     List<UserEntityResponseDto> findAllUsers(@RequestBody List<Long> userIds);
-    ;
+
+
 }

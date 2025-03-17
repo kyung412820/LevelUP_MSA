@@ -41,7 +41,7 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 
 
 	@Override
-	public GatewayFilter apply(JwtFilter.Config config) {
+	public GatewayFilter apply(Config config) {
 		return (exchange, chain) -> {
 			ServerHttpRequest request = exchange.getRequest();
 			ServerHttpResponse response = exchange.getResponse();
@@ -68,7 +68,9 @@ public class JwtFilter extends AbstractGatewayFilterFactory<JwtFilter.Config> {
 				String encodedAuth = Base64.getEncoder().encodeToString(object.writeValueAsString(authentication).getBytes());
 
 				request = request.mutate()
-					.header("UserAuthentication", encodedAuth).build();
+					.header("UserAuthentication", encodedAuth)
+					.header("Role", authentication.getRole()).build();
+
 
 				build = exchange.mutate().request(request).build();
 

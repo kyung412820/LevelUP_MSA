@@ -25,7 +25,7 @@ import com.sparta.domain.bill.dto.requestDto.BillCancelRequestDto;
 import com.sparta.domain.bill.dto.responseDto.BillEntityResponseDto;
 import com.sparta.domain.bill.dto.responseDto.BillResponseDto;
 import com.sparta.domain.bill.dto.responseDto.OrderEntityResponseDto;
-import com.sparta.domain.bill.dto.responseDto.UserResponseDto;
+import com.sparta.domain.bill.dto.responseDto.UserEntityResponseDto;
 import com.sparta.domain.bill.entity.BillEntity;
 import com.sparta.domain.bill.repository.BillRepository;
 import com.sparta.domain.payment.dto.response.BooleanStatusDto;
@@ -48,7 +48,7 @@ public class BillServiceImplV2 implements BillServiceV2 {
 	@Transactional
 	public BooleanStatusDto createBill(Long userId, Long orderId) {
 		try {
-			UserResponseDto user = getUser(userId); // tutor 정보
+			UserEntityResponseDto user = getUser(userId); // tutor 정보
 
 			OrderEntityResponseDto order = getOrder(orderId);
 
@@ -218,8 +218,8 @@ public class BillServiceImplV2 implements BillServiceV2 {
 			allUsers.add(bill.getTutorId());
 		}
 
-		Map<Long, UserResponseDto> allUsersEntity = findAllUsers(allUsers).stream().collect(
-			Collectors.toMap(UserResponseDto::getId, user -> user));
+		Map<Long, UserEntityResponseDto> allUsersEntity = findAllUsers(allUsers).stream().collect(
+			Collectors.toMap(UserEntityResponseDto::getId, user -> user));
 
 		for (BillEntity bill : tutorBillList) {
 			billResponseDtoList.add(new BillResponseDto(bill, allUsersEntity.get(bill.getTutorId()),
@@ -237,7 +237,7 @@ public class BillServiceImplV2 implements BillServiceV2 {
 		}
 	}
 
-	public UserResponseDto getUser(Long userId) {
+	public UserEntityResponseDto getUser(Long userId) {
 		try{
 			return userServiceClient.findUserById(userId);
 		}catch(FeignException e){
@@ -245,7 +245,7 @@ public class BillServiceImplV2 implements BillServiceV2 {
 		}
 	}
 
-	public List<UserResponseDto> findAllUsers(List<Long> userIds) {
+	public List<UserEntityResponseDto> findAllUsers(List<Long> userIds) {
 		try{
 			return userServiceClient.findAllUsers(userIds);
 		}catch(FeignException e){

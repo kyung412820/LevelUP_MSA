@@ -1,7 +1,7 @@
 package com.sparta.domain.payment.dto.response;
 
 import com.sparta.domain.bill.dto.responseDto.OrderEntityResponseDto;
-import com.sparta.domain.bill.dto.responseDto.UserResponseDto;
+import com.sparta.domain.bill.dto.responseDto.UserEntityResponseDto;
 import com.sparta.domain.payment.entity.PaymentEntity;
 
 import lombok.Getter;
@@ -28,7 +28,7 @@ public class PaymentResponseDto {
     @Setter
     private String failUrl;
 
-    public PaymentResponseDto(PaymentEntity payment, OrderEntityResponseDto order, UserResponseDto user) {
+    public PaymentResponseDto(PaymentEntity payment, OrderEntityResponseDto order, UserEntityResponseDto user) {
         this.amount = payment.getAmount();
         this.orderName = order.getOrderName();
         this.orderId = payment.getOrderId();

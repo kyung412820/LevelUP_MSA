@@ -511,6 +511,7 @@ public class ProductServiceImpl implements ProductService {
 
 	// @RetryableTopic(attempts = "5", backoff = @Backoff(delay = 2000))
 	@KafkaListener(topics = "user-delete-events", groupId = "game-group")
+	@Transactional
 	public void handleUserDeleteEvent(String userId, Acknowledgment ack) {
 		log.info("Received Kafka Event: userId = {}", userId);
 

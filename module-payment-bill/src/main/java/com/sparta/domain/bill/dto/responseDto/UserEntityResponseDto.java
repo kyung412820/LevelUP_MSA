@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class UserResponseDto {
+public class UserEntityResponseDto {
 	private Long id;
 	private String email;
 	private String nickName;
@@ -25,7 +25,7 @@ public class UserResponseDto {
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	public UserResponseDto(Long id, String email, String nickName, String imgUrl,
+	public UserEntityResponseDto(Long id, String email, String nickName, String imgUrl,
 		UserRole role, String password, String phoneNumber, String provider, String customerKey, Boolean isDeleted, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		this.id = id;
 		this.email = email;

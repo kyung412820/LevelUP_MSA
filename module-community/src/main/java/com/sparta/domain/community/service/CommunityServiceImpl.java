@@ -1,14 +1,10 @@
 package com.sparta.domain.community.service;
 
 import static com.sparta.domain.community.enums.UserRole.ADMIN;
-import static com.sparta.exception.common.ErrorCode.COMMUNITY_ISDELETED;
-import static com.sparta.exception.common.ErrorCode.COMMUNITY_NOT_FOUND;
-import static com.sparta.exception.common.ErrorCode.FORBIDDEN_ACCESS;
-import static com.sparta.exception.common.ErrorCode.GAME_ISDELETED;
-import static com.sparta.exception.common.ErrorCode.PAGE_OUT_OF_BOUNDS;
+import static com.sparta.exception.common.ErrorCode.*;
 
-import com.sparta.domain.community.client.GameServiceClient;
-import com.sparta.domain.community.client.UserServiceClient;
+import com.sparta.client.GameServiceClient;
+import com.sparta.client.UserServiceClient;
 import com.sparta.domain.community.document.CommunityDocument;
 import com.sparta.domain.community.dto.request.CommnunityCreateRequestDto;
 import com.sparta.domain.community.dto.request.CommunityUpdateRequestDto;
